@@ -1,3 +1,4 @@
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -239,7 +240,7 @@
         <div id="msg">Loading baseline core audio... Please wait.</div>
 
         <div class="controls-panel">
-            <button class="mode-btn active" id="mode-both" onclick="setAudioMode('both')">Voice and Bells</button>
+            <button class="mode-btn active" id="mode-both" onclick="setAudioMode('both')">Vocal/Bells</button>
             <button class="mode-btn" id="mode-vocal" onclick="setAudioMode('vocal')">Vocal Only</button>
             <button class="mode-btn" id="mode-bell" onclick="setAudioMode('bell')">Bell Only</button>
             <button class="mode-btn" id="mode-piano" onclick="setAudioMode('piano')">Piano</button>
@@ -295,38 +296,15 @@
     
     let voiceBuffers = {}; 
     let bellBuffers = {};
-
-    const sampleCDNBase = "https://gleitz.github.io/midi-js-soundfonts/FluidR3_GM/";
-    const instrumentConfigs = {
-        piano: { name: "acoustic_grand_piano-mp3", volume: 0 },
-        guitar: { name: "acoustic_guitar_nylon-mp3", volume: -2 },
-        rhodes: { name: "electric_piano_1-mp3", volume: -1 }
-    };
-
     let samplers = {};
 
-    // Remaps both key signatures and standard global midi boundaries perfectly
-    function getMapUrls() {
-        let urls = {};
-        const sharpMap = {
-            "Db": "Cs", "Eb": "Ds", "Gb": "Fs", "Ab": "Gs", "Bb": "As"
-        };
-        
-        progression.forEach(note => {
-            let noteName = note.id.slice(0, -1); 
-            let octave = parseInt(note.id.slice(-1)); 
-            
-            // Adjust notes that sit under C4 down a step to match standard General MIDI servers
-            if (noteName === "Ab" && octave === 3) { noteName = "Gs"; octave = 3; }
-            else if (noteName === "Bb" && octave === 3) { noteName = "As"; octave = 3; }
-            else if (sharpMap[noteName]) {
-                noteName = sharpMap[noteName];
-            }
-            
-            urls[note.id] = `${noteName}${octave}.mp3`;
-        });
-        return urls;
-    }
+    // Single source anchor notes that are verified to exist securely on the CDN server
+    const sampleCDNBase = "https://gleitz.github.io/midi-js-soundfonts/FluidR3_GM/";
+    const instrumentConfigs = {
+        piano: { name: "acoustic_grand_piano-mp3", anchor: "C4" },
+        guitar: { name: "acoustic_guitar_nylon-mp3", anchor: "C4" },
+        rhodes: { name: "electric_piano_1-mp3", anchor: "C4" }
+    };
 
     const sharpsRow = document.getElementById('sharps-container');
     const naturalsRow = document.getElementById('naturals-container');
@@ -348,7 +326,11 @@
     function setAudioMode(mode) {
         currentAudioMode = mode;
         document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
-        document.getElementById(`mode-${mode}`).classList.add('active');
+        if(mode === 'both') {
+            document.getElementById('mode-both').classList.add('active');
+        } else {
+            document.getElementById(`mode-${mode}`).classList.add('active');
+        }
     }
 
     async function fetchAudioBuffer(url) {
@@ -378,14 +360,17 @@
             }
         }
 
+        // Initialize internal sound engines using a foundational fallback anchor to pitch scale perfectly
         Object.keys(instrumentConfigs).forEach(key => {
             const config = instrumentConfigs[key];
+            let urls = {};
+            urls[config.anchor] = `${config.anchor}.mp3`;
+
             samplers[key] = new Tone.Sampler({
-                urls: getMapUrls(),
+                urls: urls,
                 baseUrl: `${sampleCDNBase}${config.name}/`,
-                volume: config.volume,
                 onload: () => {
-                    console.log(`Studio audio sample map for [${key}] loaded completely.`);
+                    console.log(`Studio engine for [${key}] calibrated successfully.`);
                 }
             }).toDestination();
         });
@@ -405,9 +390,19 @@
         const now = audioCtx.currentTime;
         const matchingNote = progression.find(n => n.id === choice);
 
+        // Convert flats instantly to standard scientific sharp labels for internal engine scaling
+        let playbackNote = choice;
+        if(playbackNote.includes('b')) {
+            const flatToSharpMap = { "Db": "C#", "Eb": "D#", "Gb": "F#", "Ab": "G#", "Bb": "A#" };
+            let noteParts = playbackNote.match(/^([A-Za-z]+)(\d+)$/);
+            if(noteParts && flatToSharpMap[noteParts[1]]) {
+                playbackNote = flatToSharpMap[noteParts[1]] + noteParts[2];
+            }
+        }
+
         if (['piano', 'guitar', 'rhodes'].includes(currentAudioMode)) {
             if (samplers[currentAudioMode]) {
-                samplers[currentAudioMode].triggerAttackRelease(choice, "1.5");
+                samplers[currentAudioMode].triggerAttackRelease(playbackNote, "1.5");
             }
             return;
         }
