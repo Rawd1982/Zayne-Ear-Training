@@ -42,7 +42,6 @@
 
         #msg { font-weight: 600; color: #94a3b8; min-height: 1.5rem; text-align: center; margin-bottom: 20px; font-size: 1.1rem; }
 
-        /* Audio Mode Controls Panel (Updated Grid Layout for 6 Options) */
         .controls-panel {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -52,11 +51,11 @@
             border-radius: 16px;
             margin-bottom: 25px;
             border: 2px solid #1e293b;
-            max-width: 700px;
+            max-width: 750px;
             width: 100%;
         }
 
-        @media (max-width: 500px) {
+        @media (max-width: 600px) {
             .controls-panel {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -240,7 +239,7 @@
         <div id="msg">Loading baseline core audio... Please wait.</div>
 
         <div class="controls-panel">
-            <button class="mode-btn active" id="mode-both" onclick="setAudioMode('both')">Both</button>
+            <button class="mode-btn active" id="mode-both" onclick="setAudioMode('both')">Voice and Bells</button>
             <button class="mode-btn" id="mode-vocal" onclick="setAudioMode('vocal')">Vocal Only</button>
             <button class="mode-btn" id="mode-bell" onclick="setAudioMode('bell')">Bell Only</button>
             <button class="mode-btn" id="mode-piano" onclick="setAudioMode('piano')">Piano</button>
@@ -306,7 +305,7 @@
 
     let samplers = {};
 
-    // Translates note names so the remote library understands accidentals correctly
+    // Remaps both key signatures and standard global midi boundaries perfectly
     function getMapUrls() {
         let urls = {};
         const sharpMap = {
@@ -314,19 +313,21 @@
         };
         
         progression.forEach(note => {
-            let noteName = note.id.slice(0, -1); // Extract alphabetic part (e.g., "Db")
-            let octave = note.id.slice(-1);      // Extract numeric part (e.g., "4")
+            let noteName = note.id.slice(0, -1); 
+            let octave = parseInt(note.id.slice(-1)); 
             
-            if (sharpMap[noteName]) {
-                urls[note.id] = `${sharpMap[noteName]}${octave}.mp3`; // Maps flat notes out as sharp assets
-            } else {
-                urls[note.id] = `${noteName}${octave}.mp3`;
+            // Adjust notes that sit under C4 down a step to match standard General MIDI servers
+            if (noteName === "Ab" && octave === 3) { noteName = "Gs"; octave = 3; }
+            else if (noteName === "Bb" && octave === 3) { noteName = "As"; octave = 3; }
+            else if (sharpMap[noteName]) {
+                noteName = sharpMap[noteName];
             }
+            
+            urls[note.id] = `${noteName}${octave}.mp3`;
         });
         return urls;
     }
 
-    // Render interface keys
     const sharpsRow = document.getElementById('sharps-container');
     const naturalsRow = document.getElementById('naturals-container');
 
@@ -377,7 +378,6 @@
             }
         }
 
-        // Initialize Tone.js Samplers with accidental maps fixed
         Object.keys(instrumentConfigs).forEach(key => {
             const config = instrumentConfigs[key];
             samplers[key] = new Tone.Sampler({
@@ -405,7 +405,6 @@
         const now = audioCtx.currentTime;
         const matchingNote = progression.find(n => n.id === choice);
 
-        // Check if using a high-fidelity sampled instrument
         if (['piano', 'guitar', 'rhodes'].includes(currentAudioMode)) {
             if (samplers[currentAudioMode]) {
                 samplers[currentAudioMode].triggerAttackRelease(choice, "1.5");
@@ -413,7 +412,6 @@
             return;
         }
 
-        // Original Pristine Bell Processing
         if ((currentAudioMode === 'both' || currentAudioMode === 'bell') && bellBuffers[choice] && matchingNote) {
             const bellSource = audioCtx.createBufferSource();
             bellSource.buffer = bellBuffers[choice];
@@ -422,7 +420,6 @@
             bellSource.start(now);
         }
 
-        // Original Pristine Vocal Processing
         if ((currentAudioMode === 'both' || currentAudioMode === 'vocal') && voiceBuffers[choice]) {
             const voiceSource = audioCtx.createBufferSource();
             voiceSource.buffer = voiceBuffers[choice];
