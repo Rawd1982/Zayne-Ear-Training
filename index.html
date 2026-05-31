@@ -1,3 +1,4 @@
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -42,11 +43,11 @@
 
         #msg { font-weight: 600; color: #94a3b8; min-height: 1.5rem; text-align: center; margin-bottom: 20px; font-size: 1.1rem; }
 
-        /* Audio Mode Controls Panel (Enhanced for Grid Wrap) */
+        /* Audio Mode Controls Panel (Grid Layout for 8 Options) */
         .controls-panel {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 6px;
+            gap: 8px;
             background-color: var(--keyboard-bg);
             padding: 8px;
             border-radius: 16px;
@@ -243,16 +244,16 @@
     <div class="header-line"></div>
 
     <div class="game-panel">
-        <div id="msg">Loading audio components... Please wait.</div>
+        <div id="msg">Loading baseline core audio... Please wait.</div>
 
         <div class="controls-panel">
-            <button class="mode-btn active" id="mode-both" onclick="setAudioMode('both')">Both (Voice+Bell)</button>
+            <button class="mode-btn active" id="mode-both" onclick="setAudioMode('both')">Both</button>
             <button class="mode-btn" id="mode-vocal" onclick="setAudioMode('vocal')">Vocal Only</button>
             <button class="mode-btn" id="mode-bell" onclick="setAudioMode('bell')">Bell Only</button>
             <button class="mode-btn" id="mode-piano" onclick="setAudioMode('piano')">Piano</button>
             <button class="mode-btn" id="mode-guitar" onclick="setAudioMode('guitar')">Guitar</button>
             <button class="mode-btn" id="mode-saxophone" onclick="setAudioMode('saxophone')">Saxophone</button>
-            <button class="mode-btn" id="mode-rhodes" onclick="setAudioMode('rhodes')">Rhodes Piano</button>
+            <button class="mode-btn" id="mode-rhodes" onclick="setAudioMode('rhodes')">Rhodes</button>
             <button class="mode-btn" id="mode-keyboard" onclick="setAudioMode('keyboard')">Keyboard</button>
         </div>
 
@@ -265,21 +266,12 @@
     </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
 <script>
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     const audioCtx = new AudioContext();
     
-    // Current Global Audio Configuration State
     let currentAudioMode = 'both'; 
-
-    // Scientific Frequencies Map for Dynamic Synthetic Instruments
-    const noteFreqs = {
-        "G3": 196.00, "Ab3": 207.65, "A3": 220.00, "Bb3": 233.08, "B3": 246.94,
-        "C4": 261.63, "Db4": 277.18, "D4": 293.66, "Eb4": 311.13, "E4": 329.63,
-        "F4": 349.23, "Gb4": 369.99, "G4": 392.00, "Ab4": 415.30, "A4": 440.00,
-        "Bb4": 466.16, "B4": 493.88, "C5": 523.25, "Db5": 554.37, "D5": 587.33,
-        "Eb5": 622.25, "E5": 659.25, "F5": 698.46, "Gb5": 739.99, "G5": 783.99
-    };
 
     const progression = [
         { id: "G3",  solfege: "So 3", voiceWav: "So 3.wav",  bellSourceFile: "So 4 Bell.wav",  bellRate: 0.5, type: "white", style: "G3" },
@@ -314,6 +306,43 @@
     let voiceBuffers = {}; 
     let bellBuffers = {};
 
+    // Build the mapping profiles for the CDN Sample Maps
+    const sampleCDNBase = "https://gleitz.github.io/midi-js-soundfonts/FluidR3_GM/";
+    const instrumentConfigs = {
+        piano: { name: "acoustic_grand_piano-mp3", volume: 0 },
+        guitar: { name: "acoustic_guitar_nylon-mp3", volume: -3 },
+        saxophone: { name: "tenor_sax-mp3", volume: -4 },
+        rhodes: { name: "electric_piano_1-mp3", volume: -2 },
+        keyboard: { name: "synth_brass_1-mp3", volume: -6 }
+    };
+
+    let samplers = {};
+
+    // Generate real-time pitch mappings needed to request target files automatically
+    function getMapUrls(instrumentFolder) {
+        let urls = {};
+        const noteNames = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"];
+        for(let oct = 3; oct <= 5; oct++) {
+            noteNames.forEach(name => {
+                let noteId = `${name}${oct}`;
+                if (noteFreqs.hasOwnProperty(noteId) || noteId === "C3" || noteId === "Ab5") {
+                    let fileNote = noteId.replace("b", "s"); // Asset repo maps flats as sharps
+                    urls[noteId] = `${fileNote}.mp3`;
+                }
+            });
+        }
+        return urls;
+    }
+
+    const noteFreqs = {
+        "G3": 196.00, "Ab3": 207.65, "A3": 220.00, "Bb3": 233.08, "B3": 246.94,
+        "C4": 261.63, "Db4": 277.18, "D4": 293.66, "Eb4": 311.13, "E4": 329.63,
+        "F4": 349.23, "Gb4": 369.99, "G4": 392.00, "Ab4": 415.30, "A4": 440.00,
+        "Bb4": 466.16, "B4": 493.88, "C5": 523.25, "Db5": 554.37, "D5": 587.33,
+        "Eb5": 622.25, "E5": 659.25, "F5": 698.46, "Gb5": 739.99, "G5": 783.99
+    };
+
+    // Render original keys layout
     const sharpsRow = document.getElementById('sharps-container');
     const naturalsRow = document.getElementById('naturals-container');
 
@@ -322,7 +351,6 @@
         btn.className = `bell-btn ${note.style}`;
         btn.id = `btn-${note.id}`;
         btn.setAttribute('onclick', `handleInput('${note.id}')`);
-        
         btn.innerHTML = `<div class="color-badge">${note.solfege}</div>`;
 
         if (note.type === "black") {
@@ -364,157 +392,45 @@
                 console.error(`Missing bell file: ${note.bellSourceFile}`, e);
             }
         }
-        document.getElementById('msg').innerText = "Ready! Sound engines loaded.";
+
+        // Initialize Tone.js Samplers dynamically using authentic physical studio audio matrices
+        Object.keys(instrumentConfigs).forEach(key => {
+            const config = instrumentConfigs[key];
+            samplers[key] = new Tone.Sampler({
+                urls: getMapUrls(config.name),
+                baseUrl: `${sampleCDNBase}${config.name}/`,
+                volume: config.volume,
+                onload: () => {
+                    console.log(`Studio Audio Sample map for [${key}] configured completely.`);
+                }
+            }).toDestination();
+        });
+
+        document.getElementById('msg').innerText = "Ready! High-fidelity audio modules loaded.";
     }
     loadAllSounds();
 
-    /* Physical Modeling Synthesizer Routines */
-    function playAcousticPiano(freq, startTime) {
-        const osc1 = audioCtx.createOscillator();
-        const osc2 = audioCtx.createOscillator();
-        const gainNode = audioCtx.createGain();
-        
-        osc1.type = 'triangle';
-        osc2.type = 'sine';
-        
-        // Slight detune for acoustic depth
-        osc1.frequency.setValueAtTime(freq, startTime);
-        osc2.frequency.setValueAtTime(freq * 2.003, startTime);
-        
-        gainNode.gain.setValueAtTime(0.4, startTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + 1.8);
-        
-        osc1.connect(gainNode);
-        osc2.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-        
-        osc1.start(startTime);
-        osc2.start(startTime);
-        osc1.stop(startTime + 1.8);
-        osc2.stop(startTime + 1.8);
-    }
-
-    function playAcousticGuitar(freq, startTime) {
-        const osc = audioCtx.createOscillator();
-        const gainNode = audioCtx.createGain();
-        
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(freq, startTime);
-        
-        // Rapid string pluck decay profiles
-        gainNode.gain.setValueAtTime(0.5, startTime);
-        gainNode.gain.setValueAtTime(0.4, startTime + 0.03);
-        gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + 1.2);
-        
-        osc.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-        
-        osc.start(startTime);
-        osc.stop(startTime + 1.2);
-    }
-
-    function playSaxophone(freq, startTime) {
-        const osc = audioCtx.createOscillator();
-        const filter = audioCtx.createBiquadFilter();
-        const gainNode = audioCtx.createGain();
-        
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(freq, startTime);
-        
-        // Dynamic woodwind breath vibrato emulation
-        osc.frequency.linearRampToValueAtTime(freq * 1.008, startTime + 0.1);
-        osc.frequency.linearRampToValueAtTime(freq * 0.992, startTime + 0.3);
-        osc.frequency.linearRampToValueAtTime(freq, startTime + 0.5);
-
-        filter.type = 'bandpass';
-        filter.Q.setValueAtTime(2.5, startTime);
-        filter.frequency.setValueAtTime(freq * 2.5, startTime);
-        
-        gainNode.gain.setValueAtTime(0.0, startTime);
-        gainNode.gain.linearRampToValueAtTime(0.25, startTime + 0.08); // Breath attack
-        gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + 1.0);
-        
-        osc.connect(filter);
-        filter.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-        
-        osc.start(startTime);
-        osc.stop(startTime + 1.0);
-    }
-
-    function playRhodesPiano(freq, startTime) {
-        const sineOsc = audioCtx.createOscillator();
-        const tineOsc = audioCtx.createOscillator();
-        const sineGain = audioCtx.createGain();
-        const tineGain = audioCtx.createGain();
-        
-        // Pure body tone
-        sineOsc.type = 'sine';
-        sineOsc.frequency.setValueAtTime(freq, startTime);
-        sineGain.gain.setValueAtTime(0.35, startTime);
-        sineGain.gain.exponentialRampToValueAtTime(0.001, startTime + 1.5);
-        
-        // Vintage metallic bell tine strike
-        tineOsc.type = 'triangle';
-        tineOsc.frequency.setValueAtTime(freq * 4.98, startTime);
-        tineGain.gain.setValueAtTime(0.25, startTime);
-        tineGain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.15);
-        
-        sineOsc.connect(sineGain);
-        tineOsc.connect(tineGain);
-        sineGain.connect(audioCtx.destination);
-        tineGain.connect(audioCtx.destination);
-        
-        sineOsc.start(startTime);
-        tineOsc.start(startTime);
-        sineOsc.stop(startTime + 1.5);
-        tineOsc.stop(startTime + 0.2);
-    }
-
-    function playClassicKeyboard(freq, startTime) {
-        const osc1 = audioCtx.createOscillator();
-        const osc2 = audioCtx.createOscillator();
-        const gainNode = audioCtx.createGain();
-        
-        osc1.type = 'sawtooth';
-        osc2.type = 'sawtooth';
-        
-        osc1.frequency.setValueAtTime(freq, startTime);
-        osc2.frequency.setValueAtTime(freq + 1.5, startTime); // Classic keyboard chorus effect
-        
-        gainNode.gain.setValueAtTime(0.15, startTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + 1.4);
-        
-        osc1.connect(gainNode);
-        osc2.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-        
-        osc1.start(startTime);
-        osc2.start(startTime);
-        osc1.stop(startTime + 1.4);
-        osc2.stop(startTime + 1.4);
-    }
-
     function handleInput(choice) {
+        // Safe check context validation handling
         if (audioCtx.state === 'suspended') {
             audioCtx.resume();
+        }
+        if (Tone.context.state === 'suspended') {
+            Tone.start();
         }
 
         const now = audioCtx.currentTime;
         const matchingNote = progression.find(n => n.id === choice);
-        const targetFreq = noteFreqs[choice];
 
-        // Process Synthetic/Instrument Mode triggers
-        if (['piano', 'guitar', 'saxophone', 'rhodes', 'keyboard'].includes(currentAudioMode) && targetFreq) {
-            if (currentAudioMode === 'piano') playAcousticPiano(targetFreq, now);
-            if (currentAudioMode === 'guitar') playAcousticGuitar(targetFreq, now);
-            if (currentAudioMode === 'saxophone') playSaxophone(targetFreq, now);
-            if (currentAudioMode === 'rhodes') playRhodesPiano(targetFreq, now);
-            if (currentAudioMode === 'keyboard') playClassicKeyboard(targetFreq, now);
-            return; // bypass remaining original logic
+        // route custom live streaming options smoothly
+        if (['piano', 'guitar', 'saxophone', 'rhodes', 'keyboard'].includes(currentAudioMode)) {
+            if (samplers[currentAudioMode]) {
+                samplers[currentAudioMode].triggerAttackRelease(choice, "1.5");
+            }
+            return;
         }
 
-        // Play Original Bell Track
+        // Play original pristine Bell Track
         if ((currentAudioMode === 'both' || currentAudioMode === 'bell') && bellBuffers[choice] && matchingNote) {
             const bellSource = audioCtx.createBufferSource();
             bellSource.buffer = bellBuffers[choice];
@@ -523,7 +439,7 @@
             bellSource.start(now);
         }
 
-        // Play Original Vocal Track
+        // Play original pristine Vocal Track
         if ((currentAudioMode === 'both' || currentAudioMode === 'vocal') && voiceBuffers[choice]) {
             const voiceSource = audioCtx.createBufferSource();
             voiceSource.buffer = voiceBuffers[choice];
