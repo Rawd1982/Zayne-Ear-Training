@@ -1,4 +1,3 @@
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -43,21 +42,21 @@
 
         #msg { font-weight: 600; color: #94a3b8; min-height: 1.5rem; text-align: center; margin-bottom: 20px; font-size: 1.1rem; }
 
-        /* Audio Mode Controls Panel (Grid Layout for 8 Options) */
+        /* Audio Mode Controls Panel (Updated Grid Layout for 6 Options) */
         .controls-panel {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 8px;
             background-color: var(--keyboard-bg);
             padding: 8px;
             border-radius: 16px;
             margin-bottom: 25px;
             border: 2px solid #1e293b;
-            max-width: 900px;
+            max-width: 700px;
             width: 100%;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 500px) {
             .controls-panel {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -151,7 +150,6 @@
             padding-bottom: 15px;
         }
         
-        /* Traditional White Keys Styling */
         .naturals-layer .bell-btn {
             height: 232px;
             background: linear-gradient(to bottom, #eeeeee 0%, #ffffff 100%);
@@ -160,7 +158,6 @@
             border-bottom: 4px solid #cccccc;
         }
 
-        /* Traditional Black Keys Styling */
         .sharps-layer .bell-btn {
             height: 145px;
             width: 38px;
@@ -186,7 +183,6 @@
             background: #222222;
         }
         
-        /* Centered Colored Solfege Square Badge */
         .color-badge {
             width: 44px;
             height: 44px;
@@ -203,7 +199,6 @@
             margin: 0 auto;
         }
 
-        /* Slightly smaller square badge for the black keys */
         .sharps-layer .color-badge {
             width: 32px;
             height: 32px;
@@ -211,7 +206,6 @@
             border-radius: 6px;
         }
 
-        /* Piano layout spacing configurations for accidental positions */
         #btn-Ab3  { grid-column: 1; margin-left: 38px; }
         #btn-Bb3  { grid-column: 2; margin-left: 38px; }
         #btn-Db4  { grid-column: 4; margin-left: 38px; }
@@ -223,7 +217,6 @@
         #btn-Eb5  { grid-column: 12; margin-left: 38px; }
         #btn-Gb5  { grid-column: 14; margin-left: 38px; }
 
-        /* Exact Original Tone Palette Mapped into the Inner Badges */
         .bell-btn.G3 .color-badge,  .bell-btn.G4 .color-badge,  .bell-btn.G5 .color-badge   { background: linear-gradient(to bottom, #3a6d6b, #4d908e); } 
         .bell-btn.Ab3 .color-badge, .bell-btn.Ab4 .color-badge, .bell-btn.Ab5 .color-badge  { background: linear-gradient(to bottom, #1d5f7a, #277da1); } 
         .bell-btn.A3 .color-badge,  .bell-btn.A4 .color-badge                               { background: linear-gradient(to bottom, #513970, #6a4c93); } 
@@ -252,9 +245,7 @@
             <button class="mode-btn" id="mode-bell" onclick="setAudioMode('bell')">Bell Only</button>
             <button class="mode-btn" id="mode-piano" onclick="setAudioMode('piano')">Piano</button>
             <button class="mode-btn" id="mode-guitar" onclick="setAudioMode('guitar')">Guitar</button>
-            <button class="mode-btn" id="mode-saxophone" onclick="setAudioMode('saxophone')">Saxophone</button>
             <button class="mode-btn" id="mode-rhodes" onclick="setAudioMode('rhodes')">Rhodes</button>
-            <button class="mode-btn" id="mode-keyboard" onclick="setAudioMode('keyboard')">Keyboard</button>
         </div>
 
         <div class="keyboard-wrapper">
@@ -306,43 +297,36 @@
     let voiceBuffers = {}; 
     let bellBuffers = {};
 
-    // Build the mapping profiles for the CDN Sample Maps
     const sampleCDNBase = "https://gleitz.github.io/midi-js-soundfonts/FluidR3_GM/";
     const instrumentConfigs = {
         piano: { name: "acoustic_grand_piano-mp3", volume: 0 },
-        guitar: { name: "acoustic_guitar_nylon-mp3", volume: -3 },
-        saxophone: { name: "tenor_sax-mp3", volume: -4 },
-        rhodes: { name: "electric_piano_1-mp3", volume: -2 },
-        keyboard: { name: "synth_brass_1-mp3", volume: -6 }
+        guitar: { name: "acoustic_guitar_nylon-mp3", volume: -2 },
+        rhodes: { name: "electric_piano_1-mp3", volume: -1 }
     };
 
     let samplers = {};
 
-    // Generate real-time pitch mappings needed to request target files automatically
-    function getMapUrls(instrumentFolder) {
+    // Translates note names so the remote library understands accidentals correctly
+    function getMapUrls() {
         let urls = {};
-        const noteNames = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"];
-        for(let oct = 3; oct <= 5; oct++) {
-            noteNames.forEach(name => {
-                let noteId = `${name}${oct}`;
-                if (noteFreqs.hasOwnProperty(noteId) || noteId === "C3" || noteId === "Ab5") {
-                    let fileNote = noteId.replace("b", "s"); // Asset repo maps flats as sharps
-                    urls[noteId] = `${fileNote}.mp3`;
-                }
-            });
-        }
+        const sharpMap = {
+            "Db": "Cs", "Eb": "Ds", "Gb": "Fs", "Ab": "Gs", "Bb": "As"
+        };
+        
+        progression.forEach(note => {
+            let noteName = note.id.slice(0, -1); // Extract alphabetic part (e.g., "Db")
+            let octave = note.id.slice(-1);      // Extract numeric part (e.g., "4")
+            
+            if (sharpMap[noteName]) {
+                urls[note.id] = `${sharpMap[noteName]}${octave}.mp3`; // Maps flat notes out as sharp assets
+            } else {
+                urls[note.id] = `${noteName}${octave}.mp3`;
+            }
+        });
         return urls;
     }
 
-    const noteFreqs = {
-        "G3": 196.00, "Ab3": 207.65, "A3": 220.00, "Bb3": 233.08, "B3": 246.94,
-        "C4": 261.63, "Db4": 277.18, "D4": 293.66, "Eb4": 311.13, "E4": 329.63,
-        "F4": 349.23, "Gb4": 369.99, "G4": 392.00, "Ab4": 415.30, "A4": 440.00,
-        "Bb4": 466.16, "B4": 493.88, "C5": 523.25, "Db5": 554.37, "D5": 587.33,
-        "Eb5": 622.25, "E5": 659.25, "F5": 698.46, "Gb5": 739.99, "G5": 783.99
-    };
-
-    // Render original keys layout
+    // Render interface keys
     const sharpsRow = document.getElementById('sharps-container');
     const naturalsRow = document.getElementById('naturals-container');
 
@@ -393,15 +377,15 @@
             }
         }
 
-        // Initialize Tone.js Samplers dynamically using authentic physical studio audio matrices
+        // Initialize Tone.js Samplers with accidental maps fixed
         Object.keys(instrumentConfigs).forEach(key => {
             const config = instrumentConfigs[key];
             samplers[key] = new Tone.Sampler({
-                urls: getMapUrls(config.name),
+                urls: getMapUrls(),
                 baseUrl: `${sampleCDNBase}${config.name}/`,
                 volume: config.volume,
                 onload: () => {
-                    console.log(`Studio Audio Sample map for [${key}] configured completely.`);
+                    console.log(`Studio audio sample map for [${key}] loaded completely.`);
                 }
             }).toDestination();
         });
@@ -411,7 +395,6 @@
     loadAllSounds();
 
     function handleInput(choice) {
-        // Safe check context validation handling
         if (audioCtx.state === 'suspended') {
             audioCtx.resume();
         }
@@ -422,15 +405,15 @@
         const now = audioCtx.currentTime;
         const matchingNote = progression.find(n => n.id === choice);
 
-        // route custom live streaming options smoothly
-        if (['piano', 'guitar', 'saxophone', 'rhodes', 'keyboard'].includes(currentAudioMode)) {
+        // Check if using a high-fidelity sampled instrument
+        if (['piano', 'guitar', 'rhodes'].includes(currentAudioMode)) {
             if (samplers[currentAudioMode]) {
                 samplers[currentAudioMode].triggerAttackRelease(choice, "1.5");
             }
             return;
         }
 
-        // Play original pristine Bell Track
+        // Original Pristine Bell Processing
         if ((currentAudioMode === 'both' || currentAudioMode === 'bell') && bellBuffers[choice] && matchingNote) {
             const bellSource = audioCtx.createBufferSource();
             bellSource.buffer = bellBuffers[choice];
@@ -439,7 +422,7 @@
             bellSource.start(now);
         }
 
-        // Play original pristine Vocal Track
+        // Original Pristine Vocal Processing
         if ((currentAudioMode === 'both' || currentAudioMode === 'vocal') && voiceBuffers[choice]) {
             const voiceSource = audioCtx.createBufferSource();
             voiceSource.buffer = voiceBuffers[choice];
