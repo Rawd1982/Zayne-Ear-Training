@@ -240,9 +240,10 @@
         <div id="msg">Loading baseline core audio... Please wait.</div>
 
         <div class="controls-panel">
-            <button class="mode-btn" id="mode-bells" onclick="setAudioMode('bells')">Bells Only</button>
+            <button class="mode-btn active" id="mode-bell-vocal" onclick="setAudioMode('bell-vocal')">Bells then Vocal</button>
             <button class="mode-btn" id="mode-vocal" onclick="setAudioMode('vocal')">Vocal Only</button>
-            <button class="mode-btn active" id="mode-both" onclick="setAudioMode('both')">Vocal/Bells</button>
+            <button class="mode-btn" id="mode-both" onclick="setAudioMode('both')">Vocal/Bells</button>
+            <button class="mode-btn" id="mode-bells" onclick="setAudioMode('bells')">Bells Only</button>
             <button class="mode-btn" id="mode-piano" onclick="setAudioMode('piano')">Piano</button>
             <button class="mode-btn" id="mode-guitar" onclick="setAudioMode('guitar')">Guitar</button>
             <button class="mode-btn" id="mode-rhodes" onclick="setAudioMode('rhodes')">Rhodes</button>
@@ -262,7 +263,7 @@
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     const audioCtx = new AudioContext();
     
-    let currentAudioMode = 'both'; 
+    let currentAudioMode = 'bell-vocal'; 
 
     const progression = [
         { id: "G3",  solfege: "So 3", voiceWav: "So 3.wav",  bellSourceFile: "So 4 Bell.wav",  bellRate: 0.5, type: "white", style: "G3" },
@@ -298,10 +299,7 @@
     let bellBuffers = {};
     let samplers = {};
 
-    // Configured with high-fidelity production endpoints
     const sampleGeneralCDN = "https://gleitz.github.io/midi-js-soundfonts/FluidR3_GM/";
-    
-    // Premium isolated grand piano profile endpoint matrix
     const highQualityPianoCDN = "https://tonejs.github.io/audio/salamander/";
 
     const instrumentConfigs = {
@@ -330,11 +328,7 @@
     function setAudioMode(mode) {
         currentAudioMode = mode;
         document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
-        if(mode === 'both') {
-            document.getElementById('mode-both').classList.add('active');
-        } else {
-            document.getElementById(`mode-${mode}`).classList.add('active');
-        }
+        document.getElementById(`mode-${mode}`).classList.add('active');
     }
 
     async function fetchAudioBuffer(url) {
@@ -364,7 +358,6 @@
             }
         }
 
-        // Initialize audio samplers cleanly
         Object.keys(instrumentConfigs).forEach(key => {
             const config = instrumentConfigs[key];
             let urls = {};
@@ -396,7 +389,6 @@
         const now = audioCtx.currentTime;
         const matchingNote = progression.find(n => n.id === choice);
 
-        // Convert flats instantly to standard scientific sharp labels for internal engine scaling
         let playbackNote = choice;
         if(playbackNote.includes('b')) {
             const flatToSharpMap = { "Db": "C#", "Eb": "D#", "Gb": "F#", "Ab": "G#", "Bb": "A#" };
@@ -413,6 +405,32 @@
             return;
         }
 
+        // --- NEW: Handle "Bells then Vocal" sequential playback ---
+        if (currentAudioMode === 'bell-vocal' && matchingNote) {
+            let delay = 0;
+            
+            if (bellBuffers[choice]) {
+                const bellSource = audioCtx.createBufferSource();
+                bellSource.buffer = bellBuffers[choice];
+                bellSource.playbackRate.value = matchingNote.bellRate;
+                bellSource.connect(audioCtx.destination);
+                bellSource.start(now);
+                
+                // Calculate actual duration of the modified bell note to know when it ends
+                delay = bellBuffers[choice].duration / matchingNote.bellRate;
+            }
+            
+            if (voiceBuffers[choice]) {
+                const voiceSource = audioCtx.createBufferSource();
+                voiceSource.buffer = voiceBuffers[choice];
+                voiceSource.connect(audioCtx.destination);
+                // Schedule the vocal to start right when the bell ends
+                voiceSource.start(now + delay);
+            }
+            return;
+        }
+
+        // --- Handle Standard Modes (Simultaneous or Only) ---
         if ((currentAudioMode === 'both' || currentAudioMode === 'bells') && bellBuffers[choice] && matchingNote) {
             const bellSource = audioCtx.createBufferSource();
             bellSource.buffer = bellBuffers[choice];
