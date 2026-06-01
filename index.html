@@ -245,8 +245,6 @@
             <button class="mode-btn" id="mode-both" onclick="setAudioMode('both')">Vocal/Bells</button>
             <button class="mode-btn" id="mode-bells" onclick="setAudioMode('bells')">Bells</button>
             <button class="mode-btn" id="mode-piano" onclick="setAudioMode('piano')">Grand Piano</button>
-            <button class="mode-btn" id="mode-piano-warm" onclick="setAudioMode('piano-warm')">Grand Piano (Warm)</button>
-            <button class="mode-btn" id="mode-upright" onclick="setAudioMode('upright')">Upright Piano</button>
             <button class="mode-btn" id="mode-guitar" onclick="setAudioMode('guitar')">Guitar</button>
             <button class="mode-btn" id="mode-rhodes" onclick="setAudioMode('rhodes')">Rhodes</button>
             <button class="mode-btn" id="mode-strings" onclick="setAudioMode('strings')">Synth Strings</button>
@@ -308,11 +306,9 @@
 
     const instrumentConfigs = {
         piano: { isHighQualitySteinway: true, anchor: "C4", type: "salamander" },
-        "piano-warm": { baseUrl: `${sampleGeneralCDN}acoustic_grand_piano-mp3/`, anchor: "C4", type: "midi" },
-        upright: { baseUrl: `${sampleGeneralCDN}bright_acoustic_piano-mp3/`, anchor: "C4", type: "midi" },
         guitar: { baseUrl: `${sampleGeneralCDN}acoustic_guitar_nylon-mp3/`, anchor: "C4", type: "midi" },
         rhodes: { baseUrl: `${sampleGeneralCDN}electric_piano_1-mp3/`, anchor: "C4", type: "midi" },
-        strings: { baseUrl: `${sampleGeneralCDN}synth_strings_1-mp3/`, anchor: "C4", type: "midi" },
+        strings: { baseUrl: "https://tonejs.github.io/audio/salamander/", anchor: "C4", type: "salamander" },
         organ: { baseUrl: `${sampleGeneralCDN}rock_organ-mp3/`, anchor: "C4", type: "midi" }
     };
 
@@ -407,7 +403,7 @@
         }
 
         // --- Handle Instrument Sampling Modes ---
-        if (['piano', 'piano-warm', 'upright', 'guitar', 'rhodes', 'strings', 'organ'].includes(currentAudioMode)) {
+        if (['piano', 'guitar', 'rhodes', 'strings', 'organ'].includes(currentAudioMode)) {
             if (samplers[currentAudioMode]) {
                 samplers[currentAudioMode].triggerAttackRelease(playbackNote, "1.5");
             }
