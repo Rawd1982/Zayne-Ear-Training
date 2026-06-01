@@ -52,11 +52,11 @@
             border-radius: 16px;
             margin-bottom: 25px;
             border: 2px solid #1e293b;
-            max-width: 750px;
+            max-width: 850px;
             width: 100%;
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
             .controls-panel {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -244,7 +244,9 @@
             <button class="mode-btn" id="mode-vocal" onclick="setAudioMode('vocal')">Vocal Only</button>
             <button class="mode-btn" id="mode-both" onclick="setAudioMode('both')">Vocal/Bells</button>
             <button class="mode-btn" id="mode-bells" onclick="setAudioMode('bells')">Bells Only</button>
-            <button class="mode-btn" id="mode-piano" onclick="setAudioMode('piano')">Piano</button>
+            <button class="mode-btn" id="mode-piano" onclick="setAudioMode('piano')">Grand Piano</button>
+            <button class="mode-btn" id="mode-piano-warm" onclick="setAudioMode('piano-warm')">Grand Piano (Warm)</button>
+            <button class="mode-btn" id="mode-upright" onclick="setAudioMode('upright')">Upright Piano</button>
             <button class="mode-btn" id="mode-guitar" onclick="setAudioMode('guitar')">Guitar</button>
             <button class="mode-btn" id="mode-rhodes" onclick="setAudioMode('rhodes')">Rhodes</button>
         </div>
@@ -300,12 +302,14 @@
     let samplers = {};
 
     const sampleGeneralCDN = "https://gleitz.github.io/midi-js-soundfonts/FluidR3_GM/";
-    const highQualityPianoCDN = "https://tonejs.github.io/audio/salamander/";
+    const salamanderPianoCDN = "https://tonejs.github.io/audio/salamander/";
 
     const instrumentConfigs = {
-        piano: { isHighQualitySteinway: true, anchor: "C4" },
-        guitar: { baseUrl: `${sampleGeneralCDN}acoustic_guitar_nylon-mp3/`, anchor: "C4" },
-        rhodes: { baseUrl: `${sampleGeneralCDN}electric_piano_1-mp3/`, anchor: "C4" }
+        piano: { isHighQualitySteinway: true, anchor: "C4", type: "salamander" },
+        "piano-warm": { baseUrl: `${sampleGeneralCDN}acoustic_grand_piano-mp3/`, anchor: "C4", type: "midi" },
+        upright: { baseUrl: `${sampleGeneralCDN}bright_acoustic_piano-mp3/`, anchor: "C4", type: "midi" },
+        guitar: { baseUrl: `${sampleGeneralCDN}acoustic_guitar_nylon-mp3/`, anchor: "C4", type: "midi" },
+        rhodes: { baseUrl: `${sampleGeneralCDN}electric_piano_1-mp3/`, anchor: "C4", type: "midi" }
     };
 
     const sharpsRow = document.getElementById('sharps-container');
@@ -363,7 +367,7 @@
             let urls = {};
             urls[config.anchor] = `${config.anchor}.mp3`;
 
-            let finalBaseUrl = config.isHighQualitySteinway ? highQualityPianoCDN : config.baseUrl;
+            let finalBaseUrl = config.type === "salamander" ? salamanderPianoCDN : config.baseUrl;
 
             samplers[key] = new Tone.Sampler({
                 urls: urls,
@@ -398,34 +402,30 @@
             }
         }
 
-        if (['piano', 'guitar', 'rhodes'].includes(currentAudioMode)) {
+        // --- Handle Instrument Sampling Modes ---
+        if (['piano', 'piano-warm', 'upright', 'guitar', 'rhodes'].includes(currentAudioMode)) {
             if (samplers[currentAudioMode]) {
                 samplers[currentAudioMode].triggerAttackRelease(playbackNote, "1.5");
             }
             return;
         }
 
-        // --- NEW: Handle "Bells then Vocal" sequential playback ---
+        // --- NEW: Handle "Bells then Vocal" with strict 0.5-second stagger ---
         if (currentAudioMode === 'bell-vocal' && matchingNote) {
-            let delay = 0;
-            
             if (bellBuffers[choice]) {
                 const bellSource = audioCtx.createBufferSource();
                 bellSource.buffer = bellBuffers[choice];
                 bellSource.playbackRate.value = matchingNote.bellRate;
                 bellSource.connect(audioCtx.destination);
                 bellSource.start(now);
-                
-                // Calculate actual duration of the modified bell note to know when it ends
-                delay = bellBuffers[choice].duration / matchingNote.bellRate;
             }
             
             if (voiceBuffers[choice]) {
                 const voiceSource = audioCtx.createBufferSource();
                 voiceSource.buffer = voiceBuffers[choice];
                 voiceSource.connect(audioCtx.destination);
-                // Schedule the vocal to start right when the bell ends
-                voiceSource.start(now + delay);
+                // Schedules vocal exactly 0.5 seconds after the bell starts striking
+                voiceSource.start(now + 0.5);
             }
             return;
         }
