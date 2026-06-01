@@ -249,6 +249,8 @@
             <button class="mode-btn" id="mode-upright" onclick="setAudioMode('upright')">Upright Piano</button>
             <button class="mode-btn" id="mode-guitar" onclick="setAudioMode('guitar')">Guitar</button>
             <button class="mode-btn" id="mode-rhodes" onclick="setAudioMode('rhodes')">Rhodes</button>
+            <button class="mode-btn" id="mode-strings" onclick="setAudioMode('strings')">Synth Strings</button>
+            <button class="mode-btn" id="mode-organ" onclick="setAudioMode('organ')">Rock Organ</button>
         </div>
 
         <div class="keyboard-wrapper">
@@ -309,7 +311,9 @@
         "piano-warm": { baseUrl: `${sampleGeneralCDN}acoustic_grand_piano-mp3/`, anchor: "C4", type: "midi" },
         upright: { baseUrl: `${sampleGeneralCDN}bright_acoustic_piano-mp3/`, anchor: "C4", type: "midi" },
         guitar: { baseUrl: `${sampleGeneralCDN}acoustic_guitar_nylon-mp3/`, anchor: "C4", type: "midi" },
-        rhodes: { baseUrl: `${sampleGeneralCDN}electric_piano_1-mp3/`, anchor: "C4", type: "midi" }
+        rhodes: { baseUrl: `${sampleGeneralCDN}electric_piano_1-mp3/`, anchor: "C4", type: "midi" },
+        strings: { baseUrl: `${sampleGeneralCDN}synth_strings_1-mp3/`, anchor: "C4", type: "midi" },
+        organ: { baseUrl: `${sampleGeneralCDN}rock_organ-mp3/`, anchor: "C4", type: "midi" }
     };
 
     const sharpsRow = document.getElementById('sharps-container');
@@ -403,14 +407,14 @@
         }
 
         // --- Handle Instrument Sampling Modes ---
-        if (['piano', 'piano-warm', 'upright', 'guitar', 'rhodes'].includes(currentAudioMode)) {
+        if (['piano', 'piano-warm', 'upright', 'guitar', 'rhodes', 'strings', 'organ'].includes(currentAudioMode)) {
             if (samplers[currentAudioMode]) {
                 samplers[currentAudioMode].triggerAttackRelease(playbackNote, "1.5");
             }
             return;
         }
 
-        // --- NEW: Handle "Bells then Vocal" with strict 0.5-second stagger ---
+        // --- Handle "Bells then Vocal" with strict 0.5-second stagger ---
         if (currentAudioMode === 'bell-vocal' && matchingNote) {
             if (bellBuffers[choice]) {
                 const bellSource = audioCtx.createBufferSource();
@@ -424,7 +428,6 @@
                 const voiceSource = audioCtx.createBufferSource();
                 voiceSource.buffer = voiceBuffers[choice];
                 voiceSource.connect(audioCtx.destination);
-                // Schedules vocal exactly 0.5 seconds after the bell starts striking
                 voiceSource.start(now + 0.5);
             }
             return;
