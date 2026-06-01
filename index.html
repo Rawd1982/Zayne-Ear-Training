@@ -240,9 +240,9 @@
         <div id="msg">Loading baseline core audio... Please wait.</div>
 
         <div class="controls-panel">
-            <button class="mode-btn active" id="mode-both" onclick="setAudioMode('both')">Vocal/Bells</button>
+            <button class="mode-btn" id="mode-bells" onclick="setAudioMode('bells')">Bells Only</button>
             <button class="mode-btn" id="mode-vocal" onclick="setAudioMode('vocal')">Vocal Only</button>
-            <button class="mode-btn" id="mode-bell" onclick="setAudioMode('bell')">Bell Only</button>
+            <button class="mode-btn active" id="mode-both" onclick="setAudioMode('both')">Vocal/Bells</button>
             <button class="mode-btn" id="mode-piano" onclick="setAudioMode('piano')">Piano</button>
             <button class="mode-btn" id="mode-guitar" onclick="setAudioMode('guitar')">Guitar</button>
             <button class="mode-btn" id="mode-rhodes" onclick="setAudioMode('rhodes')">Rhodes</button>
@@ -413,7 +413,7 @@
             return;
         }
 
-        if ((currentAudioMode === 'both' || currentAudioMode === 'bell') && bellBuffers[choice] && matchingNote) {
+        if ((currentAudioMode === 'both' || currentAudioMode === 'bells') && bellBuffers[choice] && matchingNote) {
             const bellSource = audioCtx.createBufferSource();
             bellSource.buffer = bellBuffers[choice];
             bellSource.playbackRate.value = matchingNote.bellRate;
