@@ -1,4 +1,3 @@
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -305,10 +304,10 @@
     const salamanderPianoCDN = "https://tonejs.github.io/audio/salamander/";
 
     const instrumentConfigs = {
-        piano: { isHighQualitySteinway: true, anchor: "C4", type: "salamander" },
+        piano: { baseUrl: salamanderPianoCDN, anchor: "C4", type: "salamander" },
         guitar: { baseUrl: `${sampleGeneralCDN}acoustic_guitar_nylon-mp3/`, anchor: "C4", type: "midi" },
         rhodes: { baseUrl: `${sampleGeneralCDN}electric_piano_1-mp3/`, anchor: "C4", type: "midi" },
-        strings: { baseUrl: "https://tonejs.github.io/audio/salamander/", anchor: "C4", type: "salamander" },
+        strings: { baseUrl: `${sampleGeneralCDN}synth_strings_1-mp3/`, anchor: "C4", type: "midi" },
         organ: { baseUrl: `${sampleGeneralCDN}rock_organ-mp3/`, anchor: "C4", type: "midi" }
     };
 
@@ -367,11 +366,9 @@
             let urls = {};
             urls[config.anchor] = `${config.anchor}.mp3`;
 
-            let finalBaseUrl = config.type === "salamander" ? salamanderPianoCDN : config.baseUrl;
-
             samplers[key] = new Tone.Sampler({
                 urls: urls,
-                baseUrl: finalBaseUrl,
+                baseUrl: config.baseUrl,
                 onload: () => {
                     console.log(`Studio engine for [${key}] calibrated successfully.`);
                 }
