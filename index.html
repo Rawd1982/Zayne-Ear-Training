@@ -2,7 +2,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zayne's Ear Training</title>
+    <title>ZAYNE'S EAR TRAINING</title>
     <style>
         * { box-sizing: border-box; }
         :root {
@@ -26,7 +26,7 @@
 
         .container { width: 100%; max-width: 1200px; display: flex; flex-direction: column; align-items: center; }
 
-        h1 { color: var(--accent); font-size: 2.5rem; font-weight: 800; text-align: center; margin: 10px 0 5px 0; width: 100%; letter-spacing: 1px; }
+        h1 { color: #000000; font-size: 2.5rem; font-weight: 800; text-align: center; margin: 10px 0 5px 0; width: 100%; letter-spacing: 1px; }
 
         .header-line { width: 80%; height: 2px; background: var(--accent); margin-bottom: 25px; opacity: 0.5; }
 
@@ -182,27 +182,59 @@
             background: var(--light-color, #222222);
         }
         
+        /* App Badge Container Styles */
         .color-badge {
-            width: 44px;
-            height: 44px;
-            border-radius: 8px;
+            width: 34px;
+            border-radius: 4px;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             font-weight: 800;
-            font-size: 0.75rem;
             color: #ffffff;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             margin: 0 auto;
         }
 
+        .naturals-layer .color-badge {
+            height: 38px;
+            font-size: 1.1rem;
+            padding-bottom: 2px;
+        }
+
         .sharps-layer .color-badge {
-            width: 32px;
-            height: 32px;
-            font-size: 0.65rem;
-            border-radius: 6px;
+            width: 28px;
+            height: 48px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            overflow: hidden;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+        }
+
+        /* Split design for accidental markers */
+        .sharp-half, .flat-half {
+            width: 100%;
+            height: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .sharp-half {
+            border-bottom: 1px solid rgba(255,255,255,0.25);
+        }
+
+        .solfege-tiny {
+            font-size: 8px;
+            font-weight: 500;
+            opacity: 0.75;
+            text-transform: lowercase;
+            line-height: 1;
+            margin-bottom: 1px;
         }
 
         #btn-Ab3  { grid-column: 1; margin-left: 38px; }
@@ -216,23 +248,35 @@
         #btn-Eb5  { grid-column: 12; margin-left: 38px; }
         #btn-Gb5  { grid-column: 14; margin-left: 38px; }
 
-        .bell-btn.G3 .color-badge,  .bell-btn.G4 .color-badge,  .bell-btn.G5 .color-badge   { background: linear-gradient(to bottom, #3a6d6b, #4d908e); } 
-        .bell-btn.Ab3 .color-badge, .bell-btn.Ab4 .color-badge, .bell-btn.Ab5 .color-badge  { background: linear-gradient(to bottom, #1d5f7a, #277da1); } 
-        .bell-btn.A3 .color-badge,  .bell-btn.A4 .color-badge                               { background: linear-gradient(to bottom, #513970, #6a4c93); } 
-        .bell-btn.Bb3 .color-badge, .bell-btn.Bb4 .color-badge                              { background: linear-gradient(to bottom, #654e80, #8367a6); } 
-        .bell-btn.B3 .color-badge,  .bell-btn.B4 .color-badge                               { background: linear-gradient(to bottom, #c4436e, #f35b8c); } 
-        .bell-btn.C4 .color-badge,  .bell-btn.C5 .color-badge                               { background: linear-gradient(to bottom, #ab1f1f, #d62828); } 
-        .bell-btn.Db4 .color-badge, .bell-btn.Db5 .color-badge                              { background: linear-gradient(to bottom, #bd4931, #e65c40); } 
-        .bell-btn.D4 .color-badge,  .bell-btn.D5 .color-badge                               { background: linear-gradient(to bottom, #c75b20, #f3722c); } 
-        .bell-btn.Eb4 .color-badge, .bell-btn.Eb5 .color-badge                              { background: linear-gradient(to bottom, #cca23c, #f9c74f); } 
-        .bell-btn.E4 .color-badge,  .bell-btn.E5 .color-badge                               { background: linear-gradient(to bottom, #cca60f, #f9cd13); } 
-        .bell-btn.F4 .color-badge,  .bell-btn.F5 .color-badge                               { background: linear-gradient(to bottom, #729955, #90be6d); } 
-        .bell-btn.Gb4 .color-badge, .bell-btn.Gb5 .color-badge                              { background: linear-gradient(to bottom, #32826a, #43aa8b); } 
+        /* Exact Chromatic Color Scheme mappings from the photo */
+        .bell-btn.C3 .color-badge, .bell-btn.C4 .color-badge, .bell-btn.C5 .color-badge { background: #d62828; }
+        .bell-btn.D3 .color-badge, .bell-btn.D4 .color-badge, .bell-btn.D5 .color-badge { background: #f3722c; }
+        .bell-btn.E3 .color-badge, .bell-btn.E4 .color-badge, .bell-btn.E5 .color-badge { background: #f9cd13; color: #333; }
+        .bell-btn.F3 .color-badge, .bell-btn.F4 .color-badge, .bell-btn.F5 .color-badge { background: #90be6d; }
+        .bell-btn.G3 .color-badge, .bell-btn.G4 .color-badge, .bell-btn.G5 .color-badge { background: #43aa8b; }
+        .bell-btn.A3 .color-badge, .bell-btn.A4 .color-badge, .bell-btn.A5 .color-badge { background: #277da1; }
+        .bell-btn.B3 .color-badge, .bell-btn.B4 .color-badge, .bell-btn.B5 .color-badge { background: #8367a6; }
+
+        /* Accidental Split Background Color Settings */
+        .bell-btn.Db3 .sharp-half, .bell-btn.Db4 .sharp-half, .bell-btn.Db5 .sharp-half { background: #d62828; }
+        .bell-btn.Db3 .flat-half,  .bell-btn.Db4 .flat-half,  .bell-btn.Db5 .flat-half  { background: #f3722c; }
+
+        .bell-btn.Eb3 .sharp-half, .bell-btn.Eb4 .sharp-half, .bell-btn.Eb5 .sharp-half { background: #f3722c; }
+        .bell-btn.Eb3 .flat-half,  .bell-btn.Eb4 .flat-half,  .bell-btn.Eb5 .flat-half  { background: #f9cd13; color: #333; }
+
+        .bell-btn.Gb3 .sharp-half, .bell-btn.Gb4 .sharp-half, .bell-btn.Gb5 .sharp-half { background: #90be6d; }
+        .bell-btn.Gb3 .flat-half,  .bell-btn.Gb4 .flat-half,  .bell-btn.Gb5 .flat-half  { background: #43aa8b; }
+
+        .bell-btn.Ab3 .sharp-half, .bell-btn.Ab4 .sharp-half, .bell-btn.Ab5 .sharp-half { background: #43aa8b; }
+        .bell-btn.Ab3 .flat-half,  .bell-btn.Ab4 .flat-half,  .bell-btn.Ab5 .flat-half  { background: #277da1; }
+
+        .bell-btn.Bb3 .sharp-half, .bell-btn.Bb4 .sharp-half, .bell-btn.Bb5 .sharp-half { background: #277da1; }
+        .bell-btn.Bb3 .flat-half,  .bell-btn.Bb4 .flat-half,  .bell-btn.Bb5 .flat-half  { background: #8367a6; }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>Zayne's Ear Training</h1>
+    <h1>ZAYNE'S EAR TRAINING</h1>
     <div class="header-line"></div>
 
     <div class="game-panel">
@@ -267,33 +311,33 @@
     let currentAudioMode = 'bell-vocal'; 
 
     const progression = [
-        { id: "G3",  solfege: "So 3", voiceWav: "So 3.wav",  bellSourceFile: "So 3 Bell.wav",  bellRate: 1.0, type: "white", style: "G3" },
-        { id: "Ab3", solfege: "Si 3", voiceWav: "Si 3.wav",  bellSourceFile: "Si 3 Bell.wav",  bellRate: 1.0, type: "black", style: "Ab3" },
-        { id: "A3",  solfege: "La 3", voiceWav: "La 3.wav",  bellSourceFile: "La 3 Bell.wav",  bellRate: 1.0, type: "white", style: "A3" },
-        { id: "Bb3", solfege: "Te 3", voiceWav: "Te 3.wav",  bellSourceFile: "Te 3 Bell.wav",  bellRate: 1.0, type: "black", style: "Bb3" },
-        { id: "B3",  solfege: "Ti 3", voiceWav: "Ti 3.wav",  bellSourceFile: "Ti 3 Bell.wav",  bellRate: 1.0, type: "white", style: "B3" },
+        { id: "G3",  solfege: "So 3", display: "G", voiceWav: "So 3.wav",  bellSourceFile: "So 3 Bell.wav",  bellRate: 1.0, type: "white", style: "G3" },
+        { id: "Ab3", solfege: "Si 3", display: { sharp: "G#", flat: "Ab" }, voiceWav: "Si 3.wav",  bellSourceFile: "Si 3 Bell.wav",  bellRate: 1.0, type: "black", style: "Ab3" },
+        { id: "A3",  solfege: "La 3", display: "A", voiceWav: "La 3.wav",  bellSourceFile: "La 3 Bell.wav",  bellRate: 1.0, type: "white", style: "A3" },
+        { id: "Bb3", solfege: "Te 3", display: { sharp: "A#", flat: "Bb" }, voiceWav: "Te 3.wav",  bellSourceFile: "Te 3 Bell.wav",  bellRate: 1.0, type: "black", style: "Bb3" },
+        { id: "B3",  solfege: "Ti 3", display: "B", voiceWav: "Ti 3.wav",  bellSourceFile: "Ti 3 Bell.wav",  bellRate: 1.0, type: "white", style: "B3" },
         
-        { id: "C4",  solfege: "Do 4", voiceWav: "Do 4.wav",  bellSourceFile: "Do 4 Bell.wav",  bellRate: 1.0, type: "white", style: "C4" },
-        { id: "Db4", solfege: "Di 4", voiceWav: "Di 4.wav",  bellSourceFile: "Di 4 Bell.wav",  bellRate: 1.0, type: "black", style: "Db4" },
-        { id: "D4",  solfege: "Re 4", voiceWav: "Re 4.wav",  bellSourceFile: "Re 4 Bell.wav",  bellRate: 1.0, type: "white", style: "D4" },
-        { id: "Eb4", solfege: "Me 4", voiceWav: "Me 4.wav",  bellSourceFile: "Me 4 Bell.wav",  bellRate: 1.0, type: "black", style: "Eb4" },
-        { id: "E4",  solfege: "Mi 4", voiceWav: "Mi 4.wav",  bellSourceFile: "Mi 4 Bell.wav",  bellRate: 1.0, type: "white", style: "E4" },
-        { id: "F4",  solfege: "Fa 4", voiceWav: "Fa 4.wav",  bellSourceFile: "Fa 4 Bell.wav",  bellRate: 1.0, type: "white", style: "F4" },
-        { id: "Gb4", solfege: "Fi 4", voiceWav: "Fi 4.wav",  bellSourceFile: "Fi 4 Bell.wav",  bellRate: 1.0, type: "black", style: "Gb4" },
-        { id: "G4",  solfege: "So 4", voiceWav: "So 4.wav",  bellSourceFile: "So 4 Bell.wav",  bellRate: 1.0, type: "white", style: "G4" },
-        { id: "Ab4", solfege: "Si 4", voiceWav: "Si 4.wav",  bellSourceFile: "Si 4 Bell.wav",  bellRate: 1.0, type: "black", style: "Ab4" },
-        { id: "A4",  solfege: "La 4", voiceWav: "La 4.wav",  bellSourceFile: "La 4 Bell.wav",  bellRate: 1.0, type: "white", style: "A4" },
-        { id: "Bb4", solfege: "Te 4", voiceWav: "Te 4.wav",  bellSourceFile: "Te 4 Bell.wav",  bellRate: 1.0, type: "black", style: "Bb4" },
-        { id: "B4",  solfege: "Ti 4", voiceWav: "Ti 4.wav",  bellSourceFile: "Ti 4 Bell.wav",  bellRate: 1.0, type: "white", style: "B4" },
-        { id: "C5",  solfege: "Do 5", voiceWav: "Do 5.wav",  bellSourceFile: "Do 5 Bell.wav",  bellRate: 1.0, type: "white", style: "C5" },
+        { id: "C4",  solfege: "Do 4", display: "C", voiceWav: "Do 4.wav",  bellSourceFile: "Do 4 Bell.wav",  bellRate: 1.0, type: "white", style: "C4" },
+        { id: "Db4", solfege: "Di 4", display: { sharp: "C#", flat: "Db" }, voiceWav: "Di 4.wav",  bellSourceFile: "Di 4 Bell.wav",  bellRate: 1.0, type: "black", style: "Db4" },
+        { id: "D4",  solfege: "Re 4", display: "D", voiceWav: "Re 4.wav",  bellSourceFile: "Re 4 Bell.wav",  bellRate: 1.0, type: "white", style: "D4" },
+        { id: "Eb4", solfege: "Me 4", display: { sharp: "D#", flat: "Eb" }, voiceWav: "Me 4.wav",  bellSourceFile: "Me 4 Bell.wav",  bellRate: 1.0, type: "black", style: "Eb4" },
+        { id: "E4",  solfege: "Mi 4", display: "E", voiceWav: "Mi 4.wav",  bellSourceFile: "Mi 4 Bell.wav",  bellRate: 1.0, type: "white", style: "E4" },
+        { id: "F4",  solfege: "Fa 4", display: "F", voiceWav: "Fa 4.wav",  bellSourceFile: "Fa 4 Bell.wav",  bellRate: 1.0, type: "white", style: "F4" },
+        { id: "Gb4", solfege: "Fi 4", display: { sharp: "F#", flat: "Gb" }, voiceWav: "Fi 4.wav",  bellSourceFile: "Fi 4 Bell.wav",  bellRate: 1.0, type: "black", style: "Gb4" },
+        { id: "G4",  solfege: "So 4", display: "G", voiceWav: "So 4.wav",  bellSourceFile: "So 4 Bell.wav",  bellRate: 1.0, type: "white", style: "G4" },
+        { id: "Ab4", solfege: "Si 4", display: { sharp: "G#", flat: "Ab" }, voiceWav: "Si 4.wav",  bellSourceFile: "Si 4 Bell.wav",  bellRate: 1.0, type: "black", style: "Ab4" },
+        { id: "A4",  solfege: "La 4", display: "A", voiceWav: "La 4.wav",  bellSourceFile: "La 4 Bell.wav",  bellRate: 1.0, type: "white", style: "A4" },
+        { id: "Bb4", solfege: "Te 4", display: { sharp: "A#", flat: "Bb" }, voiceWav: "Te 4.wav",  bellSourceFile: "Te 4 Bell.wav",  bellRate: 1.0, type: "black", style: "Bb4" },
+        { id: "B4",  solfege: "Ti 4", display: "B", voiceWav: "Ti 4.wav",  bellSourceFile: "Ti 4 Bell.wav",  bellRate: 1.0, type: "white", style: "B4" },
+        { id: "C5",  solfege: "Do 5", display: "C", voiceWav: "Do 5.wav",  bellSourceFile: "Do 5 Bell.wav",  bellRate: 1.0, type: "white", style: "C5" },
         
-        { id: "Db5", solfege: "Di 5", voiceWav: "Di 5.wav",  bellSourceFile: "Di 5 Bell.wav",  bellRate: 1.0, type: "black", style: "Db5" },
-        { id: "D5",  solfege: "Re 5", voiceWav: "Re 5.wav",  bellSourceFile: "Re 5 Bell.wav",  bellRate: 1.0, type: "white", style: "D5" },
-        { id: "Eb5", solfege: "Me 5", voiceWav: "Me 5.wav",  bellSourceFile: "Me 5 Bell.wav",  bellRate: 1.0, type: "black", style: "Eb5" },
-        { id: "E5",  solfege: "Mi 5", voiceWav: "Mi 5.wav",  bellSourceFile: "Mi 5 Bell.wav",  bellRate: 1.0, type: "white", style: "E5" },
-        { id: "F5",  solfege: "Fa 5", voiceWav: "Fa 5.wav",  bellSourceFile: "Fa 5 Bell.wav",  bellRate: 1.0, type: "white", style: "F5" },
-        { id: "Gb5", solfege: "Fi 5", voiceWav: "Fi 5.wav",  bellSourceFile: "Fi 5 Bell.wav",  bellRate: 1.0, type: "black", style: "Gb5" },
-        { id: "G5",  solfege: "So 5", voiceWav: "So 5.wav",  bellSourceFile: "So 5 Bell.wav",  bellRate: 1.0, type: "white", style: "G5" }
+        { id: "Db5", solfege: "Di 5", display: { sharp: "C#", flat: "Db" }, voiceWav: "Di 5.wav",  bellSourceFile: "Di 5 Bell.wav",  bellRate: 1.0, type: "black", style: "Db5" },
+        { id: "D5",  solfege: "Re 5", display: "D", voiceWav: "Re 5.wav",  bellSourceFile: "Re 5 Bell.wav",  bellRate: 1.0, type: "white", style: "D5" },
+        { id: "Eb5", solfege: "Me 5", display: { sharp: "D#", flat: "Eb" }, voiceWav: "Me 5.wav",  bellSourceFile: "Me 5 Bell.wav",  bellRate: 1.0, type: "black", style: "Eb5" },
+        { id: "E5",  solfege: "Mi 5", display: "E", voiceWav: "Mi 5.wav",  bellSourceFile: "Mi 5 Bell.wav",  bellRate: 1.0, type: "white", style: "E5" },
+        { id: "F5",  solfege: "Fa 5", display: "F", voiceWav: "Fa 5.wav",  bellSourceFile: "Fa 5 Bell.wav",  bellRate: 1.0, type: "white", style: "F5" },
+        { id: "Gb5", solfege: "Fi 5", display: { sharp: "F#", flat: "Gb" }, voiceWav: "Fi 5.wav",  bellSourceFile: "Fi 5 Bell.wav",  bellRate: 1.0, type: "black", style: "Gb5" },
+        { id: "G5",  solfege: "So 5", display: "G", voiceWav: "So 5.wav",  bellSourceFile: "So 5 Bell.wav",  bellRate: 1.0, type: "white", style: "G5" }
     ];
     
     let voiceBuffers = {}; 
@@ -319,11 +363,25 @@
         btn.className = `bell-btn ${note.style}`;
         btn.id = `btn-${note.id}`;
         btn.setAttribute('onclick', `handleInput('${note.id}')`);
-        btn.innerHTML = `<div class="color-badge">${note.solfege}</div>`;
-
+        
         if (note.type === "black") {
+            btn.innerHTML = `
+                <div class="color-badge">
+                    <div class="sharp-half">
+                        <span class="solfege-tiny">${note.solfege.split(' ')[0]}</span>
+                        <span>${note.display.sharp}</span>
+                    </div>
+                    <div class="flat-half">
+                        <span>${note.display.flat}</span>
+                    </div>
+                </div>`;
             sharpsRow.appendChild(btn);
         } else {
+            btn.innerHTML = `
+                <div class="color-badge">
+                    <span class="solfege-tiny">${note.solfege.split(' ')[0]}</span>
+                    <span>${note.display}</span>
+                </div>`;
             naturalsRow.appendChild(btn);
         }
     });
@@ -385,14 +443,17 @@
         const badge = btn.querySelector('.color-badge');
         if (!badge) return;
         
-        const badgeStyle = window.getComputedStyle(badge);
-        const bgImage = badgeStyle.backgroundImage;
-        let colorMatch = bgImage.match(/rgb\([^)]+\)/g);
         let targetColor = "rgba(255, 255, 255, 1)";
-        if (colorMatch && colorMatch.length > 1) {
-            targetColor = colorMatch[1];
-        } else if (colorMatch && colorMatch.length === 1) {
-            targetColor = colorMatch[0];
+        const badgeStyle = window.getComputedStyle(badge);
+        const bgImage = badgeStyle.backgroundColor;
+        
+        if (bgImage && bgImage !== "rgba(0, 0, 0, 0)" && bgImage !== "transparent") {
+            targetColor = bgImage;
+        } else {
+            const sharpElem = btn.querySelector('.sharp-half');
+            if (sharpElem) {
+                targetColor = window.getComputedStyle(sharpElem).backgroundColor;
+            }
         }
         
         btn.style.setProperty('--light-color', targetColor);
@@ -425,7 +486,6 @@
             }
         }
 
-        // --- Handle Instrument Sampling Modes ---
         if (['piano', 'guitar', 'rhodes', 'strings', 'organ'].includes(currentAudioMode)) {
             if (samplers[currentAudioMode]) {
                 samplers[currentAudioMode].triggerAttackRelease(playbackNote, "1.5");
@@ -433,7 +493,6 @@
             return;
         }
 
-        // --- Handle "Bells then Vocal" with strict 0.5-second stagger ---
         if (currentAudioMode === 'bell-vocal' && matchingNote) {
             if (bellBuffers[choice]) {
                 const bellSource = audioCtx.createBufferSource();
@@ -452,7 +511,6 @@
             return;
         }
 
-        // --- Handle Standard Modes (Simultaneous or Only) ---
         if ((currentAudioMode === 'both' || currentAudioMode === 'bells') && bellBuffers[choice] && matchingNote) {
             const bellSource = audioCtx.createBufferSource();
             bellSource.buffer = bellBuffers[choice];
