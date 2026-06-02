@@ -1,3 +1,4 @@
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -11,7 +12,7 @@
             --text-main: #ffffff;
             --text-sub: #94a3b8;
             --keyboard-bg: #0b0f19;
-            --accent: #38bdf8;
+            --accent: #0d9488; /* Switched accent line to Teal */
         }
 
         body {
@@ -35,9 +36,10 @@
             letter-spacing: 2px; 
         }
         
+        /* Updated Title Colors to Red, Yellow, Teal */
         h1 span.w-red    { color: #e65c40; }
-        h1 span.w-orange { color: #f3722c; }
         h1 span.w-yellow { color: #f9cd13; }
+        h1 span.w-teal   { color: #0d9488; }
 
         .header-line { width: 80%; height: 2px; background: var(--accent); margin-bottom: 25px; opacity: 0.5; }
 
@@ -132,7 +134,7 @@
         .mode-btn.active {
             background-color: var(--accent);
             color: var(--keyboard-bg);
-            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
+            box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
         }
 
         .keyboard-wrapper {
@@ -160,7 +162,7 @@
         .keyboard-wrapper::-webkit-scrollbar { height: 10px; }
         .keyboard-wrapper::-webkit-scrollbar-track { background: #0b0f19; border-radius: 10px; }
         .keyboard-wrapper::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
-        .keyboard-wrapper::-webkit-scrollbar-thumb:hover { background: #0ea5e9; }
+        .keyboard-wrapper::-webkit-scrollbar-thumb:hover { background: #0f766e; }
 
         .piano-grid {
             position: relative;
@@ -304,16 +306,16 @@
 <body>
 <div class="container">
     <h1>
+        <!-- Updated Classes & Spans to use Red, Yellow, Teal configuration -->
         <span class="w-red">ZAYNE'S</span> 
-        <span class="w-orange">EAR</span> 
-        <span class="w-yellow">TRAINING</span>
+        <span class="w-yellow">EAR</span> 
+        <span class="w-teal">TRAINING</span>
     </h1>
     <div class="header-line"></div>
 
     <div class="game-panel">
         <div class="loading-zone" id="loadingZone">
             <div class="dial-spinner" id="spinner"></div>
-            <!-- Standard initialization with Red LOADING... label -->
             <div id="msg" style="color: #e65c40;">LOADING...</div>
         </div>
 
@@ -456,7 +458,6 @@
             }
         }
 
-        // Midpoint transition: SET! (Yellow Dial & Text)
         spinner.style.borderTopColor = "#f9cd13";
         statusMsg.style.color = "#f9cd13";
         statusMsg.innerText = "SET!";
@@ -475,12 +476,10 @@
             }).toDestination();
         });
 
-        // Resolution step: PLAY! (Green Dial & Text)
         spinner.style.borderTopColor = "#90be6d";
         statusMsg.style.color = "#90be6d";
         statusMsg.innerText = "PLAY!";
 
-        // Let the green PLAY! stand clearly briefly before wiping the block out
         setTimeout(() => {
             loadingZone.classList.add('hidden');
         }, 1000);
@@ -576,4 +575,3 @@
 </script>
 </body>
 </html>
-
