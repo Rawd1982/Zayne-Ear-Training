@@ -12,7 +12,7 @@
             --text-main: #ffffff;
             --text-sub: #94a3b8;
             --keyboard-bg: #0b0f19;
-            --accent: #0d9488; /* Switched accent line to Teal */
+            --accent: #0d9488;
         }
 
         body {
@@ -36,7 +36,6 @@
             letter-spacing: 2px; 
         }
         
-        /* Updated Title Colors to Red, Yellow, Teal */
         h1 span.w-red    { color: #e65c40; }
         h1 span.w-yellow { color: #f9cd13; }
         h1 span.w-teal   { color: #0d9488; }
@@ -53,52 +52,6 @@
             width: 100%;
         }
 
-        /* Loading Area & Moving Dial Styles */
-        .loading-zone {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 90px;
-            margin-bottom: 15px;
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-            opacity: 1;
-        }
-
-        .loading-zone.hidden {
-            opacity: 0;
-            transform: scale(0.9);
-            pointer-events: none;
-            margin-bottom: 0;
-            min-height: 0;
-            height: 0;
-            overflow: hidden;
-        }
-
-        .dial-spinner {
-            width: 32px;
-            height: 32px;
-            border: 4px solid rgba(255, 255, 255, 0.1);
-            border-top: 4px solid #e65c40; /* Starts Red matching 'LOADING...' */
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 12px;
-            transition: border-top-color 0.3s ease;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        #msg { 
-            text-align: center; 
-            font-size: 1.4rem; 
-            font-weight: 900;
-            letter-spacing: 1px;
-            transition: color 0.3s ease;
-        }
-
         .controls-panel {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -106,7 +59,7 @@
             background-color: var(--keyboard-bg);
             padding: 8px;
             border-radius: 16px;
-            margin-bottom: 25px;
+            margin-bottom: 15px; /* Reduced to bring loading section tight */
             border: 2px solid #1e293b;
             max-width: 850px;
             width: 100%;
@@ -135,6 +88,55 @@
             background-color: var(--accent);
             color: var(--keyboard-bg);
             box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
+        }
+
+        /* Compact Loading Area Styles */
+        .loading-zone {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 400px;
+            height: 50px; /* Fixed small size */
+            margin-bottom: 15px;
+            transition: opacity 0.4s ease-out, transform 0.4s ease-out, margin 0.4s ease-out, height 0.4s ease-out;
+            opacity: 1;
+            overflow: hidden;
+        }
+
+        .loading-zone.hidden {
+            opacity: 0;
+            transform: scaleY(0);
+            height: 0;
+            margin-bottom: 0;
+            pointer-events: none;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 6px;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: #e65c40; /* Starts Red */
+            border-radius: 3px;
+            transition: width 0.1s linear, background-color 0.3s ease;
+        }
+
+        #msg { 
+            text-align: center; 
+            font-size: 0.95rem; 
+            font-weight: 900;
+            letter-spacing: 1px;
+            transition: color 0.3s ease;
+            line-height: 1;
         }
 
         .keyboard-wrapper {
@@ -306,7 +308,6 @@
 <body>
 <div class="container">
     <h1>
-        <!-- Updated Classes & Spans to use Red, Yellow, Teal configuration -->
         <span class="w-red">ZAYNE'S</span> 
         <span class="w-yellow">EAR</span> 
         <span class="w-teal">TRAINING</span>
@@ -314,11 +315,6 @@
     <div class="header-line"></div>
 
     <div class="game-panel">
-        <div class="loading-zone" id="loadingZone">
-            <div class="dial-spinner" id="spinner"></div>
-            <div id="msg" style="color: #e65c40;">LOADING...</div>
-        </div>
-
         <div class="controls-panel">
             <button class="mode-btn active" id="mode-bell-vocal" onclick="setAudioMode('bell-vocal')">Bell then Solfège</button>
             <button class="mode-btn" id="mode-vocal" onclick="setAudioMode('vocal')">Solfège</button>
@@ -329,6 +325,14 @@
             <button class="mode-btn" id="mode-rhodes" onclick="setAudioMode('rhodes')">Rhodes</button>
             <button class="mode-btn" id="strings" onclick="setAudioMode('strings')">Synth Strings</button>
             <button class="mode-btn" id="mode-organ" onclick="setAudioMode('organ')">Rock Organ</button>
+        </div>
+
+        <!-- NEWLY POSITIONED COMPACT PROGRESS SECTION -->
+        <div class="loading-zone" id="loadingZone">
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div id="msg" style="color: #e65c40;">LOADING...</div>
         </div>
 
         <div class="keyboard-wrapper">
@@ -385,11 +389,11 @@
     const salamanderPianoCDN = "https://tonejs.github.io/audio/salamander/";
 
     const instrumentConfigs = {
-        piano: { baseUrl: salamanderPianoCDN, anchor: "C4", type: "salamander" },
-        guitar: { baseUrl: `${sampleGeneralCDN}acoustic_guitar_nylon-mp3/`, anchor: "C4", type: "midi" },
-        rhodes: { baseUrl: `${sampleGeneralCDN}electric_piano_1-mp3/`, anchor: "C4", type: "midi" },
-        strings: { baseUrl: `${sampleGeneralCDN}synth_strings_1-mp3/`, anchor: "C4", type: "midi" },
-        organ: { baseUrl: `${sampleGeneralCDN}rock_organ-mp3/`, anchor: "C4", type: "midi" }
+        piano: { baseUrl: salamanderPianoCDN, anchor: "C4" },
+        guitar: { baseUrl: `${sampleGeneralCDN}acoustic_guitar_nylon-mp3/`, anchor: "C4" },
+        rhodes: { baseUrl: `${sampleGeneralCDN}electric_piano_1-mp3/`, anchor: "C4" },
+        strings: { baseUrl: `${sampleGeneralCDN}synth_strings_1-mp3/`, anchor: "C4" },
+        organ: { baseUrl: `${sampleGeneralCDN}rock_organ-mp3/`, anchor: "C4" }
     };
 
     const sharpsRow = document.getElementById('sharps-container');
@@ -436,16 +440,18 @@
 
     async function loadAllSounds() {
         const statusMsg = document.getElementById('msg');
-        const spinner = document.getElementById('spinner');
+        const progressBar = document.getElementById('progressBar');
         const loadingZone = document.getElementById('loadingZone');
+        
+        // Total tasks calculation for the bar
+        const totalNotes = progression.length;
+        let loadedNotesCount = 0;
         
         let cache = {};
         for (let note of progression) {
             try {
                 if(note.voiceWav) voiceBuffers[note.id] = await fetchAudioBuffer(note.voiceWav);
-            } catch (e) {
-                console.error(`Missing vocal file: ${note.voiceWav}`, e);
-            }
+            } catch (e) { console.error(e); }
             try {
                 if(note.bellSourceFile) {
                     if (!cache[note.bellSourceFile]) {
@@ -453,36 +459,46 @@
                     }
                     bellBuffers[note.id] = cache[note.bellSourceFile];
                 }
-            } catch (e) {
-                console.error(`Missing bell file: ${note.bellSourceFile}`, e);
-            }
+            } catch (e) { console.error(e); }
+            
+            loadedNotesCount++;
+            // Max out wav loading progress at 85% of total bar span
+            let percent = Math.floor((loadedNotesCount / totalNotes) * 85);
+            progressBar.style.width = `${percent}%`;
         }
 
-        spinner.style.borderTopColor = "#f9cd13";
+        // Transition Step: SET!
+        progressBar.style.backgroundColor = "#f9cd13";
+        progressBar.style.width = "92%";
         statusMsg.style.color = "#f9cd13";
         statusMsg.innerText = "SET!";
 
-        Object.keys(instrumentConfigs).forEach(key => {
+        // Load Samplers
+        const keys = Object.keys(instrumentConfigs);
+        for(let key of keys) {
             const config = instrumentConfigs[key];
             let urls = {};
             urls[config.anchor] = `${config.anchor}.mp3`;
 
-            samplers[key] = new Tone.Sampler({
-                urls: urls,
-                baseUrl: config.baseUrl,
-                onload: () => {
-                    console.log(`Studio engine for [${key}] calibrated successfully.`);
-                }
-            }).toDestination();
-        });
+            await new Promise((resolve) => {
+                samplers[key] = new Tone.Sampler({
+                    urls: urls,
+                    baseUrl: config.baseUrl,
+                    onload: () => resolve()
+                }).toDestination();
+            });
+        }
 
-        spinner.style.borderTopColor = "#90be6d";
+        // Completion Step: PLAY!
+        progressBar.style.backgroundColor = "#90be6d";
+        progressBar.style.width = "100%";
         statusMsg.style.color = "#90be6d";
         statusMsg.innerText = "PLAY!";
 
+        // Dissolve track layout clean
         setTimeout(() => {
             loadingZone.classList.add('hidden');
-        }, 1000);
+        }, 900);
     }
     loadAllSounds();
 
