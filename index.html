@@ -1,3 +1,4 @@
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -11,7 +12,7 @@
             --text-main: #ffffff;
             --text-sub: #94a3b8;
             --keyboard-bg: #0b0f19;
-            --accent: #e65c40; /* Changed to Red (#e65c40) for all active selections */
+            --accent: #d62828; /* Synced with the "Do" Red color profile */
         }
 
         body {
@@ -35,7 +36,7 @@
             letter-spacing: 2px; 
         }
         
-        h1 span.w-red    { color: #e65c40; }
+        h1 span.w-red    { color: #d62828; } /* Synced title color to "Do" Red */
         h1 span.w-yellow { color: #f9cd13; }
         h1 span.w-teal   { color: #0d9488; }
 
@@ -86,7 +87,7 @@
         .mode-btn.active {
             background-color: var(--accent);
             color: var(--text-main);
-            box-shadow: 0 4px 12px rgba(230, 92, 64, 0.3); /* Balanced glow shadow for Red accent */
+            box-shadow: 0 4px 12px rgba(214, 40, 40, 0.3); /* Custom glow styling for unified Red */
         }
 
         /* Compact Loading Area Styles */
@@ -124,7 +125,7 @@
         .progress-bar {
             width: 0%;
             height: 100%;
-            background-color: #e65c40;
+            background-color: #d62828; /* Synced start loading color track */
             border-radius: 3px;
             transition: width 0.1s linear, background-color 0.3s ease;
         }
@@ -162,7 +163,7 @@
 
         .keyboard-wrapper::-webkit-scrollbar { height: 10px; }
         .keyboard-wrapper::-webkit-scrollbar-track { background: #0b0f19; border-radius: 10px; }
-        .keyboard-wrapper::-webkit-scrollbar-thumb { background: #e65c40; border-radius: 10px; }
+        .keyboard-wrapper::-webkit-scrollbar-thumb { background: #d62828; border-radius: 10px; }
 
         .piano-grid {
             position: relative;
@@ -321,7 +322,6 @@
             <button class="mode-btn" id="mode-piano" onclick="setAudioMode('piano')">Grand Piano</button>
             <button class="mode-btn" id="mode-guitar" onclick="setAudioMode('guitar')">Guitar</button>
             <button class="mode-btn" id="mode-rhodes" onclick="setAudioMode('rhodes')">Rhodes</button>
-            <!-- Fixed ID match: changed 'strings' to 'mode-strings' -->
             <button class="mode-btn" id="mode-strings" onclick="setAudioMode('strings')">Synth Strings</button>
             <button class="mode-btn" id="mode-organ" onclick="setAudioMode('organ')">Rock Organ</button>
         </div>
@@ -330,7 +330,7 @@
             <div class="progress-container">
                 <div class="progress-bar" id="progressBar"></div>
             </div>
-            <div id="msg" style="color: #e65c40;">LOADING...</div>
+            <div id="msg" style="color: #d62828;">LOADING...</div>
         </div>
 
         <div class="keyboard-wrapper">
