@@ -27,7 +27,7 @@
 
         .container { width: 100%; max-width: 1200px; display: flex; flex-direction: column; align-items: center; }
 
-        /* Chroma-color Title Styles */
+        /* Solid Word Coloring Styles */
         h1 { 
             font-size: 2.8rem; 
             font-weight: 900; 
@@ -37,13 +37,9 @@
             letter-spacing: 2px; 
         }
         
-        h1 span.c-red    { color: #e65c40; }
-        h1 span.c-orange { color: #f3722c; }
-        h1 span.c-yellow { color: #f9cd13; }
-        h1 span.c-green  { color: #90be6d; }
-        h1 span.c-teal   { color: #43aa8b; }
-        h1 span.c-blue   { color: #277da1; }
-        h1 span.c-purple { color: #8367a6; }
+        h1 span.w-red    { color: #e65c40; }
+        h1 span.w-orange { color: #f3722c; }
+        h1 span.w-yellow { color: #f9cd13; }
 
         .header-line { width: 80%; height: 2px; background: var(--accent); margin-bottom: 25px; opacity: 0.5; }
 
@@ -57,7 +53,15 @@
             width: 100%;
         }
 
-        #msg { min-height: 1.5rem; text-align: center; margin-bottom: 20px; }
+        /* Status text formatting */
+        #msg { 
+            min-height: 1.8rem; 
+            text-align: center; 
+            margin-bottom: 20px; 
+            font-size: 1.4rem; 
+            font-weight: 900;
+            letter-spacing: 1px;
+        }
 
         .controls-panel {
             display: grid;
@@ -274,14 +278,15 @@
 <body>
 <div class="container">
     <h1>
-        <span class="c-red">Z</span><span class="c-orange">A</span><span class="c-yellow">Y</span><span class="c-green">N</span><span class="c-teal">E</span><span class="c-blue">'</span><span class="c-purple">S</span> 
-        <span class="c-red">E</span><span class="c-orange">A</span><span class="c-yellow">R</span> 
-        <span class="c-green">T</span><span class="c-teal">R</span><span class="c-blue">A</span><span class="c-purple">I</span><span class="c-red">N</span><span class="c-orange">I</span><span class="c-yellow">N</span><span class="c-green">G</span>
+        <span class="w-red">ZAYNE'S</span> 
+        <span class="w-orange">EAR</span> 
+        <span class="w-yellow">TRAINING</span>
     </h1>
     <div class="header-line"></div>
 
     <div class="game-panel">
-        <div id="msg"></div>
+        <!-- Initialized with Red text styling -->
+        <div id="msg" style="color: #e65c40;">Ready!</div>
 
         <div class="controls-panel">
             <button class="mode-btn active" id="mode-bell-vocal" onclick="setAudioMode('bell-vocal')">Bell then Solfège</button>
@@ -399,6 +404,8 @@
     }
 
     async function loadAllSounds() {
+        const statusMsg = document.getElementById('msg');
+        
         let cache = {};
         for (let note of progression) {
             try {
@@ -418,6 +425,10 @@
             }
         }
 
+        // Transition to Set! (Yellow) mid-load
+        statusMsg.style.color = "#f9cd13";
+        statusMsg.innerText = "Set!";
+
         Object.keys(instrumentConfigs).forEach(key => {
             const config = instrumentConfigs[key];
             let urls = {};
@@ -431,6 +442,10 @@
                 }
             }).toDestination();
         });
+
+        // Resolve to PLAY! (Green) when complete
+        statusMsg.style.color = "#90be6d";
+        statusMsg.innerText = "PLAY!";
     }
     loadAllSounds();
 
@@ -523,3 +538,4 @@
 </script>
 </body>
 </html>
+
