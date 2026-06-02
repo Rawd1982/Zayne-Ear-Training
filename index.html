@@ -1,3 +1,4 @@
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -26,7 +27,23 @@
 
         .container { width: 100%; max-width: 1200px; display: flex; flex-direction: column; align-items: center; }
 
-        h1 { color: #000000; font-size: 2.5rem; font-weight: 800; text-align: center; margin: 10px 0 5px 0; width: 100%; letter-spacing: 1px; }
+        /* Chroma-color Title Styles */
+        h1 { 
+            font-size: 2.8rem; 
+            font-weight: 900; 
+            text-align: center; 
+            margin: 10px 0 5px 0; 
+            width: 100%; 
+            letter-spacing: 2px; 
+        }
+        
+        h1 span.c-red    { color: #e65c40; }
+        h1 span.c-orange { color: #f3722c; }
+        h1 span.c-yellow { color: #f9cd13; }
+        h1 span.c-green  { color: #90be6d; }
+        h1 span.c-teal   { color: #43aa8b; }
+        h1 span.c-blue   { color: #277da1; }
+        h1 span.c-purple { color: #8367a6; }
 
         .header-line { width: 80%; height: 2px; background: var(--accent); margin-bottom: 25px; opacity: 0.5; }
 
@@ -40,7 +57,7 @@
             width: 100%;
         }
 
-        #msg { font-weight: 600; color: #94a3b8; min-height: 1.5rem; text-align: center; margin-bottom: 20px; font-size: 1.1rem; }
+        #msg { min-height: 1.5rem; text-align: center; margin-bottom: 20px; }
 
         .controls-panel {
             display: grid;
@@ -182,7 +199,6 @@
             background: var(--light-color, #222222);
         }
         
-        /* App Badge Container Styles */
         .color-badge {
             width: 44px;
             height: 44px;
@@ -210,7 +226,6 @@
             border-radius: 6px;
         }
 
-        /* Layered stacking layout for accidentals inside the restored solid badge */
         .accidental-stack {
             display: flex;
             flex-direction: column;
@@ -242,7 +257,6 @@
         #btn-Eb5  { grid-column: 12; margin-left: 38px; }
         #btn-Gb5  { grid-column: 14; margin-left: 38px; }
 
-        /* Restored Original Linear Gradient Colors from your baseline code */
         .bell-btn.G3 .color-badge,  .bell-btn.G4 .color-badge,  .bell-btn.G5 .color-badge   { background: linear-gradient(to bottom, #3a6d6b, #4d908e); } 
         .bell-btn.Ab3 .color-badge, .bell-btn.Ab4 .color-badge, .bell-btn.Ab5 .color-badge  { background: linear-gradient(to bottom, #1d5f7a, #277da1); } 
         .bell-btn.A3 .color-badge,  .bell-btn.A4 .color-badge                               { background: linear-gradient(to bottom, #513970, #6a4c93); } 
@@ -259,11 +273,15 @@
 </head>
 <body>
 <div class="container">
-    <h1>ZAYNE'S EAR TRAINING</h1>
+    <h1>
+        <span class="c-red">Z</span><span class="c-orange">A</span><span class="c-yellow">Y</span><span class="c-green">N</span><span class="c-teal">E</span><span class="c-blue">'</span><span class="c-purple">S</span> 
+        <span class="c-red">E</span><span class="c-orange">A</span><span class="c-yellow">R</span> 
+        <span class="c-green">T</span><span class="c-teal">R</span><span class="c-blue">A</span><span class="c-purple">I</span><span class="c-red">N</span><span class="c-orange">I</span><span class="c-yellow">N</span><span class="c-green">G</span>
+    </h1>
     <div class="header-line"></div>
 
     <div class="game-panel">
-        <div id="msg">Loading baseline core audio... Please wait.</div>
+        <div id="msg"></div>
 
         <div class="controls-panel">
             <button class="mode-btn active" id="mode-bell-vocal" onclick="setAudioMode('bell-vocal')">Bell then Solfège</button>
@@ -273,7 +291,7 @@
             <button class="mode-btn" id="mode-piano" onclick="setAudioMode('piano')">Grand Piano</button>
             <button class="mode-btn" id="mode-guitar" onclick="setAudioMode('guitar')">Guitar</button>
             <button class="mode-btn" id="mode-rhodes" onclick="setAudioMode('rhodes')">Rhodes</button>
-            <button class="mode-btn" id="mode-strings" onclick="setAudioMode('strings')">Synth Strings</button>
+            <button class="mode-btn" id="strings" onclick="setAudioMode('strings')">Synth Strings</button>
             <button class="mode-btn" id="mode-organ" onclick="setAudioMode('organ')">Rock Organ</button>
         </div>
 
@@ -413,8 +431,6 @@
                 }
             }).toDestination();
         });
-
-        document.getElementById('msg').innerText = "Ready! High-fidelity audio modules loaded.";
     }
     loadAllSounds();
 
