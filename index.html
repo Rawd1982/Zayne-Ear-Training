@@ -1,4 +1,3 @@
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -36,7 +35,7 @@
             letter-spacing: 2px; 
         }
         
-        h1 span.w-red    { color: #d62828; } 
+        h1 span.w-red    { color: #d62828; } /* Synced title color to "Do" Red */
         h1 span.w-yellow { color: #f9cd13; }
         h1 span.w-teal   { color: #0d9488; }
 
@@ -50,77 +49,6 @@
             flex-direction: column;
             align-items: center;
             width: 100%;
-        }
-
-        /* Top Module Toggle Between Free Play and Active Game */
-        .module-selector {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            background-color: var(--keyboard-bg);
-            padding: 6px;
-            border-radius: 12px;
-            border: 2px solid #1e293b;
-        }
-
-        .module-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-sub);
-            padding: 10px 20px;
-            font-size: 0.95rem;
-            font-weight: 700;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .module-btn.active {
-            background-color: var(--accent);
-            color: var(--text-main);
-        }
-
-        /* Dynamic Game Dashboard */
-        .game-dashboard {
-            display: none; /* Controlled via JS */
-            width: 100%;
-            max-width: 850px;
-            background: var(--keyboard-bg);
-            border-radius: 16px;
-            padding: 15px 20px;
-            margin-bottom: 15px;
-            border: 2px solid #1e293b;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .game-stat {
-            font-size: 1.1rem;
-            font-weight: 800;
-            letter-spacing: 0.5px;
-        }
-
-        .game-stat span {
-            color: var(--accent);
-        }
-
-        .action-btn {
-            background-color: var(--accent);
-            color: var(--text-main);
-            border: none;
-            padding: 10px 20px;
-            font-size: 0.95rem;
-            font-weight: 800;
-            border-radius: 8px;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(214, 40, 40, 0.3);
-            transition: transform 0.1s;
-        }
-
-        .action-btn:active {
-            transform: scale(0.97);
         }
 
         .controls-panel {
@@ -158,7 +86,7 @@
         .mode-btn.active {
             background-color: var(--accent);
             color: var(--text-main);
-            box-shadow: 0 4px 12px rgba(214, 40, 40, 0.3);
+            box-shadow: 0 4px 12px rgba(214, 40, 40, 0.3); /* Custom glow styling for unified Red */
         }
 
         /* Compact Loading Area Styles */
@@ -196,7 +124,7 @@
         .progress-bar {
             width: 0%;
             height: 100%;
-            background-color: #d62828;
+            background-color: #d62828; /* Synced start loading color track */
             border-radius: 3px;
             transition: width 0.1s linear, background-color 0.3s ease;
         }
@@ -385,20 +313,6 @@
     <div class="header-line"></div>
 
     <div class="game-panel">
-        <!-- Module Swapper -->
-        <div class="module-selector">
-            <button class="module-btn active" id="mod-train" onclick="changeModule('train')">Training Mode</button>
-            <button class="module-btn" id="mod-game" onclick="changeModule('game')">Game Mode</button>
-        </div>
-
-        <!-- Dynamic Game Engine Dashboard -->
-        <div class="game-dashboard" id="gameDashboard">
-            <div class="game-stat" id="statLevel">LEVEL: <span>1</span> (White Keys Only)</div>
-            <div class="game-stat" id="statScore">SCORE: <span>0 / 20</span></div>
-            <div class="game-stat" id="statStrikes">STRIKES: <span>X X X</span></div>
-            <button class="action-btn" id="gameActionBtn" onclick="playPromptTarget()">HEAR NOTE</button>
-        </div>
-
         <div class="controls-panel">
             <button class="mode-btn active" id="mode-bell-vocal" onclick="setAudioMode('bell-vocal')">Bell then Solfège</button>
             <button class="mode-btn" id="mode-vocal" onclick="setAudioMode('vocal')">Solfège</button>
@@ -433,14 +347,6 @@
     const audioCtx = new AudioContext();
     
     let currentAudioMode = 'bell-vocal'; 
-    let activeModule = 'train'; // 'train' or 'game'
-
-    // State Variables for the Game Mode Engine
-    let gameActive = false;
-    let currentLevel = 1;
-    let currentScore = 0;
-    let currentStrikes = 0;
-    let targetNoteId = null;
 
     const progression = [
         { id: "G3",  solfege: "So 3", display: "G", voiceWav: "So 3.wav",  bellSourceFile: "So 3 Bell.wav",  bellRate: 1.0, type: "white", style: "G3" },
@@ -520,63 +426,6 @@
         currentAudioMode = mode;
         document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
         document.getElementById(`mode-${mode}`).classList.add('active');
-    }
-
-    // Module Swapping Logic (Training Mode vs Game Mode)
-    function changeModule(module) {
-        activeModule = module;
-        document.querySelectorAll('.module-btn').forEach(btn => btn.classList.remove('active'));
-        document.getElementById(`mod-${module}`).classList.add('active');
-
-        if (module === 'game') {
-            document.getElementById('gameDashboard').style.display = 'flex';
-            resetGame();
-        } else {
-            document.getElementById('gameDashboard').style.display = 'none';
-            gameActive = false;
-            targetNoteId = null;
-        }
-    }
-
-    // Game Core Functionality
-    function resetGame() {
-        currentLevel = 1;
-        currentScore = 0;
-        currentStrikes = 0;
-        gameActive = true;
-        updateDashboardUI();
-        generateNewChallenge();
-    }
-
-    function updateDashboardUI() {
-        document.getElementById('statLevel').innerHTML = `LEVEL: <span>${currentLevel}</span> ${currentLevel === 1 ? '(White Keys Only)' : '(Black Keys Added!)'}`;
-        document.getElementById('statScore').innerHTML = `SCORE: <span>${currentScore} ${currentLevel === 1 ? '/ 20' : ''}</span>`;
-        
-        let strikeText = '';
-        for (let i = 0; i < 3; i++) {
-            strikeText += i < currentStrikes ? '❤️ ' : '❌ ';
-        }
-        document.getElementById('statStrikes').innerHTML = `STRIKES: <span>${strikeText.trim()}</span>`;
-        document.getElementById('gameActionBtn').innerText = "HEAR NOTE";
-    }
-
-    function generateNewChallenge() {
-        let validNotes = [];
-        if (currentLevel === 1) {
-            validNotes = progression.filter(n => n.type === 'white');
-        } else {
-            validNotes = progression; // Level 2 mixes all elements
-        }
-        
-        const randomIndex = Math.floor(Math.random() * validNotes.length);
-        targetNoteId = validNotes[randomIndex].id;
-        
-        playPromptTarget();
-    }
-
-    function playPromptTarget() {
-        if (!targetNoteId) return;
-        executeAudioPlayback(targetNoteId);
     }
 
     async function fetchAudioBuffer(url) {
@@ -676,45 +525,8 @@
             Tone.start();
         }
 
-        // If in standard training mode, play freely
-        if (activeModule === 'train') {
-            triggerLightEffect(choice);
-            executeAudioPlayback(choice);
-            return;
-        }
+        triggerLightEffect(choice);
 
-        // Game verification ruleset logic
-        if (activeModule === 'game' && gameActive) {
-            if (choice === targetNoteId) {
-                triggerLightEffect(choice);
-                executeAudioPlayback(choice);
-                currentScore++;
-                
-                if (currentLevel === 1 && currentScore === 20) {
-                    currentLevel = 2;
-                    alert("Excellent job! Level 1 Complete! Black keys are now entering the training pool.");
-                }
-                
-                updateDashboardUI();
-                setTimeout(() => {
-                    generateNewChallenge();
-                }, 1400);
-            } else {
-                currentStrikes++;
-                updateDashboardUI();
-                
-                if (currentStrikes >= 3) {
-                    gameActive = false;
-                    document.getElementById('gameActionBtn').innerText = "RESTART";
-                    alert(`Game over! You made it to Level ${currentLevel} with a final score of ${currentScore}. Try again!`);
-                } else {
-                    alert("Not quite! Listen closely and try hitting another key, or replay the sound prompt.");
-                }
-            }
-        }
-    }
-
-    function executeAudioPlayback(choice) {
         const now = audioCtx.currentTime;
         const matchingNote = progression.find(n => n.id === choice);
 
@@ -770,4 +582,3 @@
 </script>
 </body>
 </html>
-
