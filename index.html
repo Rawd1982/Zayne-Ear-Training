@@ -1,3 +1,4 @@
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -24,6 +25,21 @@
             padding: 20px;
         }
 
+        /* Lock Screen States */
+        body.locked-state {
+            overflow: hidden !important;
+            touch-action: none;
+        }
+        
+        body.locked-state .controls-panel {
+            opacity: 0.4;
+            pointer-events: none; /* Disables all clicks on buttons */
+        }
+
+        body.locked-state .keyboard-wrapper {
+            overflow: hidden !important; /* Locks keyboard from scrolling left/right */
+        }
+
         .container { width: 100%; max-width: 1200px; display: flex; flex-direction: column; align-items: center; }
 
         h1 { 
@@ -39,7 +55,74 @@
         h1 span.w-yellow { color: #f9cd13; }
         h1 span.w-teal   { color: #0d9488; }
 
-        .header-line { width: 80%; height: 2px; background: #0d9488; margin-bottom: 25px; opacity: 0.5; }
+        .header-line { width: 80%; height: 2px; background: #0d9488; margin-bottom: 15px; opacity: 0.5; }
+
+        /* Lock Switch Container Styles */
+        .lock-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: #1e293b;
+            padding: 8px 16px;
+            border-radius: 50px;
+            border: 1px solid rgba(13, 148, 136, 0.3);
+        }
+
+        .lock-label {
+            font-size: 0.85rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: var(--text-sub);
+            text-transform: uppercase;
+        }
+
+        /* The Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+
+        .switch input { 
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #475569;
+            transition: .3s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #d62828;
+            box-shadow: 0 0 8px rgba(214, 40, 40, 0.6);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
 
         .game-panel {
             background-color: var(--panel-bg);
@@ -62,6 +145,7 @@
             border: 2px solid #1e293b;
             max-width: 850px;
             width: 100%;
+            transition: opacity 0.3s ease;
         }
 
         @media (max-width: 768px) {
@@ -312,6 +396,14 @@
     </h1>
     <div class="header-line"></div>
 
+    <div class="lock-container">
+        <span class="lock-label" id="lockLabel">Lock Screen</span>
+        <label class="switch">
+            <input type="checkbox" id="lockToggle" onchange="toggleLockMode()">
+            <span class="slider"></span>
+        </label>
+    </div>
+
     <div class="game-panel">
         <div class="controls-panel">
             <button class="mode-btn active" id="mode-bell-vocal" onclick="setAudioMode('bell-vocal')">Bell then Solfège</button>
@@ -426,6 +518,22 @@
         currentAudioMode = mode;
         document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
         document.getElementById(`mode-${mode}`).classList.add('active');
+    }
+
+    /* Screen Freeze Toggle Handler */
+    function toggleLockMode() {
+        const isChecked = document.getElementById('lockToggle').checked;
+        const label = document.getElementById('lockLabel');
+        
+        if (isChecked) {
+            document.body.classList.add('locked-state');
+            label.innerText = "Screen Locked";
+            label.style.color = "#d62828";
+        } else {
+            document.body.classList.remove('locked-state');
+            label.innerText = "Lock Screen";
+            label.style.color = "var(--text-sub)";
+        }
     }
 
     async function fetchAudioBuffer(url) {
