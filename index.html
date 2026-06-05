@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ZAYNE'S EAR TRAINING</title>
     <style>
         * { box-sizing: border-box; }
@@ -23,6 +23,14 @@
             display: flex;
             justify-content: center;
             padding: 20px;
+        }
+
+        /* Lock screen state */
+        body.screen-locked {
+            overflow: hidden !important;
+            position: fixed;
+            width: 100%;
+            height: 100%;
         }
 
         .container { width: 100%; max-width: 1200px; display: flex; flex-direction: column; align-items: center; }
@@ -50,6 +58,14 @@
             flex-direction: column;
             align-items: center;
             width: 100%;
+            position: relative;
+        }
+
+        .controls-panel-wrapper {
+            position: relative;
+            max-width: 850px;
+            width: 100%;
+            margin-bottom: 15px;
         }
 
         .controls-panel {
@@ -59,10 +75,20 @@
             background-color: var(--keyboard-bg);
             padding: 8px;
             border-radius: 16px;
-            margin-bottom: 15px;
             border: 2px solid #1e293b;
-            max-width: 850px;
             width: 100%;
+        }
+
+        /* Disabled overlay state for controls when locked */
+        .controls-panel-wrapper.locked::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(1px);
+            border-radius: 16px;
+            z-index: 10;
+            cursor: not-allowed;
         }
 
         @media (max-width: 768px) {
@@ -88,99 +114,6 @@
             background-color: var(--accent);
             color: var(--text-main);
             box-shadow: 0 4px 12px rgba(214, 40, 40, 0.3); /* Custom glow styling for unified Red */
-        }
-
-        /* Specialized Lock Activating Button styling */
-        .mode-btn.lock-trigger-btn {
-            background-color: #0d9488;
-            color: white;
-            grid-column: span 3;
-        }
-        @media (max-width: 768px) {
-            .mode-btn.lock-trigger-btn { grid-column: span 2; }
-        }
-
-        /* FULL LANDSCAPE LOCK SCREEN OVERLAY */
-        #lock-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(11, 15, 25, 0.5); /* Dim but leave piano visible underneath */
-            z-index: 99999;
-            display: none; /* Hidden by default */
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 0;
-            touch-action: none; /* Completely blocks phone scrolling gestures */
-        }
-
-        .lock-msg {
-            text-align: center;
-            color: white;
-            margin-top: 2vh;
-            pointer-events: none;
-            user-select: none;
-        }
-        
-        .lock-msg h2 { margin: 0 0 5px 0; font-size: 1.8rem; letter-spacing: 2px; color: #f9cd13; }
-        .lock-msg p { margin: 0; color: #94a3b8; font-size: 0.9rem; }
-
-        /* Full Width Slider Track Container at bottom */
-        .bottom-slider-container {
-            width: 100%;
-            padding: 0 20px;
-            margin-bottom: 5px;
-        }
-
-        .slider-track {
-            position: relative;
-            width: 100%;
-            height: 60px;
-            background-color: #1e293b;
-            border-radius: 50px;
-            border: 2px solid #0d9488;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
-        }
-
-        .slider-text {
-            color: #64748b;
-            font-weight: 800;
-            font-size: 0.9rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            user-select: none;
-            pointer-events: none;
-        }
-
-        #slider-handle {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 80px;
-            height: 56px;
-            background: linear-gradient(to bottom, #f9cd13, #e1b507);
-            border-radius: 50px;
-            cursor: grab;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-            touch-action: none;
-            z-index: 10;
-        }
-
-        #slider-handle::before {
-            content: "➔➔";
-            color: #0f172a;
-            font-weight: 900;
-            font-size: 1.2rem;
         }
 
         /* Compact Loading Area Styles */
@@ -244,6 +177,12 @@
             -webkit-overflow-scrolling: touch; 
             border: 4px solid #1e293b;
             box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+        }
+
+        /* Freeze scroll layout modifications */
+        .keyboard-wrapper.locked {
+            overflow-x: hidden !important;
+            -webkit-overflow-scrolling: auto;
         }
 
         @media screen and (orientation: landscape) {
@@ -395,24 +334,79 @@
         .bell-btn.E4 .color-badge,  .bell-btn.E5 .color-badge                               { background: linear-gradient(to bottom, #cca60f, #f9cd13); } 
         .bell-btn.F4 .color-badge,  .bell-btn.F5 .color-badge                               { background: linear-gradient(to bottom, #729955, #90be6d); } 
         .bell-btn.Gb4 .color-badge, .bell-btn.Gb5 .color-badge                              { background: linear-gradient(to bottom, #32826a, #43aa8b); } 
+
+        /* Slider Switch Design */
+        .lock-control-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 25px;
+            background-color: var(--keyboard-bg);
+            padding: 10px 24px;
+            border-radius: 50px;
+            border: 2px solid #1e293b;
+        }
+
+        .lock-label {
+            font-size: 0.9rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: var(--text-sub);
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+        }
+
+        .lock-label.active {
+            color: #0d9488;
+        }
+
+        .switch-track {
+            position: relative;
+            display: inline-block;
+            width: 64px;
+            height: 34px;
+        }
+
+        .switch-track input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider-thumb {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #475569;
+            transition: .3s ease;
+            border-radius: 34px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+        }
+
+        .slider-thumb:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .3s ease;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+        }
+
+        input:checked + .slider-thumb {
+            background-color: #0d9488;
+        }
+
+        input:checked + .slider-thumb:before {
+            transform: translateX(30px);
+        }
     </style>
 </head>
 <body>
-
-<div id="lock-screen">
-    <div class="lock-msg">
-        <h2>BOARD IS LOCKED</h2>
-        <p>Slide the yellow bar entirely to the right to edit modes.</p>
-    </div>
-    
-    <div class="bottom-slider-container">
-        <div class="slider-track" id="sliderTrack">
-            <div id="slider-handle"></div>
-            <span class="slider-text">Slide right to open settings >>></span>
-        </div>
-    </div>
-</div>
-
 <div class="container">
     <h1>
         <span class="w-red">ZAYNE'S</span> 
@@ -422,18 +416,18 @@
     <div class="header-line"></div>
 
     <div class="game-panel">
-        <div class="controls-panel">
-            <button class="mode-btn active" id="mode-bell-vocal" onclick="setAudioMode('bell-vocal')">Bell then Solfège</button>
-            <button class="mode-btn" id="mode-vocal" onclick="setAudioMode('vocal')">Solfège</button>
-            <button class="mode-btn" id="mode-both" onclick="setAudioMode('both')">Solfège/Bells</button>
-            <button class="mode-btn" id="mode-bells" onclick="setAudioMode('bells')">Bells</button>
-            <button class="mode-btn" id="mode-piano" onclick="setAudioMode('piano')">Grand Piano</button>
-            <button class="mode-btn" id="mode-guitar" onclick="setAudioMode('guitar')">Guitar</button>
-            <button class="mode-btn" id="mode-rhodes" onclick="setAudioMode('rhodes')">Rhodes</button>
-            <button class="mode-btn" id="mode-strings" onclick="setAudioMode('strings')">Synth Strings</button>
-            <button class="mode-btn" id="mode-organ" onclick="setAudioMode('organ')">Rock Organ</button>
-            
-            <button class="mode-btn lock-trigger-btn" onclick="activateLockScreen()">🔒 FREEZE MENUS & SCROLLING FOR PRACTICE</button>
+        <div class="controls-panel-wrapper" id="controlsWrapper">
+            <div class="controls-panel">
+                <button class="mode-btn active" id="mode-bell-vocal" onclick="setAudioMode('bell-vocal')">Bell then Solfège</button>
+                <button class="mode-btn" id="mode-vocal" onclick="setAudioMode('vocal')">Solfège</button>
+                <button class="mode-btn" id="mode-both" onclick="setAudioMode('both')">Solfège/Bells</button>
+                <button class="mode-btn" id="mode-bells" onclick="setAudioMode('bells')">Bells</button>
+                <button class="mode-btn" id="mode-piano" onclick="setAudioMode('piano')">Grand Piano</button>
+                <button class="mode-btn" id="mode-guitar" onclick="setAudioMode('guitar')">Guitar</button>
+                <button class="mode-btn" id="mode-rhodes" onclick="setAudioMode('rhodes')">Rhodes</button>
+                <button class="mode-btn" id="mode-strings" onclick="setAudioMode('strings')">Synth Strings</button>
+                <button class="mode-btn" id="mode-organ" onclick="setAudioMode('organ')">Rock Organ</button>
+            </div>
         </div>
 
         <div class="loading-zone" id="loadingZone">
@@ -443,11 +437,19 @@
             <div id="msg" style="color: #d62828;">LOADING...</div>
         </div>
 
-        <div class="keyboard-wrapper" id="keyboardWrapper">
+        <div class="keyboard-wrapper" id="pianoWrapper">
             <div class="piano-grid">
                 <div class="sharps-layer" id="sharps-container"></div>
                 <div class="naturals-layer" id="naturals-container"></div>
             </div>
+        </div>
+
+        <div class="lock-control-container">
+            <span class="lock-label" id="lockLabel">Screen Unlocked</span>
+            <label class="switch-track">
+                <input type="checkbox" id="lockToggle" onchange="toggleScreenLock(this.checked)">
+                <span class="slider-thumb"></span>
+            </label>
         </div>
     </div>
 </div>
@@ -534,91 +536,45 @@
     });
 
     function setAudioMode(mode) {
+        if (document.getElementById('lockToggle').checked) return; // Guard if locked
         currentAudioMode = mode;
         document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
         document.getElementById(`mode-${mode}`).classList.add('active');
     }
 
-    /* ---------------- LOCK SCREEN LOGIC ---------------- */
-    const lockScreen = document.getElementById('lock-screen');
-    const handle = document.getElementById('slider-handle');
-    const track = document.getElementById('sliderTrack');
-    const keyboardWrapper = document.getElementById('keyboardWrapper');
-
-    let isDragging = false;
-    let startX = 0;
-    let maxDelta = 0;
-
-    function activateLockScreen() {
-        // Freeze browser scroll body behavior entirely
-        document.body.style.overflow = "hidden";
-        document.body.style.touchAction = "none";
-        
-        // Hide scrollbars on keys wrapper so it can't move sideways
-        keyboardWrapper.style.overflowX = "hidden";
-        
-        // Pop up the overlay blocking controls panel
-        lockScreen.style.display = "flex";
-        
-        // Ensure handle is pinned back left
-        handle.style.left = "0px";
-    }
-
-    function deactivateLockScreen() {
-        document.body.style.overflow = "";
-        document.body.style.touchAction = "";
-        keyboardWrapper.style.overflowX = "auto";
-        lockScreen.style.display = "none";
-    }
-
-    // Capture drag initialization (Mice & Fingers)
-    handle.addEventListener('mousedown', startDrag);
-    handle.addEventListener('touchstart', startDrag, { passive: true });
-
-    window.addEventListener('mousemove', doDrag);
-    window.addEventListener('touchmove', doDrag, { passive: false });
-
-    window.addEventListener('mouseup', endDrag);
-    window.addEventListener('touchend', endDrag);
-
-    function startDrag(e) {
-        isDragging = true;
-        startX = e.touches ? e.touches[0].clientX : e.clientX;
-        maxDelta = track.clientWidth - handle.clientWidth;
-        handle.style.transition = "none";
-    }
-
-    function doDrag(e) {
-        if (!isDragging) return;
-        
-        // Prevent generic mobile elastic edge dragging
-        if(e.cancelable) e.preventDefault();
-
-        const currentX = e.touches ? e.touches[0].clientX : e.clientX;
-        let delta = currentX - startX;
-
-        // Bound parameters between left edge and absolute end of path
-        if (delta < 0) delta = 0;
-        if (delta > maxDelta) delta = maxDelta;
-
-        handle.style.left = `${delta}px`;
-
-        // Instantly break lock loop if they complete the 100% path drag
-        if (delta >= maxDelta) {
-            isDragging = false;
-            deactivateLockScreen();
+    /* Screen Lock Handler */
+    function preventTouchMove(e) {
+        // Prevent default touch movement unless scrolling inside the active keys wrapper
+        if (!e.target.closest('#pianoWrapper')) {
+            e.preventDefault();
         }
     }
 
-    function endDrag() {
-        if (!isDragging) return;
-        isDragging = false;
-        
-        // If handle wasn't cleared by full slide, spring snap back to start index
-        handle.style.transition = "left 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)";
-        handle.style.left = "0px";
+    function toggleScreenLock(isLocked) {
+        const body = document.body;
+        const controlsWrapper = document.getElementById('controlsWrapper');
+        const pianoWrapper = document.getElementById('pianoWrapper');
+        const lockLabel = document.getElementById('lockLabel');
+
+        if (isLocked) {
+            body.classList.add('screen-locked');
+            controlsWrapper.classList.add('locked');
+            pianoWrapper.classList.add('locked');
+            lockLabel.innerText = "Screen Locked";
+            lockLabel.classList.add('active');
+            
+            // Standard mobile drag/rubber-band mitigation
+            window.addEventListener('touchmove', preventTouchMove, { passive: false });
+        } else {
+            body.classList.remove('screen-locked');
+            controlsWrapper.classList.remove('locked');
+            pianoWrapper.classList.remove('locked');
+            lockLabel.innerText = "Screen Unlocked";
+            lockLabel.classList.remove('active');
+            
+            window.removeEventListener('touchmove', preventTouchMove);
+        }
     }
-    /* --------------------------------------------------- */
 
     async function fetchAudioBuffer(url) {
         const response = await fetch(url);
@@ -774,3 +730,4 @@
 </script>
 </body>
 </html>
+
