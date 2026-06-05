@@ -21,16 +21,8 @@
             background-color: var(--bg-dark);
             font-family: 'Segoe UI', Roboto, Arial, sans-serif;
             color: var(--text-main);
-        }
-
-        /* Strict Master Lock Overrides to completely freeze viewports and prevent bounce/overscroll */
-        html.app-locked, body.app-locked {
-            overflow: hidden !important;
-            position: fixed !important;
-            width: 100% !important;
-            height: 100% !important;
-            max-height: 100vh !important;
-            touch-action: none !important; /* Disables all native browser scrolling/gestures completely */
+            width: 100%;
+            height: 100%;
         }
 
         body {
@@ -179,7 +171,7 @@
             flex-direction: column;
             align-items: center;
             position: relative;
-            z-index: 100; /* Keeps bar control isolated above blocked panels */
+            z-index: 1000; /* Stays isolated above the shield layer */
         }
 
         .slide-lock-container.hidden {
@@ -221,10 +213,10 @@
             background: transparent;
             outline: none;
             position: absolute;
-            z-index: 105;
+            z-index: 1005;
             margin: 0;
             cursor: pointer;
-            touch-action: pan-x !important; /* Explicitly forces slider to only listen to horizontal swipe interactions */
+            touch-action: pan-x !important;
         }
 
         .lock-slider::-webkit-slider-thumb {
@@ -250,6 +242,23 @@
         }
         .lock-slider::-moz-range-thumb:active { background: #e2e8f0; cursor: grabbing; }
 
+        /* Full Screen Invisible Shield to trap touches safely without breaking Tone.js audio engine contexts */
+        .lock-shield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: transparent;
+            z-index: 900;
+            display: none;
+            touch-action: none !important;
+        }
+
+        .lock-shield.active {
+            display: block;
+        }
+
         .keyboard-wrapper {
             background-color: var(--keyboard-bg);
             padding: 30px 20px;
@@ -262,14 +271,13 @@
             -webkit-overflow-scrolling: touch; 
             border: 4px solid #1e293b;
             box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+            position: relative;
         }
 
-        /* When system is locked, lock down native scrolling and layout values */
         .keyboard-wrapper.locked {
             overflow-x: hidden !important;
             overflow-y: hidden !important;
             -webkit-overflow-scrolling: auto;
-            touch-action: none !important;
         }
 
         @media screen and (orientation: landscape) {
@@ -424,6 +432,8 @@
     </style>
 </head>
 <body>
+<div class="lock-shield" id="lockShield"></div>
+
 <div class="container">
     <h1>
         <span class="w-red">ZAYNE'S</span> 
@@ -479,7 +489,6 @@
     
     let currentAudioMode = 'bell-vocal'; 
     let isCurrentlyLocked = false;
-    let savedScrollY = 0; 
 
     const progression = [
         { id: "G3",  solfege: "So 3", display: "G", voiceWav: "So 3.wav",  bellSourceFile: "So 3 Bell.wav",  bellRate: 1.0, type: "white", style: "G3" },
@@ -562,20 +571,18 @@
         document.getElementById(`mode-${mode}`).classList.add('active');
     }
 
-    /* Master Touch Interceptor */
-    function preventGlobalScroll(e) {
+    /* Strict Touch Interceptor - applied to shield and window targets to block scrolling entirely */
+    function blockViewportGestures(e) {
         if (isCurrentlyLocked) {
-            if (e.target.id === 'lockSlider') {
-                return;
-            }
+            if (e.target.id === 'lockSlider') return;
             if (e.cancelable) e.preventDefault();
         }
     }
 
-    window.addEventListener('touchstart', preventGlobalScroll, { passive: false });
-    window.addEventListener('touchmove', preventGlobalScroll, { passive: false });
-    window.addEventListener('touchend', preventGlobalScroll, { passive: false });
-    window.addEventListener('wheel', preventGlobalScroll, { passive: false });
+    window.addEventListener('touchstart', blockViewportGestures, { passive: false });
+    window.addEventListener('touchmove', blockViewportGestures, { passive: false });
+    window.addEventListener('touchend', blockViewportGestures, { passive: false });
+    window.addEventListener('wheel', blockViewportGestures, { passive: false });
 
     function handleSliderInput(value) {
         if (!isCurrentlyLocked && value > 25) {
@@ -597,23 +604,18 @@
     function updateLockUI(lockState) {
         isCurrentlyLocked = lockState;
         
-        const htmlElement = document.documentElement;
-        const bodyElement = document.body;
         const controlsWrapper = document.getElementById('controlsWrapper');
         const pianoWrapper = document.getElementById('pianoWrapper');
         const slideLabel = document.getElementById('slideLabel');
         const trackWrapper = document.getElementById('trackWrapper');
+        const lockShield = document.getElementById('lockShield');
 
         if (lockState) {
-            // 1. Force screen back to 0,0 instantly before clamping layout bounds. 
-            // This stops mobile browsers from freezing half-scrolled elements or cutting off layouts.
+            // Keep window completely snapped to 0,0 
             window.scrollTo(0, 0);
-            savedScrollY = 0;
             
-            // 2. Inject structural constraint configurations safely
-            htmlElement.classList.add('app-locked');
-            bodyElement.classList.add('app-locked');
-            bodyElement.style.top = '0px'; 
+            // Activate screen shield to absorb all structural swipe gestures
+            lockShield.classList.add('active');
 
             controlsWrapper.classList.add('locked');
             pianoWrapper.classList.add('locked');
@@ -621,11 +623,9 @@
             slideLabel.innerText = "◄ Slide left to unlock";
             slideLabel.className = "slide-label locked";
         } else {
-            // Remove structural view blocks cleanly
-            htmlElement.classList.remove('app-locked');
-            bodyElement.classList.remove('app-locked');
-            bodyElement.style.top = '';
-            
+            // Dismantle shield to release view interactions
+            lockShield.classList.remove('active');
+
             controlsWrapper.classList.remove('locked');
             pianoWrapper.classList.remove('locked');
             trackWrapper.classList.remove('is-locked');
@@ -726,8 +726,42 @@
     }
 
     function handleInput(choice) {
-        if (isCurrentlyLocked) return; 
-        
+        // Explicit layout block check bypassed internally if interaction arrives directly via shield coordinates
+        if (isCurrentlyLocked && event && event.target.id !== 'lockSlider') {
+            // Check if touch target hit structural layout keys underneath the shield layer coordinates
+            const targetShield = document.getElementById('lockShield');
+            if (event.changedTouches && event.changedTouches.length > 0) {
+                const touchX = event.changedTouches[0].clientX;
+                const touchY = event.changedTouches[0].clientY;
+                
+                targetShield.style.pointerEvents = 'none';
+                const lowerElement = document.elementFromPoint(touchX, touchY);
+                targetShield.style.pointerEvents = 'auto';
+
+                const closestBtn = lowerElement ? lowerElement.closest('.bell-btn') : null;
+                if (closestBtn) {
+                    const parsedId = closestBtn.id.replace('btn-', '');
+                    executeAudioPlay(parsedId);
+                }
+            } else if (event.clientX && event.clientY) {
+                // Mouse event fallback
+                targetShield.style.pointerEvents = 'none';
+                const lowerElement = document.elementFromPoint(event.clientX, event.clientY);
+                targetShield.style.pointerEvents = 'auto';
+
+                const closestBtn = lowerElement ? lowerElement.closest('.bell-btn') : null;
+                if (closestBtn) {
+                    const parsedId = closestBtn.id.replace('btn-', '');
+                    executeAudioPlay(parsedId);
+                }
+            }
+            return;
+        }
+
+        executeAudioPlay(choice);
+    }
+
+    function executeAudioPlay(choice) {
         if (audioCtx.state === 'suspended') {
             audioCtx.resume();
         }
@@ -789,6 +823,14 @@
             voiceSource.start(now);
         }
     }
+
+    // Capture shield taps directly and forward coordinate details down to key layers
+    document.getElementById('lockShield').addEventListener('touchstart', function(e) {
+        if (isCurrentlyLocked) {
+            if (e.cancelable) e.preventDefault();
+            handleInput(null);
+        }
+    }, { passive: false });
 </script>
 </body>
 </html>
