@@ -25,21 +25,6 @@
             padding: 20px;
         }
 
-        /* Lock Screen States */
-        body.locked-state {
-            overflow: hidden !important;
-            touch-action: none;
-        }
-        
-        body.locked-state .controls-panel {
-            opacity: 0.4;
-            pointer-events: none; /* Disables all clicks on buttons */
-        }
-
-        body.locked-state .keyboard-wrapper {
-            overflow: hidden !important; /* Locks keyboard from scrolling left/right */
-        }
-
         .container { width: 100%; max-width: 1200px; display: flex; flex-direction: column; align-items: center; }
 
         h1 { 
@@ -55,74 +40,7 @@
         h1 span.w-yellow { color: #f9cd13; }
         h1 span.w-teal   { color: #0d9488; }
 
-        .header-line { width: 80%; height: 2px; background: #0d9488; margin-bottom: 15px; opacity: 0.5; }
-
-        /* Lock Switch Container Styles */
-        .lock-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 20px;
-            background: #1e293b;
-            padding: 8px 16px;
-            border-radius: 50px;
-            border: 1px solid rgba(13, 148, 136, 0.3);
-        }
-
-        .lock-label {
-            font-size: 0.85rem;
-            font-weight: 800;
-            letter-spacing: 1px;
-            color: var(--text-sub);
-            text-transform: uppercase;
-        }
-
-        /* The Switch */
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 26px;
-        }
-
-        .switch input { 
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #475569;
-            transition: .3s;
-            border-radius: 34px;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .3s;
-            border-radius: 50%;
-        }
-
-        input:checked + .slider {
-            background-color: #d62828;
-            box-shadow: 0 0 8px rgba(214, 40, 40, 0.6);
-        }
-
-        input:checked + .slider:before {
-            transform: translateX(24px);
-        }
+        .header-line { width: 80%; height: 2px; background: #0d9488; margin-bottom: 25px; opacity: 0.5; }
 
         .game-panel {
             background-color: var(--panel-bg);
@@ -145,7 +63,6 @@
             border: 2px solid #1e293b;
             max-width: 850px;
             width: 100%;
-            transition: opacity 0.3s ease;
         }
 
         @media (max-width: 768px) {
@@ -171,6 +88,99 @@
             background-color: var(--accent);
             color: var(--text-main);
             box-shadow: 0 4px 12px rgba(214, 40, 40, 0.3); /* Custom glow styling for unified Red */
+        }
+
+        /* Specialized Lock Activating Button styling */
+        .mode-btn.lock-trigger-btn {
+            background-color: #0d9488;
+            color: white;
+            grid-column: span 3;
+        }
+        @media (max-width: 768px) {
+            .mode-btn.lock-trigger-btn { grid-column: span 2; }
+        }
+
+        /* FULL LANDSCAPE LOCK SCREEN OVERLAY */
+        #lock-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(11, 15, 25, 0.5); /* Dim but leave piano visible underneath */
+            z-index: 99999;
+            display: none; /* Hidden by default */
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            touch-action: none; /* Completely blocks phone scrolling gestures */
+        }
+
+        .lock-msg {
+            text-align: center;
+            color: white;
+            margin-top: 2vh;
+            pointer-events: none;
+            user-select: none;
+        }
+        
+        .lock-msg h2 { margin: 0 0 5px 0; font-size: 1.8rem; letter-spacing: 2px; color: #f9cd13; }
+        .lock-msg p { margin: 0; color: #94a3b8; font-size: 0.9rem; }
+
+        /* Full Width Slider Track Container at bottom */
+        .bottom-slider-container {
+            width: 100%;
+            padding: 0 20px;
+            margin-bottom: 5px;
+        }
+
+        .slider-track {
+            position: relative;
+            width: 100%;
+            height: 60px;
+            background-color: #1e293b;
+            border-radius: 50px;
+            border: 2px solid #0d9488;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .slider-text {
+            color: #64748b;
+            font-weight: 800;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        #slider-handle {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 80px;
+            height: 56px;
+            background: linear-gradient(to bottom, #f9cd13, #e1b507);
+            border-radius: 50px;
+            cursor: grab;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            touch-action: none;
+            z-index: 10;
+        }
+
+        #slider-handle::before {
+            content: "➔➔";
+            color: #0f172a;
+            font-weight: 900;
+            font-size: 1.2rem;
         }
 
         /* Compact Loading Area Styles */
@@ -388,6 +398,21 @@
     </style>
 </head>
 <body>
+
+<div id="lock-screen">
+    <div class="lock-msg">
+        <h2>BOARD IS LOCKED</h2>
+        <p>Slide the yellow bar entirely to the right to edit modes.</p>
+    </div>
+    
+    <div class="bottom-slider-container">
+        <div class="slider-track" id="sliderTrack">
+            <div id="slider-handle"></div>
+            <span class="slider-text">Slide right to open settings >>></span>
+        </div>
+    </div>
+</div>
+
 <div class="container">
     <h1>
         <span class="w-red">ZAYNE'S</span> 
@@ -395,14 +420,6 @@
         <span class="w-teal">TRAINING</span>
     </h1>
     <div class="header-line"></div>
-
-    <div class="lock-container">
-        <span class="lock-label" id="lockLabel">Lock Screen</span>
-        <label class="switch">
-            <input type="checkbox" id="lockToggle" onchange="toggleLockMode()">
-            <span class="slider"></span>
-        </label>
-    </div>
 
     <div class="game-panel">
         <div class="controls-panel">
@@ -415,6 +432,8 @@
             <button class="mode-btn" id="mode-rhodes" onclick="setAudioMode('rhodes')">Rhodes</button>
             <button class="mode-btn" id="mode-strings" onclick="setAudioMode('strings')">Synth Strings</button>
             <button class="mode-btn" id="mode-organ" onclick="setAudioMode('organ')">Rock Organ</button>
+            
+            <button class="mode-btn lock-trigger-btn" onclick="activateLockScreen()">🔒 FREEZE MENUS & SCROLLING FOR PRACTICE</button>
         </div>
 
         <div class="loading-zone" id="loadingZone">
@@ -424,7 +443,7 @@
             <div id="msg" style="color: #d62828;">LOADING...</div>
         </div>
 
-        <div class="keyboard-wrapper">
+        <div class="keyboard-wrapper" id="keyboardWrapper">
             <div class="piano-grid">
                 <div class="sharps-layer" id="sharps-container"></div>
                 <div class="naturals-layer" id="naturals-container"></div>
@@ -520,21 +539,86 @@
         document.getElementById(`mode-${mode}`).classList.add('active');
     }
 
-    /* Screen Freeze Toggle Handler */
-    function toggleLockMode() {
-        const isChecked = document.getElementById('lockToggle').checked;
-        const label = document.getElementById('lockLabel');
+    /* ---------------- LOCK SCREEN LOGIC ---------------- */
+    const lockScreen = document.getElementById('lock-screen');
+    const handle = document.getElementById('slider-handle');
+    const track = document.getElementById('sliderTrack');
+    const keyboardWrapper = document.getElementById('keyboardWrapper');
+
+    let isDragging = false;
+    let startX = 0;
+    let maxDelta = 0;
+
+    function activateLockScreen() {
+        // Freeze browser scroll body behavior entirely
+        document.body.style.overflow = "hidden";
+        document.body.style.touchAction = "none";
         
-        if (isChecked) {
-            document.body.classList.add('locked-state');
-            label.innerText = "Screen Locked";
-            label.style.color = "#d62828";
-        } else {
-            document.body.classList.remove('locked-state');
-            label.innerText = "Lock Screen";
-            label.style.color = "var(--text-sub)";
+        // Hide scrollbars on keys wrapper so it can't move sideways
+        keyboardWrapper.style.overflowX = "hidden";
+        
+        // Pop up the overlay blocking controls panel
+        lockScreen.style.display = "flex";
+        
+        // Ensure handle is pinned back left
+        handle.style.left = "0px";
+    }
+
+    function deactivateLockScreen() {
+        document.body.style.overflow = "";
+        document.body.style.touchAction = "";
+        keyboardWrapper.style.overflowX = "auto";
+        lockScreen.style.display = "none";
+    }
+
+    // Capture drag initialization (Mice & Fingers)
+    handle.addEventListener('mousedown', startDrag);
+    handle.addEventListener('touchstart', startDrag, { passive: true });
+
+    window.addEventListener('mousemove', doDrag);
+    window.addEventListener('touchmove', doDrag, { passive: false });
+
+    window.addEventListener('mouseup', endDrag);
+    window.addEventListener('touchend', endDrag);
+
+    function startDrag(e) {
+        isDragging = true;
+        startX = e.touches ? e.touches[0].clientX : e.clientX;
+        maxDelta = track.clientWidth - handle.clientWidth;
+        handle.style.transition = "none";
+    }
+
+    function doDrag(e) {
+        if (!isDragging) return;
+        
+        // Prevent generic mobile elastic edge dragging
+        if(e.cancelable) e.preventDefault();
+
+        const currentX = e.touches ? e.touches[0].clientX : e.clientX;
+        let delta = currentX - startX;
+
+        // Bound parameters between left edge and absolute end of path
+        if (delta < 0) delta = 0;
+        if (delta > maxDelta) delta = maxDelta;
+
+        handle.style.left = `${delta}px`;
+
+        // Instantly break lock loop if they complete the 100% path drag
+        if (delta >= maxDelta) {
+            isDragging = false;
+            deactivateLockScreen();
         }
     }
+
+    function endDrag() {
+        if (!isDragging) return;
+        isDragging = false;
+        
+        // If handle wasn't cleared by full slide, spring snap back to start index
+        handle.style.transition = "left 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)";
+        handle.style.left = "0px";
+    }
+    /* --------------------------------------------------- */
 
     async function fetchAudioBuffer(url) {
         const response = await fetch(url);
