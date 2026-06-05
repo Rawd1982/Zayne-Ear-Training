@@ -1,4 +1,3 @@
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -171,7 +170,7 @@
             flex-direction: column;
             align-items: center;
             position: relative;
-            z-index: 1000; /* Stays isolated above the shield layer */
+            z-index: 1000; 
         }
 
         .slide-lock-container.hidden {
@@ -242,7 +241,7 @@
         }
         .lock-slider::-moz-range-thumb:active { background: #e2e8f0; cursor: grabbing; }
 
-        /* Full Screen Invisible Shield to trap touches safely without breaking Tone.js audio engine contexts */
+        /* Full Screen Invisible Shield Layer */
         .lock-shield {
             position: fixed;
             top: 0;
@@ -489,6 +488,7 @@
     
     let currentAudioMode = 'bell-vocal'; 
     let isCurrentlyLocked = false;
+    let savedScrollY = 0;
 
     const progression = [
         { id: "G3",  solfege: "So 3", display: "G", voiceWav: "So 3.wav",  bellSourceFile: "So 3 Bell.wav",  bellRate: 1.0, type: "white", style: "G3" },
@@ -571,7 +571,7 @@
         document.getElementById(`mode-${mode}`).classList.add('active');
     }
 
-    /* Strict Touch Interceptor - applied to shield and window targets to block scrolling entirely */
+    /* Master Touch Interceptor */
     function blockViewportGestures(e) {
         if (isCurrentlyLocked) {
             if (e.target.id === 'lockSlider') return;
@@ -611,21 +611,17 @@
         const lockShield = document.getElementById('lockShield');
 
         if (lockState) {
-            // Keep window completely snapped to 0,0 
-            window.scrollTo(0, 0);
+            // Track exactly where the user is looking right now instead of forcing a snap back to 0,0
+            savedScrollY = window.scrollY;
             
-            // Activate screen shield to absorb all structural swipe gestures
             lockShield.classList.add('active');
-
             controlsWrapper.classList.add('locked');
             pianoWrapper.classList.add('locked');
             trackWrapper.classList.add('is-locked');
             slideLabel.innerText = "◄ Slide left to unlock";
             slideLabel.className = "slide-label locked";
         } else {
-            // Dismantle shield to release view interactions
             lockShield.classList.remove('active');
-
             controlsWrapper.classList.remove('locked');
             pianoWrapper.classList.remove('locked');
             trackWrapper.classList.remove('is-locked');
@@ -726,10 +722,10 @@
     }
 
     function handleInput(choice) {
-        // Explicit layout block check bypassed internally if interaction arrives directly via shield coordinates
         if (isCurrentlyLocked && event && event.target.id !== 'lockSlider') {
-            // Check if touch target hit structural layout keys underneath the shield layer coordinates
             const targetShield = document.getElementById('lockShield');
+            
+            // Adjust calculation logic to include page context variables natively
             if (event.changedTouches && event.changedTouches.length > 0) {
                 const touchX = event.changedTouches[0].clientX;
                 const touchY = event.changedTouches[0].clientY;
@@ -744,7 +740,6 @@
                     executeAudioPlay(parsedId);
                 }
             } else if (event.clientX && event.clientY) {
-                // Mouse event fallback
                 targetShield.style.pointerEvents = 'none';
                 const lowerElement = document.elementFromPoint(event.clientX, event.clientY);
                 targetShield.style.pointerEvents = 'auto';
@@ -824,7 +819,6 @@
         }
     }
 
-    // Capture shield taps directly and forward coordinate details down to key layers
     document.getElementById('lockShield').addEventListener('touchstart', function(e) {
         if (isCurrentlyLocked) {
             if (e.cancelable) e.preventDefault();
