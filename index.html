@@ -1,4 +1,3 @@
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -12,7 +11,7 @@
             --text-main: #ffffff;
             --text-sub: #94a3b8;
             --keyboard-bg: #0b0f19;
-            --accent: #d62828; /* Synced with the "Do" Red color profile */
+            --accent: #d62828; 
         }
 
         body {
@@ -23,14 +22,6 @@
             display: flex;
             justify-content: center;
             padding: 20px;
-        }
-
-        /* Lock screen state */
-        body.screen-locked {
-            overflow: hidden !important;
-            position: fixed;
-            width: 100%;
-            height: 100%;
         }
 
         .container { width: 100%; max-width: 1200px; display: flex; flex-direction: column; align-items: center; }
@@ -44,7 +35,7 @@
             letter-spacing: 2px; 
         }
         
-        h1 span.w-red    { color: #d62828; } /* Synced title color to "Do" Red */
+        h1 span.w-red    { color: #d62828; } 
         h1 span.w-yellow { color: #f9cd13; }
         h1 span.w-teal   { color: #0d9488; }
 
@@ -79,7 +70,6 @@
             width: 100%;
         }
 
-        /* Disabled overlay state for controls when locked */
         .controls-panel-wrapper.locked::after {
             content: '';
             position: absolute;
@@ -113,10 +103,10 @@
         .mode-btn.active {
             background-color: var(--accent);
             color: var(--text-main);
-            box-shadow: 0 4px 12px rgba(214, 40, 40, 0.3); /* Custom glow styling for unified Red */
+            box-shadow: 0 4px 12px rgba(214, 40, 40, 0.3); 
         }
 
-        /* Compact Loading Area Styles */
+        /* Loading Zone Area */
         .loading-zone {
             display: flex;
             flex-direction: column;
@@ -151,7 +141,7 @@
         .progress-bar {
             width: 0%;
             height: 100%;
-            background-color: #d62828; /* Synced start loading color track */
+            background-color: #d62828; 
             border-radius: 3px;
             transition: width 0.1s linear, background-color 0.3s ease;
         }
@@ -164,6 +154,85 @@
             transition: color 0.3s ease;
             line-height: 1;
         }
+
+        /* Slide-to-Unlock Container - Repositioned right above piano and thin-profile matched */
+        .slide-lock-container {
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .slide-lock-container.hidden {
+            display: none;
+        }
+
+        .slide-label {
+            font-size: 0.8rem;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            transition: color 0.3s ease;
+            user-select: none;
+        }
+
+        .slide-label.unlocked { color: #94a3b8; }
+        .slide-label.locked { color: #0d9488; text-shadow: 0 0 8px rgba(13, 148, 136, 0.4); }
+
+        /* Matched to exactly 6px tall like the progress container */
+        .slider-track-wrapper {
+            position: relative;
+            width: 100%;
+            height: 6px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+        }
+
+        .slider-track-wrapper.is-locked {
+            background-color: rgba(13, 148, 136, 0.3);
+        }
+
+        .lock-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 30px; /* High click-target container height, keeps rail at 6px visually */
+            background: transparent;
+            outline: none;
+            position: absolute;
+            z-index: 5;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        /* Custom Drag Handle Slider Button Controls */
+        .lock-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 36px;
+            height: 20px;
+            border-radius: 10px;
+            background: #ffffff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+            cursor: grab;
+        }
+        .lock-slider::-webkit-slider-thumb:active { background: #e2e8f0; cursor: grabbing; }
+
+        .lock-slider::-moz-range-thumb {
+            width: 36px;
+            height: 20px;
+            border: none;
+            border-radius: 10px;
+            background: #ffffff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+            cursor: grab;
+        }
+        .lock-slider::-moz-range-thumb:active { background: #e2e8f0; cursor: grabbing; }
 
         .keyboard-wrapper {
             background-color: var(--keyboard-bg);
@@ -179,7 +248,6 @@
             box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
         }
 
-        /* Freeze scroll layout modifications */
         .keyboard-wrapper.locked {
             overflow-x: hidden !important;
             -webkit-overflow-scrolling: auto;
@@ -334,103 +402,6 @@
         .bell-btn.E4 .color-badge,  .bell-btn.E5 .color-badge                               { background: linear-gradient(to bottom, #cca60f, #f9cd13); } 
         .bell-btn.F4 .color-badge,  .bell-btn.F5 .color-badge                               { background: linear-gradient(to bottom, #729955, #90be6d); } 
         .bell-btn.Gb4 .color-badge, .bell-btn.Gb5 .color-badge                              { background: linear-gradient(to bottom, #32826a, #43aa8b); } 
-
-        /* Slide-to-Unlock Container (Size-matched to loading zone profile) */
-        .slide-lock-container {
-            width: 100%;
-            max-width: 400px;
-            margin-top: 25px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background-color: var(--keyboard-bg);
-            padding: 12px 20px;
-            border-radius: 20px;
-            border: 2px solid #1e293b;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
-
-        .slide-label {
-            font-size: 0.85rem;
-            font-weight: 900;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-            transition: color 0.3s ease;
-            user-select: none;
-        }
-
-        .slide-label.unlocked { color: #94a3b8; }
-        .slide-label.locked { color: #0d9488; text-shadow: 0 0 8px rgba(13, 148, 136, 0.4); }
-
-        .slider-track-wrapper {
-            position: relative;
-            width: 100%;
-            height: 38px;
-            background-color: #1e293b;
-            border-radius: 30px;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        /* Slide track background highlight colors based on lock state */
-        .slider-track-wrapper.is-locked {
-            background: linear-gradient(90deg, rgba(13,148,136,0.1) 0%, #1e293b 100%);
-        }
-
-        .lock-slider {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 100%;
-            height: 100%;
-            background: transparent;
-            outline: none;
-            position: absolute;
-            z-index: 5;
-            margin: 0;
-            cursor: pointer;
-        }
-
-        /* Custom Drag Handle Styling */
-        .lock-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 50px;
-            height: 32px;
-            border-radius: 20px;
-            background: #ffffff;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-            cursor: grab;
-            transition: background-color 0.2s;
-        }
-        .lock-slider::-webkit-slider-thumb:active { background: #e2e8f0; cursor: grabbing; }
-
-        .lock-slider::-moz-range-thumb {
-            width: 50px;
-            height: 32px;
-            border: none;
-            border-radius: 20px;
-            background: #ffffff;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-            cursor: grab;
-        }
-        .lock-slider::-moz-range-thumb:active { background: #e2e8f0; cursor: grabbing; }
-
-        /* Background Text Indicator behind thumb button */
-        .track-text-hint {
-            position: absolute;
-            width: 100%;
-            text-align: center;
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: rgba(255, 255, 255, 0.25);
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            pointer-events: none;
-            z-index: 1;
-        }
     </style>
 </head>
 <body>
@@ -457,6 +428,7 @@
             </div>
         </div>
 
+        <!-- Progress bar container -->
         <div class="loading-zone" id="loadingZone">
             <div class="progress-container">
                 <div class="progress-bar" id="progressBar"></div>
@@ -464,20 +436,20 @@
             <div id="msg" style="color: #d62828;">LOADING...</div>
         </div>
 
+        <!-- Full Range Slide-To-Unlock Control Container (Now Hidden on start, appears when fully loaded) -->
+        <div class="slide-lock-container hidden" id="lockInterface">
+            <span class="slide-label unlocked" id="slideLabel">Slide right to lock</span>
+            <div class="slider-track-wrapper" id="trackWrapper">
+                <input type="range" min="0" max="100" value="0" class="lock-slider" id="lockSlider" 
+                       oninput="handleSliderInput(this.value)" 
+                       onchange="handleSliderChange(this.value)">
+            </div>
+        </div>
+
         <div class="keyboard-wrapper" id="pianoWrapper">
             <div class="piano-grid">
                 <div class="sharps-layer" id="sharps-container"></div>
                 <div class="naturals-layer" id="naturals-container"></div>
-            </div>
-        </div>
-
-        <div class="slide-lock-container">
-            <span class="slide-label unlocked" id="slideLabel">Screen Unlocked</span>
-            <div class="slider-track-wrapper" id="trackWrapper">
-                <div class="track-text-hint" id="trackHint">Slide to Lock Screen</div>
-                <input type="range" min="0" max="100" value="0" class="lock-slider" id="lockSlider" 
-                       oninput="handleSliderInput(this.value)" 
-                       onchange="handleSliderChange(this.value)">
             </div>
         </div>
     </div>
@@ -572,29 +544,35 @@
         document.getElementById(`mode-${mode}`).classList.add('active');
     }
 
-    /* Screen Drag Interception helper */
-    function preventTouchMove(e) {
-        if (!e.target.closest('#pianoWrapper') && !e.target.closest('.slide-lock-container')) {
+    /* Fixed Scroll Interception Engine - Intercepts scroll inputs *without* changing body position layouts */
+    function preventGlobalScroll(e) {
+        if (isCurrentlyLocked) {
+            // Allow slider manipulation and inner piano horizontal panning gestures
+            if (e.target.closest('#pianoWrapper') || e.target.closest('#lockInterface')) {
+                return;
+            }
             e.preventDefault();
         }
     }
 
-    /* Slide Engine Logic */
+    // Attach passive touch interceptor globally on app initiation
+    window.addEventListener('touchstart', preventGlobalScroll, { passive: false });
+    window.addEventListener('touchmove', preventGlobalScroll, { passive: false });
+    window.addEventListener('wheel', preventGlobalScroll, { passive: false });
+
+    /* Slider Action Event Parsers */
     function handleSliderInput(value) {
-        // If system is unlocked, dragging any distance right registers lock state change immediately 
-        if (!isCurrentlyLocked && value > 15) {
+        if (!isCurrentlyLocked && value > 25) {
             updateLockUI(true);
             document.getElementById('lockSlider').value = 100;
         }
     }
 
     function handleSliderChange(value) {
-        // If locked, handle must be pulled completely across the line to 0 to trigger an unlock configuration
         if (isCurrentlyLocked) {
             if (parseInt(value) === 0) {
                 updateLockUI(false);
             } else {
-                // Otherwise reset snap target to 100% locked state boundary safely
                 document.getElementById('lockSlider').value = 100;
             }
         }
@@ -602,35 +580,23 @@
 
     function updateLockUI(lockState) {
         isCurrentlyLocked = lockState;
-        const body = document.body;
         const controlsWrapper = document.getElementById('controlsWrapper');
         const pianoWrapper = document.getElementById('pianoWrapper');
         const slideLabel = document.getElementById('slideLabel');
-        const trackHint = document.getElementById('trackHint');
         const trackWrapper = document.getElementById('trackWrapper');
 
         if (lockState) {
-            body.classList.add('screen-locked');
             controlsWrapper.classList.add('locked');
             pianoWrapper.classList.add('locked');
             trackWrapper.classList.add('is-locked');
-            
-            slideLabel.innerText = "Screen Locked";
+            slideLabel.innerText = "◄ Slide left to unlock";
             slideLabel.className = "slide-label locked";
-            trackHint.innerText = "◄ Slide Left to Unlock";
-            
-            window.addEventListener('touchmove', preventTouchMove, { passive: false });
         } else {
-            body.classList.remove('screen-locked');
             controlsWrapper.classList.remove('locked');
             pianoWrapper.classList.remove('locked');
             trackWrapper.classList.remove('is-locked');
-            
-            slideLabel.innerText = "Screen Unlocked";
+            slideLabel.innerText = "Slide right to lock";
             slideLabel.className = "slide-label unlocked";
-            trackHint.innerText = "Slide Right to Lock Screen ►";
-            
-            window.removeEventListener('touchmove', preventTouchMove);
         }
     }
 
@@ -645,6 +611,7 @@
         const statusMsg = document.getElementById('msg');
         const progressBar = document.getElementById('progressBar');
         const loadingZone = document.getElementById('loadingZone');
+        const lockInterface = document.getElementById('lockInterface');
         
         const totalNotes = progression.length;
         let loadedNotesCount = 0;
@@ -688,13 +655,15 @@
             });
         }
 
-        progressBar.style.backgroundColor = "#90be6d";
         progressBar.style.width = "100%";
+        progressBar.style.backgroundColor = "#90be6d";
         statusMsg.style.color = "#90be6d";
         statusMsg.innerText = "PLAY!";
 
         setTimeout(() => {
             loadingZone.classList.add('hidden');
+            // Smoothly display lock bar slider exactly when training space goes live
+            lockInterface.classList.remove('hidden');
         }, 900);
     }
     loadAllSounds();
@@ -724,6 +693,8 @@
     }
 
     function handleInput(choice) {
+        if (isCurrentlyLocked) return; // Completely guard buttons when lock state registers
+        
         if (audioCtx.state === 'suspended') {
             audioCtx.resume();
         }
