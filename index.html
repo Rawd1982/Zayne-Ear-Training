@@ -479,7 +479,7 @@
     
     let currentAudioMode = 'bell-vocal'; 
     let isCurrentlyLocked = false;
-    let savedScrollY = 0; // Tracks coordinates to protect viewport position values
+    let savedScrollY = 0; 
 
     const progression = [
         { id: "G3",  solfege: "So 3", display: "G", voiceWav: "So 3.wav",  bellSourceFile: "So 3 Bell.wav",  bellRate: 1.0, type: "white", style: "G3" },
@@ -562,19 +562,16 @@
         document.getElementById(`mode-${mode}`).classList.add('active');
     }
 
-    /* Master Touch Interceptor - blocks ALL drags/swipes across the root view when locked */
+    /* Master Touch Interceptor */
     function preventGlobalScroll(e) {
         if (isCurrentlyLocked) {
-            // ONLY permit finger touches if interacting directly with the lock slider range element
             if (e.target.id === 'lockSlider') {
                 return;
             }
-            // Block all other scroll, zoom, pan, and bounce activities safely
             if (e.cancelable) e.preventDefault();
         }
     }
 
-    // Attach rigid interceptors using non-passive parameters to outrun hardware rendering threads
     window.addEventListener('touchstart', preventGlobalScroll, { passive: false });
     window.addEventListener('touchmove', preventGlobalScroll, { passive: false });
     window.addEventListener('touchend', preventGlobalScroll, { passive: false });
@@ -608,13 +605,15 @@
         const trackWrapper = document.getElementById('trackWrapper');
 
         if (lockState) {
-            // Save absolute screen scroll offset coordinates *before* applying lock layout overrides
-            savedScrollY = window.scrollY;
+            // 1. Force screen back to 0,0 instantly before clamping layout bounds. 
+            // This stops mobile browsers from freezing half-scrolled elements or cutting off layouts.
+            window.scrollTo(0, 0);
+            savedScrollY = 0;
             
-            // Inject structural viewport constraint configurations
+            // 2. Inject structural constraint configurations safely
             htmlElement.classList.add('app-locked');
             bodyElement.classList.add('app-locked');
-            bodyElement.style.top = `-${savedScrollY}px`; // Anchors visible display precisely where you stood
+            bodyElement.style.top = '0px'; 
 
             controlsWrapper.classList.add('locked');
             pianoWrapper.classList.add('locked');
@@ -622,14 +621,11 @@
             slideLabel.innerText = "◄ Slide left to unlock";
             slideLabel.className = "slide-label locked";
         } else {
-            // Remove structural view blocks
+            // Remove structural view blocks cleanly
             htmlElement.classList.remove('app-locked');
             bodyElement.classList.remove('app-locked');
             bodyElement.style.top = '';
             
-            // Re-apply absolute spatial positions seamlessly without snapping views
-            window.scrollTo(0, savedScrollY);
-
             controlsWrapper.classList.remove('locked');
             pianoWrapper.classList.remove('locked');
             trackWrapper.classList.remove('is-locked');
@@ -796,4 +792,5 @@
 </script>
 </body>
 </html>
+
 
