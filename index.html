@@ -1,3 +1,4 @@
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -14,11 +15,25 @@
             --accent: #d62828; 
         }
 
-        body {
-            font-family: 'Segoe UI', Roboto, Arial, sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-main);
+        html, body {
             margin: 0;
+            padding: 0;
+            background-color: var(--bg-dark);
+            font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+            color: var(--text-main);
+        }
+
+        /* Strict Master Lock Overrides to completely freeze viewports and prevent bounce/overscroll */
+        html.app-locked, body.app-locked {
+            overflow: hidden !important;
+            position: fixed !important;
+            width: 100% !important;
+            height: 100% !important;
+            max-height: 100vh !important;
+            touch-action: none !important; /* Disables all native browser scrolling/gestures completely */
+        }
+
+        body {
             display: flex;
             justify-content: center;
             padding: 20px;
@@ -155,7 +170,7 @@
             line-height: 1;
         }
 
-        /* Slide-to-Unlock Container - Repositioned right above piano and thin-profile matched */
+        /* Slide-to-Unlock Container */
         .slide-lock-container {
             width: 100%;
             max-width: 400px;
@@ -163,6 +178,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            position: relative;
+            z-index: 100; /* Keeps bar control isolated above blocked panels */
         }
 
         .slide-lock-container.hidden {
@@ -182,7 +199,6 @@
         .slide-label.unlocked { color: #94a3b8; }
         .slide-label.locked { color: #0d9488; text-shadow: 0 0 8px rgba(13, 148, 136, 0.4); }
 
-        /* Matched to exactly 6px tall like the progress container */
         .slider-track-wrapper {
             position: relative;
             width: 100%;
@@ -201,16 +217,16 @@
             -webkit-appearance: none;
             appearance: none;
             width: 100%;
-            height: 30px; /* High click-target container height, keeps rail at 6px visually */
+            height: 30px; 
             background: transparent;
             outline: none;
             position: absolute;
-            z-index: 5;
+            z-index: 105;
             margin: 0;
             cursor: pointer;
+            touch-action: pan-x !important; /* Explicitly forces slider to only listen to horizontal swipe interactions */
         }
 
-        /* Custom Drag Handle Slider Button Controls */
         .lock-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
@@ -248,9 +264,12 @@
             box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
         }
 
+        /* When system is locked, lock down native scrolling and layout values */
         .keyboard-wrapper.locked {
             overflow-x: hidden !important;
+            overflow-y: hidden !important;
             -webkit-overflow-scrolling: auto;
+            touch-action: none !important;
         }
 
         @media screen and (orientation: landscape) {
@@ -428,7 +447,6 @@
             </div>
         </div>
 
-        <!-- Progress bar container -->
         <div class="loading-zone" id="loadingZone">
             <div class="progress-container">
                 <div class="progress-bar" id="progressBar"></div>
@@ -436,7 +454,6 @@
             <div id="msg" style="color: #d62828;">LOADING...</div>
         </div>
 
-        <!-- Full Range Slide-To-Unlock Control Container (Now Hidden on start, appears when fully loaded) -->
         <div class="slide-lock-container hidden" id="lockInterface">
             <span class="slide-label unlocked" id="slideLabel">Slide right to lock</span>
             <div class="slider-track-wrapper" id="trackWrapper">
@@ -462,6 +479,7 @@
     
     let currentAudioMode = 'bell-vocal'; 
     let isCurrentlyLocked = false;
+    let savedScrollY = 0; // Tracks coordinates to protect viewport position values
 
     const progression = [
         { id: "G3",  solfege: "So 3", display: "G", voiceWav: "So 3.wav",  bellSourceFile: "So 3 Bell.wav",  bellRate: 1.0, type: "white", style: "G3" },
@@ -544,23 +562,24 @@
         document.getElementById(`mode-${mode}`).classList.add('active');
     }
 
-    /* Fixed Scroll Interception Engine - Intercepts scroll inputs *without* changing body position layouts */
+    /* Master Touch Interceptor - blocks ALL drags/swipes across the root view when locked */
     function preventGlobalScroll(e) {
         if (isCurrentlyLocked) {
-            // Allow slider manipulation and inner piano horizontal panning gestures
-            if (e.target.closest('#pianoWrapper') || e.target.closest('#lockInterface')) {
+            // ONLY permit finger touches if interacting directly with the lock slider range element
+            if (e.target.id === 'lockSlider') {
                 return;
             }
-            e.preventDefault();
+            // Block all other scroll, zoom, pan, and bounce activities safely
+            if (e.cancelable) e.preventDefault();
         }
     }
 
-    // Attach passive touch interceptor globally on app initiation
+    // Attach rigid interceptors using non-passive parameters to outrun hardware rendering threads
     window.addEventListener('touchstart', preventGlobalScroll, { passive: false });
     window.addEventListener('touchmove', preventGlobalScroll, { passive: false });
+    window.addEventListener('touchend', preventGlobalScroll, { passive: false });
     window.addEventListener('wheel', preventGlobalScroll, { passive: false });
 
-    /* Slider Action Event Parsers */
     function handleSliderInput(value) {
         if (!isCurrentlyLocked && value > 25) {
             updateLockUI(true);
@@ -580,18 +599,37 @@
 
     function updateLockUI(lockState) {
         isCurrentlyLocked = lockState;
+        
+        const htmlElement = document.documentElement;
+        const bodyElement = document.body;
         const controlsWrapper = document.getElementById('controlsWrapper');
         const pianoWrapper = document.getElementById('pianoWrapper');
         const slideLabel = document.getElementById('slideLabel');
         const trackWrapper = document.getElementById('trackWrapper');
 
         if (lockState) {
+            // Save absolute screen scroll offset coordinates *before* applying lock layout overrides
+            savedScrollY = window.scrollY;
+            
+            // Inject structural viewport constraint configurations
+            htmlElement.classList.add('app-locked');
+            bodyElement.classList.add('app-locked');
+            bodyElement.style.top = `-${savedScrollY}px`; // Anchors visible display precisely where you stood
+
             controlsWrapper.classList.add('locked');
             pianoWrapper.classList.add('locked');
             trackWrapper.classList.add('is-locked');
             slideLabel.innerText = "◄ Slide left to unlock";
             slideLabel.className = "slide-label locked";
         } else {
+            // Remove structural view blocks
+            htmlElement.classList.remove('app-locked');
+            bodyElement.classList.remove('app-locked');
+            bodyElement.style.top = '';
+            
+            // Re-apply absolute spatial positions seamlessly without snapping views
+            window.scrollTo(0, savedScrollY);
+
             controlsWrapper.classList.remove('locked');
             pianoWrapper.classList.remove('locked');
             trackWrapper.classList.remove('is-locked');
@@ -662,7 +700,6 @@
 
         setTimeout(() => {
             loadingZone.classList.add('hidden');
-            // Smoothly display lock bar slider exactly when training space goes live
             lockInterface.classList.remove('hidden');
         }, 900);
     }
@@ -693,7 +730,7 @@
     }
 
     function handleInput(choice) {
-        if (isCurrentlyLocked) return; // Completely guard buttons when lock state registers
+        if (isCurrentlyLocked) return; 
         
         if (audioCtx.state === 'suspended') {
             audioCtx.resume();
