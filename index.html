@@ -61,14 +61,15 @@
 
         .controls-panel-wrapper {
             position: relative;
-            max-width: 850px;
+            max-width: 950px;
             width: 100%;
             margin-bottom: 15px;
         }
 
         .controls-panel {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            /* Strict 2-row configuration: 5 items top, 4 items bottom */
+            grid-template-columns: repeat(10, 1fr);
             gap: 8px;
             background-color: var(--keyboard-bg);
             padding: 8px;
@@ -77,20 +78,29 @@
             width: 100%;
         }
 
-        .controls-panel-wrapper.locked::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(1px);
-            border-radius: 16px;
-            z-index: 10;
-            cursor: not-allowed;
+        /* Force specific items to row 1 vs row 2 */
+        #mode-bell-vocal, #mode-vocal, #mode-both, #mode-bells, #mode-piano {
+            grid-row: 1;
+            grid-column: span 2;
+        }
+        #mode-guitar, #mode-rhodes, #mode-piano-vocal, #mode-organ {
+            grid-row: 2;
+            grid-column: span 2;
+        }
+        /* Offset the second row slightly to balance the 4 items nicely */
+        #mode-guitar {
+            grid-column: 2 / span 2;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 900px) {
+            /* On standard mobile/tablet, wrap into an even 50/50 split grid across 2 rows */
             .controls-panel {
                 grid-template-columns: repeat(2, 1fr);
+            }
+            #mode-bell-vocal, #mode-vocal, #mode-both, #mode-bells, #mode-piano,
+            #mode-guitar, #mode-rhodes, #mode-piano-vocal, #mode-organ {
+                grid-row: auto;
+                grid-column: auto;
             }
         }
 
@@ -98,13 +108,16 @@
             background: transparent;
             border: none;
             color: var(--text-sub);
-            padding: 12px 16px;
-            font-size: 0.9rem;
+            padding: 12px 10px;
+            font-size: 0.85rem;
             font-weight: 700;
             border-radius: 10px;
             cursor: pointer;
             transition: all 0.2s ease;
             text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .mode-btn.active {
@@ -487,6 +500,11 @@
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     const audioCtx = new AudioContext();
     
+    // Dedicated Gain Node to balance the vocal track volume perfectly with other tools
+    const solfegeGainNode = audioCtx.createGain();
+    solfegeGainNode.gain.setValueAtTime(0.45, audioCtx.currentTime); 
+    solfegeGainNode.connect(audioCtx.destination);
+
     let currentAudioMode = 'bell-vocal'; 
     let isCurrentlyLocked = false;
     let savedScrollY = 0;
@@ -774,6 +792,15 @@
         source.start(0);
     }
 
+    function playVocalBufferBalanced(buffer, delayTime = 0) {
+        if(!buffer) return;
+        const source = audioCtx.createBufferSource();
+        source.buffer = buffer;
+        // Connect directly to our specialized balanced volume gain node instead of raw output
+        source.connect(solfegeGainNode);
+        source.start(audioCtx.currentTime + delayTime);
+    }
+
     function executeAudioPlay(choice) {
         if (audioCtx.state === 'suspended') {
             audioCtx.resume();
@@ -804,20 +831,15 @@
                     sourceBell.connect(audioCtx.destination);
                     sourceBell.start(now);
                     
-                    if (voiceBuffers[choice]) {
-                        const sourceVoice = audioCtx.createBufferSource();
-                        sourceVoice.buffer = voiceBuffers[choice];
-                        sourceVoice.connect(audioCtx.destination);
-                        sourceVoice.start(now + 0.8); // Quicker delay timing
-                    }
+                    playVocalBufferBalanced(voiceBuffers[choice], 0.8);
                 }
                 break;
             case 'vocal':
-                playNativeBuffer(voiceBuffers[choice]);
+                playVocalBufferBalanced(voiceBuffers[choice], 0);
                 break;
             case 'both':
                 playNativeBuffer(bellBuffers[choice]);
-                playNativeBuffer(voiceBuffers[choice]);
+                playVocalBufferBalanced(voiceBuffers[choice], 0);
                 break;
             case 'bells':
                 playNativeBuffer(bellBuffers[choice]);
@@ -832,12 +854,7 @@
                     sourcePiano.connect(audioCtx.destination);
                     sourcePiano.start(now);
                     
-                    if (voiceBuffers[choice]) {
-                        const sourceVoice = audioCtx.createBufferSource();
-                        sourceVoice.buffer = voiceBuffers[choice];
-                        sourceVoice.connect(audioCtx.destination);
-                        sourceVoice.start(now + 0.8); // Quicker delay timing
-                    }
+                    playVocalBufferBalanced(voiceBuffers[choice], 0.8);
                 }
                 break;
             default:
@@ -850,3 +867,4 @@
 </script>
 </body>
 </html>
+
