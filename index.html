@@ -487,7 +487,6 @@
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     const audioCtx = new AudioContext();
     
-    // Gain Node to keep solfege levels balanced with standard instrumentation
     const solfegeGainNode = audioCtx.createGain();
     solfegeGainNode.gain.setValueAtTime(0.45, audioCtx.currentTime); 
     solfegeGainNode.connect(audioCtx.destination);
@@ -586,6 +585,10 @@
     function blockViewportGestures(e) {
         if (isCurrentlyLocked) {
             if (e.target.id === 'lockSlider') return;
+            
+            // Check if the gesture targets anything inside the piano wrapper
+            if (e.target.closest('#pianoWrapper')) return;
+
             if (e.cancelable) e.preventDefault();
         }
     }
@@ -738,12 +741,13 @@
     }
 
     function handleInput(choice) {
-        if (isCurrentlyLocked && event && event.target.id !== 'lockSlider') {
+        if (isCurrentlyLocked && window.event && window.event.target.id !== 'lockSlider') {
+            const currentEvent = window.event;
             const targetShield = document.getElementById('lockShield');
             
-            if (event.changedTouches && event.changedTouches.length > 0) {
-                const touchX = event.changedTouches[0].clientX;
-                const touchY = event.changedTouches[0].clientY;
+            if (currentEvent.changedTouches && currentEvent.changedTouches.length > 0) {
+                const touchX = currentEvent.changedTouches[0].clientX;
+                const touchY = currentEvent.changedTouches[0].clientY;
                 
                 targetShield.style.pointerEvents = 'none';
                 const lowerElement = document.elementFromPoint(touchX, touchY);
@@ -754,9 +758,9 @@
                     const parsedId = closestBtn.id.replace('btn-', '');
                     executeAudioPlay(parsedId);
                 }
-            } else if (event.clientX && event.clientY) {
+            } else if (currentEvent.clientX && currentEvent.clientY) {
                 targetShield.style.pointerEvents = 'none';
-                const lowerElement = document.elementFromPoint(event.clientX, event.clientY);
+                const lowerElement = document.elementFromPoint(currentEvent.clientX, currentEvent.clientY);
                 targetShield.style.pointerEvents = 'auto';
 
                 const closestBtn = lowerElement ? lowerElement.closest('.bell-btn') : null;
