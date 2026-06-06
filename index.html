@@ -1,3 +1,4 @@
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -448,7 +449,7 @@
                 <button class="mode-btn" id="mode-vocal" onclick="setAudioMode('vocal')">Solfège</button>
                 <button class="mode-btn" id="mode-both" onclick="setAudioMode('both')">Solfège/Bells</button>
                 <button class="mode-btn" id="mode-bells" onclick="setAudioMode('bells')">Bells</button>
-                <button class="mode-btn" id="mode-piano" onclick="setAudioMode('piano')">Grand Piano</button>
+                <button class="mode-btn" id="mode-piano" onclick="setAudioMode('piano')">Ravensoft 275</button>
                 <button class="mode-btn" id="mode-guitar" onclick="setAudioMode('guitar')">Guitar</button>
                 <button class="mode-btn" id="mode-rhodes" onclick="setAudioMode('rhodes')">Rhodes</button>
                 <button class="mode-btn" id="mode-strings" onclick="setAudioMode('strings')">Synth Strings</button>
@@ -522,13 +523,21 @@
     
     let voiceBuffers = {}; 
     let bellBuffers = {};
+    let pianoBuffers = {};
     let samplers = {};
 
+    // Explicit Mapping for the imported Ravensoft 275 local assets
+    const pianoWavFiles = {
+        "G3": "So 3 Piano.wav", "Ab3": "Si 3 Piano.wav", "A3": "La 3 Piano.wav", "Bb3": "Te 3 Piano.wav", "B3": "Ti 3 Piano.wav",
+        "C4": "Do 4 Piano.wav", "Db4": "Di 4 Piano.wav", "D4": "Re 4 Piano.wav", "Eb4": "Me 4 Piano.wav", "E4": "Mi 4 Piano.wav",
+        "F4": "Fa 4 Piano.wav", "Gb4": "Fi 4 Piano.wav", "G4": "So 4 Piano.wav", "Ab4": "Si 4 Piano.wav", "A4": "La 4 Piano.wav",
+        "Bb4": "Te 4 Piano.wav", "B4": "Ti 4 Piano.wav", "C5": "Do 5 Piano.wav", "Db5": "Di 5 Piano.wav", "D5": "Re 5 Piano.wav",
+        "Eb5": "Me 5 Piano.wav", "E5": "Mi 5 Piano.wav", "F5": "Fa 5 Piano.wav", "Gb5": "Fi 5 Piano.wav", "G5": "So 5 Piano.wav"
+    };
+
     const sampleGeneralCDN = "https://gleitz.github.io/midi-js-soundfonts/FluidR3_GM/";
-    const salamanderPianoCDN = "https://tonejs.github.io/audio/salamander/";
 
     const instrumentConfigs = {
-        piano: { baseUrl: salamanderPianoCDN, anchor: "C4" },
         guitar: { baseUrl: `${sampleGeneralCDN}acoustic_guitar_nylon-mp3/`, anchor: "C4" },
         rhodes: { baseUrl: `${sampleGeneralCDN}electric_piano_1-mp3/`, anchor: "C4" },
         strings: { baseUrl: `${sampleGeneralCDN}synth_strings_1-mp3/`, anchor: "C4" },
@@ -611,7 +620,6 @@
         const lockShield = document.getElementById('lockShield');
 
         if (lockState) {
-            // Track exactly where the user is looking right now instead of forcing a snap back to 0,0
             savedScrollY = window.scrollY;
             
             lockShield.classList.add('active');
@@ -657,6 +665,13 @@
                         cache[note.bellSourceFile] = await fetchAudioBuffer(note.bellSourceFile);
                     }
                     bellBuffers[note.id] = cache[note.bellSourceFile];
+                }
+            } catch (e) { console.error(e); }
+
+            // Load Ravensoft 275 local piano wav files directly into custom audio context buffers
+            try {
+                if(pianoWavFiles[note.id]) {
+                    pianoBuffers[note.id] = await fetchAudioBuffer(pianoWavFiles[note.id]);
                 }
             } catch (e) { console.error(e); }
             
@@ -725,7 +740,6 @@
         if (isCurrentlyLocked && event && event.target.id !== 'lockSlider') {
             const targetShield = document.getElementById('lockShield');
             
-            // Adjust calculation logic to include page context variables natively
             if (event.changedTouches && event.changedTouches.length > 0) {
                 const touchX = event.changedTouches[0].clientX;
                 const touchY = event.changedTouches[0].clientY;
@@ -756,6 +770,14 @@
         executeAudioPlay(choice);
     }
 
+    function playNativeBuffer(buffer) {
+        if(!buffer) return;
+        const source = audioCtx.createBufferSource();
+        source.buffer = buffer;
+        source.connect(audioCtx.destination);
+        source.start(0);
+    }
+
     function executeAudioPlay(choice) {
         if (audioCtx.state === 'suspended') {
             audioCtx.resume();
@@ -778,53 +800,45 @@
             }
         }
 
-        if (['piano', 'guitar', 'rhodes', 'strings', 'organ'].includes(currentAudioMode)) {
-            if (samplers[currentAudioMode]) {
-                samplers[currentAudioMode].triggerAttackRelease(playbackNote, "1.5");
-            }
-            return;
-        }
-
-        if (currentAudioMode === 'bell-vocal' && matchingNote) {
-            if (bellBuffers[choice]) {
-                const bellSource = audioCtx.createBufferSource();
-                bellSource.buffer = bellBuffers[choice];
-                bellSource.playbackRate.value = matchingNote.bellRate;
-                bellSource.connect(audioCtx.destination);
-                bellSource.start(now);
-            }
-            
-            if (voiceBuffers[choice]) {
-                const voiceSource = audioCtx.createBufferSource();
-                voiceSource.buffer = voiceBuffers[choice];
-                voiceSource.connect(audioCtx.destination);
-                voiceSource.start(now + 0.5);
-            }
-            return;
-        }
-
-        if ((currentAudioMode === 'both' || currentAudioMode === 'bells') && bellBuffers[choice] && matchingNote) {
-            const bellSource = audioCtx.createBufferSource();
-            bellSource.buffer = bellBuffers[choice];
-            bellSource.playbackRate.value = matchingNote.bellRate;
-            bellSource.connect(audioCtx.destination);
-            bellSource.start(now);
-        }
-
-        if ((currentAudioMode === 'both' || currentAudioMode === 'vocal') && voiceBuffers[choice]) {
-            const voiceSource = audioCtx.createBufferSource();
-            voiceSource.buffer = voiceBuffers[choice];
-            voiceSource.connect(audioCtx.destination);
-            voiceSource.start(now);
+        // Modified execution router evaluating mode selection explicitly
+        switch (currentAudioMode) {
+            case 'bell-vocal':
+                if (bellBuffers[choice]) {
+                    const sourceBell = audioCtx.createBufferSource();
+                    sourceBell.buffer = bellBuffers[choice];
+                    sourceBell.connect(audioCtx.destination);
+                    sourceBell.start(now);
+                    
+                    if (voiceBuffers[choice]) {
+                        const sourceVoice = audioCtx.createBufferSource();
+                        sourceVoice.buffer = voiceBuffers[choice];
+                        sourceVoice.connect(audioCtx.destination);
+                        // Starts playing voice sequence 1.6 seconds after the pure initial tone stimulus
+                        sourceVoice.start(now + 1.6);
+                    }
+                }
+                break;
+            case 'vocal':
+                playNativeBuffer(voiceBuffers[choice]);
+                break;
+            case 'both':
+                playNativeBuffer(bellBuffers[choice]);
+                playNativeBuffer(voiceBuffers[choice]);
+                break;
+            case 'bells':
+                playNativeBuffer(bellBuffers[choice]);
+                break;
+            case 'piano':
+                // Directly triggers the localized exact sample mappings for Ravensoft 275
+                playNativeBuffer(pianoBuffers[choice]);
+                break;
+            default:
+                if (samplers[currentAudioMode]) {
+                    samplers[currentAudioMode].triggerAttackRelease(playbackNote, "1n");
+                }
+                break;
         }
     }
-
-    document.getElementById('lockShield').addEventListener('touchstart', function(e) {
-        if (isCurrentlyLocked) {
-            if (e.cancelable) e.preventDefault();
-            handleInput(null);
-        }
-    }, { passive: false });
 </script>
 </body>
 </html>
