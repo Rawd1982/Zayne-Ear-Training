@@ -449,7 +449,7 @@
                 <button class="mode-btn" id="mode-vocal" onclick="setAudioMode('vocal')">Solfège</button>
                 <button class="mode-btn" id="mode-both" onclick="setAudioMode('both')">Solfège/Bells</button>
                 <button class="mode-btn" id="mode-bells" onclick="setAudioMode('bells')">Bells</button>
-                <button class="mode-btn" id="mode-piano" onclick="setAudioMode('piano')">Ravensoft 275</button>
+                <button class="mode-btn" id="mode-piano" onclick="setAudioMode('piano')">Ravenscroft 275</button>
                 <button class="mode-btn" id="mode-guitar" onclick="setAudioMode('guitar')">Guitar</button>
                 <button class="mode-btn" id="mode-rhodes" onclick="setAudioMode('rhodes')">Rhodes</button>
                 <button class="mode-btn" id="mode-strings" onclick="setAudioMode('strings')">Synth Strings</button>
@@ -523,11 +523,11 @@
     
     let voiceBuffers = {}; 
     let bellBuffers = {};
-    let pianoBuffers = {};
+    let ravenscroftBuffers = {};
     let samplers = {};
 
-    // Explicit Mapping for the imported Ravensoft 275 local assets
-    const pianoWavFiles = {
+    // Explicit Local Workspace Asset Mapping for Ravenscroft 275 (.wav structure expected)
+    const ravenscroftWavFiles = {
         "G3": "So 3 Piano.wav", "Ab3": "Si 3 Piano.wav", "A3": "La 3 Piano.wav", "Bb3": "Te 3 Piano.wav", "B3": "Ti 3 Piano.wav",
         "C4": "Do 4 Piano.wav", "Db4": "Di 4 Piano.wav", "D4": "Re 4 Piano.wav", "Eb4": "Me 4 Piano.wav", "E4": "Mi 4 Piano.wav",
         "F4": "Fa 4 Piano.wav", "Gb4": "Fi 4 Piano.wav", "G4": "So 4 Piano.wav", "Ab4": "Si 4 Piano.wav", "A4": "La 4 Piano.wav",
@@ -668,10 +668,10 @@
                 }
             } catch (e) { console.error(e); }
 
-            // Load Ravensoft 275 local piano wav files directly into custom audio context buffers
+            // Load Ravenscroft 275 local piano wav files directly into custom audio context buffers
             try {
-                if(pianoWavFiles[note.id]) {
-                    pianoBuffers[note.id] = await fetchAudioBuffer(pianoWavFiles[note.id]);
+                if(ravenscroftWavFiles[note.id]) {
+                    ravenscroftBuffers[note.id] = await fetchAudioBuffer(ravenscroftWavFiles[note.id]);
                 }
             } catch (e) { console.error(e); }
             
@@ -800,7 +800,6 @@
             }
         }
 
-        // Modified execution router evaluating mode selection explicitly
         switch (currentAudioMode) {
             case 'bell-vocal':
                 if (bellBuffers[choice]) {
@@ -813,7 +812,6 @@
                         const sourceVoice = audioCtx.createBufferSource();
                         sourceVoice.buffer = voiceBuffers[choice];
                         sourceVoice.connect(audioCtx.destination);
-                        // Starts playing voice sequence 1.6 seconds after the pure initial tone stimulus
                         sourceVoice.start(now + 1.6);
                     }
                 }
@@ -829,8 +827,8 @@
                 playNativeBuffer(bellBuffers[choice]);
                 break;
             case 'piano':
-                // Directly triggers the localized exact sample mappings for Ravensoft 275
-                playNativeBuffer(pianoBuffers[choice]);
+                // Triggers the localized sample mappings for Ravenscroft 275
+                playNativeBuffer(ravenscroftBuffers[choice]);
                 break;
             default:
                 if (samplers[currentAudioMode]) {
