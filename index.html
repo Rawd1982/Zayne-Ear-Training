@@ -31,6 +31,15 @@
             padding: 20px;
         }
 
+        /* Lock structural page layout from scrolling */
+        body.page-locked {
+            position: fixed !important;
+            overflow: hidden !important;
+            width: 100% !important;
+            height: 100% !important;
+            touch-action: none !important;
+        }
+
         .container { width: 100%; max-width: 1200px; display: flex; flex-direction: column; align-items: center; }
 
         h1 { 
@@ -242,23 +251,6 @@
         }
         .lock-slider::-moz-range-thumb:active { background: #e2e8f0; cursor: grabbing; }
 
-        /* Full Screen Invisible Shield Layer */
-        .lock-shield {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: transparent;
-            z-index: 900;
-            display: none;
-            touch-action: none !important;
-        }
-
-        .lock-shield.active {
-            display: block;
-        }
-
         .keyboard-wrapper {
             background-color: var(--keyboard-bg);
             padding: 30px 20px;
@@ -274,10 +266,12 @@
             position: relative;
         }
 
+        /* Prevent scrolling of keys while locked */
         .keyboard-wrapper.locked {
             overflow-x: hidden !important;
             overflow-y: hidden !important;
             -webkit-overflow-scrolling: auto;
+            touch-action: manipulation !important;
         }
 
         @media screen and (orientation: landscape) {
@@ -291,6 +285,7 @@
         .keyboard-wrapper::-webkit-scrollbar { height: 10px; }
         .keyboard-wrapper::-webkit-scrollbar-track { background: #0b0f19; border-radius: 10px; }
         .keyboard-wrapper::-webkit-scrollbar-thumb { background: #d62828; border-radius: 10px; }
+        .keyboard-wrapper.locked::-webkit-scrollbar { display: none; height: 0; }
 
         .piano-grid {
             position: relative;
@@ -332,6 +327,8 @@
             transition: filter 0.2s, transform 0.05s, box-shadow 0.05s, background 0.1s;
             pointer-events: auto;
             padding-bottom: 15px;
+            user-select: none;
+            -webkit-user-select: none;
         }
         
         .naturals-layer .bell-btn {
@@ -381,6 +378,7 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
             border: 1px solid rgba(255, 255, 255, 0.15);
             margin: 0 auto;
+            pointer-events: none;
         }
 
         .naturals-layer .color-badge { font-size: 0.95rem; }
@@ -432,7 +430,6 @@
     </style>
 </head>
 <body>
-<div class="lock-shield" id="lockShield"></div>
 
 <div class="container">
     <h1>
@@ -493,7 +490,6 @@
 
     let currentAudioMode = 'bell-vocal'; 
     let isCurrentlyLocked = false;
-    let savedScrollY = 0;
 
     const progression = [
         { id: "G3",  solfege: "So 3", display: "G", voiceWav: "So 3.wav",  bellSourceFile: "So 3 Bell.wav",  bellRate: 1.0, type: "white", style: "G3" },
@@ -582,13 +578,21 @@
         document.getElementById(`mode-${mode}`).classList.add('active');
     }
 
+    // Intercept zoom gestures, context selections, and structural viewport panning
     function blockViewportGestures(e) {
         if (isCurrentlyLocked) {
+            // Let slider track manipulate values freely
             if (e.target.id === 'lockSlider') return;
             
-            // Check if the gesture targets anything inside the piano wrapper
-            if (e.target.closest('#pianoWrapper')) return;
+            // Allow clicking/tapping directly inside piano, but kill overall swipe translation actions
+            if (e.target.closest('#pianoWrapper')) {
+                if (e.type === 'touchmove') {
+                    if (e.cancelable) e.preventDefault();
+                }
+                return;
+            }
 
+            // Universal block for outside elements
             if (e.cancelable) e.preventDefault();
         }
     }
@@ -622,19 +626,16 @@
         const pianoWrapper = document.getElementById('pianoWrapper');
         const slideLabel = document.getElementById('slideLabel');
         const trackWrapper = document.getElementById('trackWrapper');
-        const lockShield = document.getElementById('lockShield');
 
         if (lockState) {
-            savedScrollY = window.scrollY;
-            
-            lockShield.classList.add('active');
+            document.body.classList.add('page-locked');
             controlsWrapper.classList.add('locked');
             pianoWrapper.classList.add('locked');
             trackWrapper.classList.add('is-locked');
             slideLabel.innerText = "◄ Slide left to unlock";
             slideLabel.className = "slide-label locked";
         } else {
-            lockShield.classList.remove('active');
+            document.body.classList.remove('page-locked');
             controlsWrapper.classList.remove('locked');
             pianoWrapper.classList.remove('locked');
             trackWrapper.classList.remove('is-locked');
@@ -741,37 +742,6 @@
     }
 
     function handleInput(choice) {
-        if (isCurrentlyLocked && window.event && window.event.target.id !== 'lockSlider') {
-            const currentEvent = window.event;
-            const targetShield = document.getElementById('lockShield');
-            
-            if (currentEvent.changedTouches && currentEvent.changedTouches.length > 0) {
-                const touchX = currentEvent.changedTouches[0].clientX;
-                const touchY = currentEvent.changedTouches[0].clientY;
-                
-                targetShield.style.pointerEvents = 'none';
-                const lowerElement = document.elementFromPoint(touchX, touchY);
-                targetShield.style.pointerEvents = 'auto';
-
-                const closestBtn = lowerElement ? lowerElement.closest('.bell-btn') : null;
-                if (closestBtn) {
-                    const parsedId = closestBtn.id.replace('btn-', '');
-                    executeAudioPlay(parsedId);
-                }
-            } else if (currentEvent.clientX && currentEvent.clientY) {
-                targetShield.style.pointerEvents = 'none';
-                const lowerElement = document.elementFromPoint(currentEvent.clientX, currentEvent.clientY);
-                targetShield.style.pointerEvents = 'auto';
-
-                const closestBtn = lowerElement ? lowerElement.closest('.bell-btn') : null;
-                if (closestBtn) {
-                    const parsedId = closestBtn.id.replace('btn-', '');
-                    executeAudioPlay(parsedId);
-                }
-            }
-            return;
-        }
-
         executeAudioPlay(choice);
     }
 
