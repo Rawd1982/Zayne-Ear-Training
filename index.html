@@ -808,7 +808,7 @@
                         const sourceVoice = audioCtx.createBufferSource();
                         sourceVoice.buffer = voiceBuffers[choice];
                         sourceVoice.connect(audioCtx.destination);
-                        sourceVoice.start(now + 1.6);
+                        sourceVoice.start(now + 0.8); // Quicker delay timing
                     }
                 }
                 break;
@@ -836,7 +836,7 @@
                         const sourceVoice = audioCtx.createBufferSource();
                         sourceVoice.buffer = voiceBuffers[choice];
                         sourceVoice.connect(audioCtx.destination);
-                        sourceVoice.start(now + 1.6);
+                        sourceVoice.start(now + 0.8); // Quicker delay timing
                     }
                 }
                 break;
