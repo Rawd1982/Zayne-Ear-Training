@@ -31,15 +31,6 @@
             padding: 20px;
         }
 
-        /* Lock structural page layout from scrolling */
-        body.page-locked {
-            position: fixed !important;
-            overflow: hidden !important;
-            width: 100% !important;
-            height: 100% !important;
-            touch-action: none !important;
-        }
-
         .container { width: 100%; max-width: 1200px; display: flex; flex-direction: column; align-items: center; }
 
         h1 { 
@@ -490,6 +481,7 @@
 
     let currentAudioMode = 'bell-vocal'; 
     let isCurrentlyLocked = false;
+    let lockedScrollTop = 0;
 
     const progression = [
         { id: "G3",  solfege: "So 3", display: "G", voiceWav: "So 3.wav",  bellSourceFile: "So 3 Bell.wav",  bellRate: 1.0, type: "white", style: "G3" },
@@ -578,13 +570,11 @@
         document.getElementById(`mode-${mode}`).classList.add('active');
     }
 
-    // Intercept zoom gestures, context selections, and structural viewport panning
+    // Dynamic gesture barrier that holds scroll position exactly in place without snapping layout coordinates
     function blockViewportGestures(e) {
         if (isCurrentlyLocked) {
-            // Let slider track manipulate values freely
             if (e.target.id === 'lockSlider') return;
             
-            // Allow clicking/tapping directly inside piano, but kill overall swipe translation actions
             if (e.target.closest('#pianoWrapper')) {
                 if (e.type === 'touchmove') {
                     if (e.cancelable) e.preventDefault();
@@ -592,8 +582,8 @@
                 return;
             }
 
-            // Universal block for outside elements
             if (e.cancelable) e.preventDefault();
+            window.scrollTo(0, lockedScrollTop);
         }
     }
 
@@ -601,6 +591,12 @@
     window.addEventListener('touchmove', blockViewportGestures, { passive: false });
     window.addEventListener('touchend', blockViewportGestures, { passive: false });
     window.addEventListener('wheel', blockViewportGestures, { passive: false });
+    
+    window.addEventListener('scroll', () => {
+        if (isCurrentlyLocked) {
+            window.scrollTo(0, lockedScrollTop);
+        }
+    });
 
     function handleSliderInput(value) {
         if (!isCurrentlyLocked && value > 25) {
@@ -628,14 +624,13 @@
         const trackWrapper = document.getElementById('trackWrapper');
 
         if (lockState) {
-            document.body.classList.add('page-locked');
+            lockedScrollTop = window.pageYOffset || document.documentElement.scrollTop;
             controlsWrapper.classList.add('locked');
             pianoWrapper.classList.add('locked');
             trackWrapper.classList.add('is-locked');
             slideLabel.innerText = "◄ Slide left to unlock";
             slideLabel.className = "slide-label locked";
         } else {
-            document.body.classList.remove('page-locked');
             controlsWrapper.classList.remove('locked');
             pianoWrapper.classList.remove('locked');
             trackWrapper.classList.remove('is-locked');
@@ -659,31 +654,33 @@
         
         const totalNotes = progression.length;
         let loadedNotesCount = 0;
-        
-        let cache = {};
-        for (let note of progression) {
-            try {
-                if(note.voiceWav) voiceBuffers[note.id] = await fetchAudioBuffer(note.voiceWav);
-            } catch (e) { console.error(e); }
-            try {
-                if(note.bellSourceFile) {
-                    if (!cache[note.bellSourceFile]) {
-                        cache[note.bellSourceFile] = await fetchAudioBuffer(note.bellSourceFile);
-                    }
-                    bellBuffers[note.id] = cache[note.bellSourceFile];
-                }
-            } catch (e) { console.error(e); }
+        let bellCache = {};
 
+        // Parallel batch architecture optimized for fast multi-stream loading
+        const loadPromises = progression.map(async (note) => {
             try {
-                if(ravenscroftWavFiles[note.id]) {
+                if (note.voiceWav) {
+                    voiceBuffers[note.id] = await fetchAudioBuffer(note.voiceWav);
+                }
+                if (note.bellSourceFile) {
+                    if (!bellCache[note.bellSourceFile]) {
+                        bellCache[note.bellSourceFile] = await fetchAudioBuffer(note.bellSourceFile);
+                    }
+                    bellBuffers[note.id] = bellCache[note.bellSourceFile];
+                }
+                if (ravenscroftWavFiles[note.id]) {
                     ravenscroftBuffers[note.id] = await fetchAudioBuffer(ravenscroftWavFiles[note.id]);
                 }
-            } catch (e) { console.error(e); }
-            
-            loadedNotesCount++;
-            let percent = Math.floor((loadedNotesCount / totalNotes) * 85);
-            progressBar.style.width = `${percent}%`;
-        }
+            } catch (e) {
+                console.error(`Error processing asset dependencies for note context: ${note.id}`, e);
+            } finally {
+                loadedNotesCount++;
+                let percent = Math.floor((loadedNotesCount / totalNotes) * 85);
+                progressBar.style.width = `${percent}%`;
+            }
+        });
+
+        await Promise.all(loadPromises);
 
         progressBar.style.backgroundColor = "#f9cd13";
         progressBar.style.width = "92%";
@@ -691,19 +688,21 @@
         statusMsg.innerText = "SET!";
 
         const keys = Object.keys(instrumentConfigs);
-        for(let key of keys) {
+        const samplerPromises = keys.map((key) => {
             const config = instrumentConfigs[key];
             let urls = {};
             urls[config.anchor] = `${config.anchor}.mp3`;
 
-            await new Promise((resolve) => {
+            return new Promise((resolve) => {
                 samplers[key] = new Tone.Sampler({
                     urls: urls,
                     baseUrl: config.baseUrl,
                     onload: () => resolve()
                 }).toDestination();
             });
-        }
+        });
+
+        await Promise.all(samplerPromises);
 
         progressBar.style.width = "100%";
         progressBar.style.backgroundColor = "#90be6d";
@@ -713,7 +712,7 @@
         setTimeout(() => {
             loadingZone.classList.add('hidden');
             lockInterface.classList.remove('hidden');
-        }, 900);
+        }, 600);
     }
     loadAllSounds();
 
@@ -827,3 +826,4 @@
 </script>
 </body>
 </html>
+
