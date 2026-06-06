@@ -452,7 +452,7 @@
                 <button class="mode-btn" id="mode-piano" onclick="setAudioMode('piano')">Ravenscroft 275</button>
                 <button class="mode-btn" id="mode-guitar" onclick="setAudioMode('guitar')">Guitar</button>
                 <button class="mode-btn" id="mode-rhodes" onclick="setAudioMode('rhodes')">Rhodes</button>
-                <button class="mode-btn" id="mode-strings" onclick="setAudioMode('strings')">Synth Strings</button>
+                <button class="mode-btn" id="mode-piano-vocal" onclick="setAudioMode('piano-vocal')">Ravenscroft then Solfège</button>
                 <button class="mode-btn" id="mode-organ" onclick="setAudioMode('organ')">Rock Organ</button>
             </div>
         </div>
@@ -526,7 +526,6 @@
     let ravenscroftBuffers = {};
     let samplers = {};
 
-    // Explicit Local Workspace Asset Mapping for Ravenscroft 275 (.wav structure expected)
     const ravenscroftWavFiles = {
         "G3": "So 3 Piano.wav", "Ab3": "Si 3 Piano.wav", "A3": "La 3 Piano.wav", "Bb3": "Te 3 Piano.wav", "B3": "Ti 3 Piano.wav",
         "C4": "Do 4 Piano.wav", "Db4": "Di 4 Piano.wav", "D4": "Re 4 Piano.wav", "Eb4": "Me 4 Piano.wav", "E4": "Mi 4 Piano.wav",
@@ -540,7 +539,6 @@
     const instrumentConfigs = {
         guitar: { baseUrl: `${sampleGeneralCDN}acoustic_guitar_nylon-mp3/`, anchor: "C4" },
         rhodes: { baseUrl: `${sampleGeneralCDN}electric_piano_1-mp3/`, anchor: "C4" },
-        strings: { baseUrl: `${sampleGeneralCDN}synth_strings_1-mp3/`, anchor: "C4" },
         organ: { baseUrl: `${sampleGeneralCDN}rock_organ-mp3/`, anchor: "C4" }
     };
 
@@ -580,7 +578,6 @@
         document.getElementById(`mode-${mode}`).classList.add('active');
     }
 
-    /* Master Touch Interceptor */
     function blockViewportGestures(e) {
         if (isCurrentlyLocked) {
             if (e.target.id === 'lockSlider') return;
@@ -668,7 +665,6 @@
                 }
             } catch (e) { console.error(e); }
 
-            // Load Ravenscroft 275 local piano wav files directly into custom audio context buffers
             try {
                 if(ravenscroftWavFiles[note.id]) {
                     ravenscroftBuffers[note.id] = await fetchAudioBuffer(ravenscroftWavFiles[note.id]);
@@ -827,8 +823,22 @@
                 playNativeBuffer(bellBuffers[choice]);
                 break;
             case 'piano':
-                // Triggers the localized sample mappings for Ravenscroft 275
                 playNativeBuffer(ravenscroftBuffers[choice]);
+                break;
+            case 'piano-vocal':
+                if (ravenscroftBuffers[choice]) {
+                    const sourcePiano = audioCtx.createBufferSource();
+                    sourcePiano.buffer = ravenscroftBuffers[choice];
+                    sourcePiano.connect(audioCtx.destination);
+                    sourcePiano.start(now);
+                    
+                    if (voiceBuffers[choice]) {
+                        const sourceVoice = audioCtx.createBufferSource();
+                        sourceVoice.buffer = voiceBuffers[choice];
+                        sourceVoice.connect(audioCtx.destination);
+                        sourceVoice.start(now + 1.6);
+                    }
+                }
                 break;
             default:
                 if (samplers[currentAudioMode]) {
@@ -840,5 +850,3 @@
 </script>
 </body>
 </html>
-
-
