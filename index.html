@@ -68,8 +68,8 @@
 
         .controls-panel {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
             background-color: var(--keyboard-bg);
             padding: 8px;
             border-radius: 16px;
@@ -98,13 +98,17 @@
             background: transparent;
             border: none;
             color: var(--text-sub);
-            padding: 12px 16px;
-            font-size: 0.9rem;
+            padding: 10px 8px;
+            font-size: 0.8rem;
             font-weight: 700;
             border-radius: 10px;
             cursor: pointer;
             transition: all 0.2s ease;
             text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.2;
         }
 
         .mode-btn.active {
@@ -438,6 +442,7 @@
                 <button class="mode-btn" id="mode-both" onclick="setAudioMode('both')">Solfège/Bells</button>
                 <button class="mode-btn" id="mode-bells" onclick="setAudioMode('bells')">Bells</button>
                 <button class="mode-btn" id="mode-piano" onclick="setAudioMode('piano')">Ravenscroft 275</button>
+                <button class="mode-btn" id="mode-piano-bells" onclick="setAudioMode('piano-bells')">Ravenscroft & Bells</button>
                 <button class="mode-btn" id="mode-guitar" onclick="setAudioMode('guitar')">Guitar</button>
                 <button class="mode-btn" id="mode-rhodes" onclick="setAudioMode('rhodes')">Rhodes</button>
                 <button class="mode-btn" id="mode-piano-vocal" onclick="setAudioMode('piano-vocal')">Ravenscroft then Solfège</button>
@@ -570,7 +575,6 @@
         document.getElementById(`mode-${mode}`).classList.add('active');
     }
 
-    // Dynamic gesture barrier that holds scroll position exactly in place without snapping layout coordinates
     function blockViewportGestures(e) {
         if (isCurrentlyLocked) {
             if (e.target.id === 'lockSlider') return;
@@ -656,7 +660,6 @@
         let loadedNotesCount = 0;
         let bellCache = {};
 
-        // Parallel batch architecture optimized for fast multi-stream loading
         const loadPromises = progression.map(async (note) => {
             try {
                 if (note.voiceWav) {
@@ -776,22 +779,17 @@
         let playbackNote = choice;
         if(playbackNote.includes('b')) {
             const flatToSharpMap = { "Db": "C#", "Eb": "D#", "Gb": "F#", "Ab": "G#", "Bb": "A#" };
-            let noteParts = playbackNote.match(/^([A-Za-z]+)(\d+)$/);
-            if(noteParts && flatToSharpMap[noteParts[1]]) {
-                playbackNote = flatToSharpMap[noteParts[1]] + noteParts[2];
+            const root = playbackNote.substring(0, 2);
+            const oct = playbackNote.substring(2);
+            if(flatToSharpMap[root]) {
+                playbackNote = flatToSharpMap[root] + oct;
             }
         }
 
         switch (currentAudioMode) {
             case 'bell-vocal':
-                if (bellBuffers[choice]) {
-                    const sourceBell = audioCtx.createBufferSource();
-                    sourceBell.buffer = bellBuffers[choice];
-                    sourceBell.connect(audioCtx.destination);
-                    sourceBell.start(now);
-                    
-                    playVocalBufferBalanced(voiceBuffers[choice], 0.8);
-                }
+                playNativeBuffer(bellBuffers[choice]);
+                playVocalBufferBalanced(voiceBuffers[choice], 1.1);
                 break;
             case 'vocal':
                 playVocalBufferBalanced(voiceBuffers[choice], 0);
@@ -806,20 +804,22 @@
             case 'piano':
                 playNativeBuffer(ravenscroftBuffers[choice]);
                 break;
-            case 'piano-vocal':
-                if (ravenscroftBuffers[choice]) {
-                    const sourcePiano = audioCtx.createBufferSource();
-                    sourcePiano.buffer = ravenscroftBuffers[choice];
-                    sourcePiano.connect(audioCtx.destination);
-                    sourcePiano.start(now);
-                    
-                    playVocalBufferBalanced(voiceBuffers[choice], 0.8);
-                }
+            case 'piano-bells':
+                playNativeBuffer(ravenscroftBuffers[choice]);
+                playNativeBuffer(bellBuffers[choice]);
                 break;
-            default:
-                if (samplers[currentAudioMode]) {
-                    samplers[currentAudioMode].triggerAttackRelease(playbackNote, "1n");
-                }
+            case 'piano-vocal':
+                playNativeBuffer(ravenscroftBuffers[choice]);
+                playVocalBufferBalanced(voiceBuffers[choice], 1.1);
+                break;
+            case 'guitar':
+                if (samplers.guitar) samplers.guitar.triggerAttackRelease(playbackNote, "1.5");
+                break;
+            case 'rhodes':
+                if (samplers.rhodes) samplers.rhodes.triggerAttackRelease(playbackNote, "1.5");
+                break;
+            case 'organ':
+                if (samplers.organ) samplers.organ.triggerAttackRelease(playbackNote, "1.5");
                 break;
         }
     }
