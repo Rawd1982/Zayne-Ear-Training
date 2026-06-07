@@ -1,4 +1,4 @@
-html
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -13,7 +13,6 @@ html
             --text-sub: #94a3b8;
             --keyboard-bg: #0b0f19;
             --accent: #d62828; 
-            --bridge-accent: #0d9488;
         }
 
         html, body {
@@ -116,99 +115,6 @@ html
             background-color: var(--accent);
             color: var(--text-main);
             box-shadow: 0 4px 12px rgba(214, 40, 40, 0.3); 
-        }
-
-        /* Acoustic Bridge Controls style block */
-        .bridge-panel {
-            background-color: var(--keyboard-bg);
-            border: 2px solid var(--bridge-accent);
-            border-radius: 16px;
-            padding: 15px;
-            width: 100%;
-            max-width: 850px;
-            margin-bottom: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .bridge-title {
-            font-size: 0.9rem;
-            font-weight: 900;
-            color: var(--bridge-accent);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin: 0;
-        }
-
-        .bridge-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
-        .bridge-slider-container {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-grow: 1;
-            min-width: 280px;
-        }
-
-        .bridge-slider {
-            -webkit-appearance: none;
-            appearance: none;
-            flex-grow: 1;
-            height: 8px;
-            border-radius: 4px;
-            background: #1e293b;
-            outline: none;
-        }
-
-        .bridge-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            background: var(--bridge-accent);
-            cursor: pointer;
-        }
-        
-        .bridge-slider::-moz-range-thumb {
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            background: var(--bridge-accent);
-            cursor: pointer;
-            border: none;
-        }
-
-        .bridge-status {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--text-main);
-            min-width: 180px;
-        }
-
-        .split-checkbox-container {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--text-sub);
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .split-checkbox-container input {
-            cursor: pointer;
-            width: 16px;
-            height: 16px;
-            accent-color: var(--bridge-accent);
         }
 
         /* Loading Zone Area */
@@ -544,20 +450,6 @@ html
             </div>
         </div>
 
-        <!-- Dynamic Acoustic Bridge System -->
-        <div class="bridge-panel">
-            <h4 class="bridge-title">Acoustic Bridge (The Slider Method)</h4>
-            <div class="bridge-row">
-                <div class="bridge-slider-container">
-                    <input type="range" min="1" max="4" value="1" class="bridge-slider" id="bridgeSlider" oninput="handleBridgeSlider(this.value)">
-                    <div class="bridge-status" id="bridgeStatusDisplay">Level 1: 90% Bell / 10% Piano</div>
-                </div>
-                <label class="split-checkbox-container">
-                    <input type="checkbox" id="splitTestingToggle"> Enable 80/20 Sessions Splits
-                </label>
-            </div>
-        </div>
-
         <div class="loading-zone" id="loadingZone">
             <div class="progress-container">
                 <div class="progress-bar" id="progressBar"></div>
@@ -591,16 +483,6 @@ html
     const solfegeGainNode = audioCtx.createGain();
     solfegeGainNode.gain.setValueAtTime(0.45, audioCtx.currentTime); 
     solfegeGainNode.connect(audioCtx.destination);
-
-    // Discrete slider settings for Simultaneous Layering configuration
-    const layeringLevels = {
-        1: { bellVol: 0.9, pianoVol: 0.1, label: "Level 1: 90% Bell / 10% Piano" },
-        2: { bellVol: 0.5, pianoVol: 0.5, label: "Level 2: 50% Bell / 50% Piano" },
-        3: { bellVol: 0.1, pianoVol: 0.9, label: "Level 3: 10% Bell / 90% Piano" },
-        4: { bellVol: 0.0, pianoVol: 1.0, label: "Level 4: 0% Bell / 100% Piano (Solo)" }
-    };
-    let activeBridgeLevel = 1;
-    const superAnchors = ['C', 'E', 'G'];
 
     let currentAudioMode = 'bell-vocal'; 
     let isCurrentlyLocked = false;
@@ -691,11 +573,6 @@ html
         currentAudioMode = mode;
         document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
         document.getElementById(`mode-${mode}`).classList.add('active');
-    }
-
-    function handleBridgeSlider(value) {
-        activeBridgeLevel = parseInt(value);
-        document.getElementById('bridgeStatusDisplay').innerText = layeringLevels[activeBridgeLevel].label;
     }
 
     function blockViewportGestures(e) {
@@ -870,20 +747,12 @@ html
         executeAudioPlay(choice);
     }
 
-    // Gain controlled native playback logic
-    function playNativeBufferWithGain(buffer, volume) {
-        if(!buffer || volume <= 0) return;
+    function playNativeBuffer(buffer) {
+        if(!buffer) return;
         const source = audioCtx.createBufferSource();
         source.buffer = buffer;
-        const gainNode = audioCtx.createGain();
-        gainNode.gain.setValueAtTime(volume, audioCtx.currentTime);
-        source.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
+        source.connect(audioCtx.destination);
         source.start(0);
-    }
-
-    function playNativeBuffer(buffer) {
-        playNativeBufferWithGain(buffer, 1.0);
     }
 
     function playVocalBufferBalanced(buffer, delayTime = 0) {
@@ -917,36 +786,16 @@ html
             }
         }
 
-        // Calculate current crossfade balance based on the Mix Slider setting
-        let targetBellVol = layeringLevels[activeBridgeLevel].bellVol;
-        let targetPianoVol = layeringLevels[activeBridgeLevel].pianoVol;
-
-        // Apply 80/20 Splits Engine Rule: Check if enabled and rolled
-        const splitsEnabled = document.getElementById('splitTestingToggle').checked;
-        if (splitsEnabled && activeBridgeLevel < 4) {
-            const roll = Math.random() * 100;
-            const baseNoteName = choice.replace(/[0-9]/g, ''); // Extract key note letter
-            
-            // If rolling a 20% split chance on a Super Anchor, target Pure Piano instantly
-            if (roll <= 20 && superAnchors.includes(baseNoteName)) {
-                targetBellVol = 0.0;
-                targetPianoVol = 1.0;
-                console.log(`🎯 Session Split Activated: Pure Piano forced for Super Anchor Note ${choice}`);
-            }
-        }
-
         switch (currentAudioMode) {
             case 'bell-vocal':
-                playNativeBufferWithGain(bellBuffers[choice], targetBellVol);
-                playNativeBufferWithGain(ravenscroftBuffers[choice], targetPianoVol);
+                playNativeBuffer(bellBuffers[choice]);
                 playVocalBufferBalanced(voiceBuffers[choice], 1.1);
                 break;
             case 'vocal':
                 playVocalBufferBalanced(voiceBuffers[choice], 0);
                 break;
             case 'both':
-                playNativeBufferWithGain(bellBuffers[choice], targetBellVol);
-                playNativeBufferWithGain(ravenscroftBuffers[choice], targetPianoVol);
+                playNativeBuffer(bellBuffers[choice]);
                 playVocalBufferBalanced(voiceBuffers[choice], 0);
                 break;
             case 'bells':
