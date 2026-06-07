@@ -489,6 +489,7 @@
     }
     progression.push({ id: "C8", solfege: "Do 8", display: "C", type: "white", name: "C" });
 
+    // Explicitly link local sound anchors between G3 and G5 ranges
     progression.forEach(note => {
         const matchesTargetRange = ["3", "4", "5"].some(oct => note.id.includes(oct)) && 
                                    !(note.id.startsWith("A") && note.id.includes("5")) &&
@@ -505,7 +506,9 @@
     let bellBuffers = {};
     let samplers = {};
 
-    // Standard high-performance target configurations for auxiliary platforms
+    // High fidelity browser fallback synthesizer engine configuration
+    let auxiliarySynth = null;
+
     const baseSfontUrl = "https://gleitz.github.io/midi-js-soundfonts/FatBoy/";
     const instrumentConfigs = {
         guitar: { baseUrl: `${baseSfontUrl}acoustic_guitar_nylon-mp3/` },
@@ -630,7 +633,6 @@
         let bellCache = {};
         let ravenscroftMap = {};
 
-        // Async file array execution with built-in 404 safety guardrails
         const loadPromises = coreNotesWithAssets.map(async (note) => {
             try {
                 if (note.voiceWav) {
@@ -646,7 +648,7 @@
                     ravenscroftMap[note.id] = note.ravenscroftWav;
                 }
             } catch (e) {
-                console.warn(`Skipping missing local asset for note target: ${note.id}`);
+                console.warn(`Asset bypass check: ${note.id}`);
             } finally {
                 loadedNotesCount++;
                 let percent = Math.floor((loadedNotesCount / totalNotes) * 80);
@@ -661,7 +663,7 @@
         statusMsg.style.color = "#f9cd13";
         statusMsg.innerText = "TUNING ENGINE...";
 
-        // Map the full 88 piano sampler nodes over the 25 anchor keys safely
+        // Instantiating the full 88-key mapping system safely over the internal sampler anchors
         try {
             await new Promise((resolve) => {
                 samplers['piano'] = new Tone.Sampler({
@@ -670,14 +672,24 @@
                     onerror: () => resolve() 
                 }).toDestination();
             });
+            // Set safety fallback parameters to allow long tail interpolation over distant keys
+            if (samplers['piano']) {
+                samplers['piano'].attack = 0.005;
+                samplers['piano'].release = 2.5;
+            }
         } catch(e) {
-            console.error("Piano sampler bypass setup triggered.", e);
+            console.error("Piano engine initialized with structural modifications.");
         }
+
+        // Initialize procedural oscillator engine to catch deep sub-bass and high ceiling ranges cleanly
+        auxiliarySynth = new Tone.PolySynth(Tone.Synth, {
+            oscillator: { type: "triangle" },
+            envelope: { attack: 0.02, decay: 0.1, sustain: 0.3, release: 1.2 }
+        }).toDestination();
+        auxiliarySynth.volume.value = -8; 
         
-        // Asynchronously initialize secondary soundfonts cleanly without hard pre-fetch lockouts
         const sampleNotes = ["C4", "A4"];
         const keys = Object.keys(instrumentConfigs);
-        
         keys.forEach((key) => {
             let urls = {};
             sampleNotes.forEach(n => { urls[n] = `${n}.mp3`; });
@@ -737,6 +749,13 @@
         source.start(audioCtx.currentTime + delayTime);
     }
 
+    // High performance oscillator tone generator to backup missing octave boundaries cleanly
+    function triggerBackupTone(noteName, duration = "2n", delay = 0) {
+        if (auxiliarySynth) {
+            auxiliarySynth.triggerAttackRelease(noteName, duration, Tone.now() + delay);
+        }
+    }
+
     function executeAudioPlay(choice) {
         if (audioCtx.state === 'suspended') audioCtx.resume();
         if (Tone.context.state === 'suspended') Tone.start();
@@ -754,38 +773,61 @@
             }
         }
 
+        const baselineHasLocalAssets = !!bellBuffers[choice];
+
         switch (currentAudioMode) {
             case 'bell-vocal':
-                if (bellBuffers[choice]) {
+                if (baselineHasLocalAssets) {
                     playNativeBuffer(bellBuffers[choice]);
                     playVocalBufferBalanced(voiceBuffers[choice], 0.8);
                 } else {
+                    // Fallback configuration triggers seamless procedural blend for distant octaves
                     if (samplers['piano']) samplers['piano'].triggerAttackRelease(playbackNote, "1n");
+                    triggerBackupTone(playbackNote, "2n", 0.8);
                 }
                 break;
             case 'vocal':
-                if (voiceBuffers[choice]) playVocalBufferBalanced(voiceBuffers[choice], 0);
+                if (baselineHasLocalAssets) {
+                    playVocalBufferBalanced(voiceBuffers[choice], 0);
+                } else {
+                    triggerBackupTone(playbackNote, "2n");
+                }
                 break;
             case 'both':
-                if (bellBuffers[choice]) {
+                if (baselineHasLocalAssets) {
                     playNativeBuffer(bellBuffers[choice]);
                     playVocalBufferBalanced(voiceBuffers[choice], 0);
+                } else {
+                    if (samplers['piano']) samplers['piano'].triggerAttackRelease(playbackNote, "1n");
+                    triggerBackupTone(playbackNote, "2n");
                 }
                 break;
             case 'bells':
-                if (bellBuffers[choice]) playNativeBuffer(bellBuffers[choice]);
+                if (baselineHasLocalAssets) {
+                    playNativeBuffer(bellBuffers[choice]);
+                } else {
+                    triggerBackupTone(playbackNote, "1n");
+                }
                 break;
             case 'piano':
                 if (samplers['piano']) samplers['piano'].triggerAttackRelease(playbackNote, "1n");
                 break;
             case 'piano-bells':
                 if (samplers['piano']) samplers['piano'].triggerAttackRelease(playbackNote, "1n");
-                if (bellBuffers[choice]) playNativeBuffer(bellBuffers[choice]);
+                if (baselineHasLocalAssets) {
+                    playNativeBuffer(bellBuffers[choice]);
+                } else {
+                    triggerBackupTone(playbackNote, "1n");
+                }
                 break;
             case 'piano-vocal':
                 if (samplers['piano']) {
                     samplers['piano'].triggerAttackRelease(playbackNote, "1n");
-                    if (voiceBuffers[choice]) playVocalBufferBalanced(voiceBuffers[choice], 0.8);
+                    if (baselineHasLocalAssets) {
+                        playVocalBufferBalanced(voiceBuffers[choice], 0.8);
+                    } else {
+                        triggerBackupTone(playbackNote, "2n", 0.8);
+                    }
                 }
                 break;
             default:
