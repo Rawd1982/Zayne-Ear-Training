@@ -1,3 +1,5 @@
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -776,52 +778,43 @@
         const matchingNote = progression.find(n => n.id === choice);
 
         let playbackNote = choice;
-        if(playbackNote.includes('b')) {
-            const flatToSharpMap = { "Db": "C#", "Eb": "D#", "Gb": "F#", "Ab": "G#", "Bb": "A#" };
-            const root = playbackNote.substring(0, 2);
-            const oct = playbackNote.substring(2);
-            if(flatToSharpMap[root]) {
-                playbackNote = flatToSharpMap[root] + oct;
+        if (currentAudioMode === 'bell-vocal') {
+            playNativeBuffer(bellBuffers[choice]);
+            playVocalBufferBalanced(voiceBuffers[choice], 1.1);
+        } else if (currentAudioMode === 'vocal') {
+            playVocalBufferBalanced(voiceBuffers[choice]);
+        } else if (currentAudioMode === 'both') {
+            playNativeBuffer(bellBuffers[choice]);
+            playVocalBufferBalanced(voiceBuffers[choice]);
+        } else if (currentAudioMode === 'bells') {
+            playNativeBuffer(bellBuffers[choice]);
+        } else if (currentAudioMode === 'piano') {
+            playNativeBuffer(ravenscroftBuffers[choice]);
+        } else if (currentAudioMode === 'piano-bells') {
+            playNativeBuffer(ravenscroftBuffers[choice]);
+            playNativeBuffer(bellBuffers[choice]);
+        } else if (currentAudioMode === 'piano-vocal') {
+            playNativeBuffer(ravenscroftBuffers[choice]);
+            playVocalBufferBalanced(voiceBuffers[choice], 1.1);
+        } else if (samplers[currentAudioMode]) {
+            if (Tone.context.state === 'suspended') {
+                Tone.start();
             }
-        }
-
-        switch (currentAudioMode) {
-            case 'bell-vocal':
-                playNativeBuffer(bellBuffers[choice]);
-                playVocalBufferBalanced(voiceBuffers[choice], 1.1);
-                break;
-            case 'vocal':
-                playVocalBufferBalanced(voiceBuffers[choice], 0);
-                break;
-            case 'both':
-                playNativeBuffer(bellBuffers[choice]);
-                playVocalBufferBalanced(voiceBuffers[choice], 0);
-                break;
-            case 'bells':
-                playNativeBuffer(bellBuffers[choice]);
-                break;
-            case 'piano':
-                playNativeBuffer(ravenscroftBuffers[choice]);
-                break;
-            case 'piano-bells':
-                playNativeBuffer(ravenscroftBuffers[choice]);
-                playNativeBuffer(bellBuffers[choice]);
-                break;
-            case 'piano-vocal':
-                playNativeBuffer(ravenscroftBuffers[choice]);
-                playVocalBufferBalanced(voiceBuffers[choice], 1.1);
-                break;
-            case 'guitar':
-                if (samplers.guitar) samplers.guitar.triggerAttackRelease(playbackNote, "1.5");
-                break;
-            case 'rhodes':
-                if (samplers.rhodes) samplers.rhodes.triggerAttackRelease(playbackNote, "1.5");
-                break;
-            case 'organ':
-                if (samplers.organ) samplers.organ.triggerAttackRelease(playbackNote, "1.5");
-                break;
+            samplers[currentAudioMode].triggerAttackRelease(playbackNote, "1m");
         }
     }
+
+    // Auto-resume audio instances instantly upon switching tabs/apps back into view
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            if (window.Tone && Tone.context && Tone.context.state === 'suspended') {
+                Tone.context.resume();
+            }
+        }
+    });
 </script>
 </body>
 </html>
