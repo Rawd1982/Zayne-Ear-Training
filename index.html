@@ -1,4 +1,5 @@
 
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -77,7 +78,7 @@
             width: 100%;
         }
 
-        /* Top row grid configuration for the two multi-instrument fader blocks */
+        /* Top row configuration for the two blend fader blocks */
         .fader-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -85,7 +86,7 @@
             width: 100%;
         }
 
-        /* Compact single row configuration for the five standalone nodes */
+        /* Compact single row configuration for the five alternate buttons */
         .single-row-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -115,7 +116,7 @@
             border: none;
             color: var(--text-sub);
             padding: 8px 4px;
-            font-size: 0.75rem; /* Reduced typography footprint to optimize spacing */
+            font-size: 0.75rem; 
             font-weight: 700;
             border-radius: 8px;
             cursor: pointer;
@@ -137,7 +138,7 @@
             border-color: transparent;
         }
 
-        /* Fader Component Containers */
+        /* Fader Cards */
         .fader-card {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.05);
@@ -212,7 +213,7 @@
             cursor: not-allowed;
         }
 
-        /* Loading UI Zone */
+        /* Loading Panel */
         .loading-zone {
             display: flex;
             flex-direction: column;
@@ -504,7 +505,7 @@
         #btn-Eb5  { grid-column: 12; margin-left: 38px; }
         #btn-Gb5  { grid-column: 14; margin-left: 38px; }
 
-        /* Absolute Pitch System Color Anchors (Teal explicitly bound for Note G) */
+        /* Absolute Pitch Color Anchors */
         .bell-btn.G3 .color-badge,  .bell-btn.G4 .color-badge,  .bell-btn.G5 .color-badge   { background: linear-gradient(to bottom, #3a6d6b, #4d908e); } 
         .bell-btn.Ab3 .color-badge, .bell-btn.Ab4 .color-badge, .bell-btn.Ab5 .color-badge  { background: linear-gradient(to bottom, #1d5f7a, #277da1); } 
         .bell-btn.A3 .color-badge,  .bell-btn.A4 .color-badge                               { background: linear-gradient(to bottom, #513970, #6a4c93); } 
@@ -533,6 +534,7 @@
         <div class="controls-panel-wrapper" id="controlsWrapper">
             <div class="controls-panel">
                 
+                <!-- ROW 1: Mixing Faders -->
                 <div class="fader-grid">
                     <div class="fader-card" id="card-bell-vocal">
                         <button class="fader-header-btn active" id="mode-bell-vocal" onclick="setAudioMode('bell-vocal')">
@@ -540,7 +542,7 @@
                         </button>
                         <div class="fader-metrics">
                             <span id="label-bv-left" class="highlight">Bells 50%</span>
-                            <span id="label-bv-right">Solfege 50%</span>
+                            <span id="label-bv-right" class="highlight">Solfege 50%</span>
                         </div>
                         <input type="range" min="0" max="100" value="50" class="blend-slider" id="fader-bell-vocal" oninput="updateBlendValues('bell-vocal', this.value)">
                     </div>
@@ -550,13 +552,14 @@
                             <span>Ravenscroft / Solfege Blend</span>
                         </button>
                         <div class="fader-metrics">
-                            <span id="label-pv-left">Ravenscroft 50%</span>
-                            <span id="label-pv-right">Solfege 50%</span>
+                            <span id="label-pv-left" class="highlight">Ravenscroft 50%</span>
+                            <span id="label-pv-right" class="highlight">Solfege 50%</span>
                         </div>
                         <input type="range" min="0" max="100" value="50" class="blend-slider" id="fader-piano-vocal" oninput="updateBlendValues('piano-vocal', this.value)" disabled>
                     </div>
                 </div>
 
+                <!-- ROW 2: Single Row Grid Layout for All 5 Alternate Nodes -->
                 <div class="single-row-grid">
                     <button class="mode-btn" id="mode-seq-bell-vocal" onclick="setAudioMode('seq-bell-vocal')">Bells → Solfège</button>
                     <button class="mode-btn" id="mode-seq-piano-vocal" onclick="setAudioMode('seq-piano-vocal')">Piano → Solfège</button>
@@ -598,15 +601,16 @@
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     const audioCtx = new AudioContext();
     
-    // Create direct mixing targets
+    // Create mixing target points
     const bellGainNode = audioCtx.createGain();
     const vocalGainNode = audioCtx.createGain();
     const ravenscroftGainNode = audioCtx.createGain();
     const generalGainNode = audioCtx.createGain();
 
-    bellGainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
-    vocalGainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
-    ravenscroftGainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
+    // Default initialization: both sounds initialized at 1.0 full gain profile
+    bellGainNode.gain.setValueAtTime(1.0, audioCtx.currentTime);
+    vocalGainNode.gain.setValueAtTime(1.0, audioCtx.currentTime);
+    ravenscroftGainNode.gain.setValueAtTime(1.0, audioCtx.currentTime);
     generalGainNode.gain.setValueAtTime(1.0, audioCtx.currentTime);
 
     bellGainNode.connect(audioCtx.destination);
@@ -723,22 +727,27 @@
         const percentage = parseInt(val);
         const inversePercentage = 100 - percentage;
 
+        // Custom full-dynamic mix logic: 
+        // Instruments stay at full 1.0 volume at center split, dropping off only on their respective opposite halves.
+        let leftGain = percentage <= 50 ? 1.0 : (100 - percentage) / 50;
+        let rightGain = percentage >= 50 ? 1.0 : percentage / 50;
+
         if (targetFader === 'bell-vocal') {
             document.getElementById('label-bv-left').innerHTML = `Bells ${percentage}%`;
             document.getElementById('label-bv-right').innerHTML = `Solfege ${inversePercentage}%`;
             document.getElementById('label-bv-left').className = percentage > 0 ? "highlight" : "";
             document.getElementById('label-bv-right').className = inversePercentage > 0 ? "highlight" : "";
             
-            bellGainNode.gain.setValueAtTime(percentage / 100, audioCtx.currentTime);
-            vocalGainNode.gain.setValueAtTime(inversePercentage / 100, audioCtx.currentTime);
+            bellGainNode.gain.setValueAtTime(leftGain, audioCtx.currentTime);
+            vocalGainNode.gain.setValueAtTime(rightGain, audioCtx.currentTime);
         } else if (targetFader === 'piano-vocal') {
             document.getElementById('label-pv-left').innerHTML = `Ravenscroft ${percentage}%`;
             document.getElementById('label-pv-right').innerHTML = `Solfege ${inversePercentage}%`;
             document.getElementById('label-pv-left').className = percentage > 0 ? "highlight" : "";
             document.getElementById('label-pv-right').className = inversePercentage > 0 ? "highlight" : "";
 
-            ravenscroftGainNode.gain.setValueAtTime(percentage / 100, audioCtx.currentTime);
-            vocalGainNode.gain.setValueAtTime(inversePercentage / 100, audioCtx.currentTime);
+            ravenscroftGainNode.gain.setValueAtTime(leftGain, audioCtx.currentTime);
+            vocalGainNode.gain.setValueAtTime(rightGain, audioCtx.currentTime);
         }
     }
 
@@ -905,11 +914,11 @@
             playTargetBuffer(ravenscroftBuffers[choice], ravenscroftGainNode);
             playTargetBuffer(voiceBuffers[choice], vocalGainNode);
         } else if (currentAudioMode === 'seq-bell-vocal') {
-            // Speed up playback loop sequence context (0.6 seconds delay)
+            // Sequential playback timing at 0.6 seconds delay
             playTargetBuffer(bellBuffers[choice], generalGainNode);
             playTargetBuffer(voiceBuffers[choice], generalGainNode, 0.6);
         } else if (currentAudioMode === 'seq-piano-vocal') {
-            // Speed up playback loop sequence context (0.6 seconds delay)
+            // Sequential playback timing at 0.6 seconds delay
             playTargetBuffer(ravenscroftBuffers[choice], generalGainNode);
             playTargetBuffer(voiceBuffers[choice], generalGainNode, 0.6);
         } else if (samplers[currentAudioMode]) {
