@@ -69,34 +69,19 @@
         .controls-panel {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 16px;
             background-color: var(--keyboard-bg);
-            padding: 14px;
+            padding: 18px;
             border-radius: 16px;
             border: 2px solid #1e293b;
             width: 100%;
         }
 
-        .category-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .category-title {
-            font-size: 0.75rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #0d9488;
-            margin-left: 4px;
-            margin-bottom: 2px;
-        }
-
         .button-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 6px;
+            gap: 8px;
+            align-items: start;
         }
 
         @media (max-width: 768px) {
@@ -120,8 +105,8 @@
             background: transparent;
             border: none;
             color: var(--text-sub);
-            padding: 10px 8px;
-            font-size: 0.8rem;
+            padding: 12px 10px;
+            font-size: 0.85rem;
             font-weight: 700;
             border-radius: 10px;
             cursor: pointer;
@@ -133,6 +118,7 @@
             line-height: 1.2;
             border: 1px solid rgba(255, 255, 255, 0.05);
             background-color: rgba(255, 255, 255, 0.02);
+            height: 44px;
         }
 
         .mode-btn.active {
@@ -140,6 +126,87 @@
             color: var(--text-main);
             box-shadow: 0 4px 12px rgba(214, 40, 40, 0.3); 
             border-color: transparent;
+        }
+
+        /* Fader Styling Block */
+        .fader-card {
+            grid-column: span 2;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 10px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        @media (max-width: 768px) {
+            .fader-card {
+                grid-column: span 2;
+            }
+        }
+
+        .fader-header-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-sub);
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-align: left;
+            padding: 0;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .fader-header-btn.active {
+            color: #0d9488;
+        }
+
+        .fader-metrics {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            font-family: monospace;
+            color: #64748b;
+            letter-spacing: 0.5px;
+        }
+        .fader-metrics span.highlight {
+            color: #0d9488;
+            font-weight: bold;
+        }
+
+        .blend-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            background: #334155;
+            border-radius: 3px;
+            outline: none;
+            margin: 4px 0;
+        }
+        .blend-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #0d9488;
+            cursor: pointer;
+        }
+        .blend-slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border: none;
+            border-radius: 50%;
+            background: #0d9488;
+            cursor: pointer;
+        }
+        .blend-slider:disabled {
+            opacity: 0.2;
+            cursor: not-allowed;
         }
 
         /* Loading Zone Area */
@@ -462,35 +529,34 @@
         <div class="controls-panel-wrapper" id="controlsWrapper">
             <div class="controls-panel">
                 
-                <!-- Category 1: Hybrid Guidance Modes -->
-                <div class="category-group">
-                    <div class="category-title">Hybrid Training Modes</div>
-                    <div class="button-grid">
-                        <button class="mode-btn active" id="mode-bell-vocal" onclick="setAudioMode('bell-vocal')">Bell then Solfège</button>
-                        <button class="mode-btn" id="mode-piano-vocal" onclick="setAudioMode('piano-vocal')">Ravenscroft then Solfège</button>
-                        <button class="mode-btn" id="mode-both" onclick="setAudioMode('both')">Solfège/Bells Joint</button>
-                        <button class="mode-btn" id="mode-piano-bells" onclick="setAudioMode('piano-bells')">Ravenscroft/Bells</button>
+                <div class="button-grid">
+                    <div class="fader-card" id="card-bell-vocal">
+                        <button class="fader-header-btn active" id="mode-bell-vocal" onclick="setAudioMode('bell-vocal')">
+                            <span>Bells + Solfege</span>
+                        </button>
+                        <div class="fader-metrics">
+                            <span id="label-bv-left" class="highlight">Bells 50%</span>
+                            <span id="label-bv-right">Solfege 50%</span>
+                        </div>
+                        <input type="range" min="0" max="100" value="50" class="blend-slider" id="fader-bell-vocal" oninput="updateBlendValues('bell-vocal', this.value)">
                     </div>
-                </div>
 
-                <!-- Category 2: Core Targets -->
-                <div class="category-group">
-                    <div class="category-title">Core Targets</div>
-                    <div class="button-grid">
-                        <button class="mode-btn" id="mode-vocal" onclick="setAudioMode('vocal')">Solfège Only</button>
-                        <button class="mode-btn" id="mode-bells" onclick="setAudioMode('bells')">Bells Only</button>
+                    <div class="fader-card" id="card-piano-vocal">
+                        <button class="fader-header-btn" id="mode-piano-vocal" onclick="setAudioMode('piano-vocal')">
+                            <span>Ravenscroft + Solfege</span>
+                        </button>
+                        <div class="fader-metrics">
+                            <span id="label-pv-left">Ravenscroft 50%</span>
+                            <span id="label-pv-right">Solfege 50%</span>
+                        </div>
+                        <input type="range" min="0" max="100" value="50" class="blend-slider" id="fader-piano-vocal" oninput="updateBlendValues('piano-vocal', this.value)" disabled>
                     </div>
-                </div>
 
-                <!-- Category 3: Instruments -->
-                <div class="category-group">
-                    <div class="category-title">Virtual Instruments</div>
-                    <div class="button-grid">
-                        <button class="mode-btn" id="mode-piano" onclick="setAudioMode('piano')">Ravenscroft 275</button>
-                        <button class="mode-btn" id="mode-rhodes" onclick="setAudioMode('rhodes')">Rhodes Piano</button>
-                        <button class="mode-btn" id="mode-guitar" onclick="setAudioMode('guitar')">Nylon Guitar</button>
-                        <button class="mode-btn" id="mode-organ" onclick="setAudioMode('organ')">Rock Organ</button>
-                    </div>
+                    <button class="mode-btn" id="mode-piano-bells" onclick="setAudioMode('piano-bells')">Ravenscroft/Bells</button>
+                    <button class="mode-btn" id="mode-piano" onclick="setAudioMode('piano')">Ravenscroft 275</button>
+                    <button class="mode-btn" id="mode-rhodes" onclick="setAudioMode('rhodes')">Rhodes Piano</button>
+                    <button class="mode-btn" id="mode-guitar" onclick="setAudioMode('guitar')">Nylon Guitar</button>
+                    <button class="mode-btn" id="mode-organ" onclick="setAudioMode('organ')">Rock Organ</button>
                 </div>
 
             </div>
@@ -526,9 +592,22 @@
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     const audioCtx = new AudioContext();
     
-    const solfegeGainNode = audioCtx.createGain();
-    solfegeGainNode.gain.setValueAtTime(0.45, audioCtx.currentTime); 
-    solfegeGainNode.connect(audioCtx.destination);
+    // Independent track source volume matrix mapping tracking nodes
+    const bellGainNode = audioCtx.createGain();
+    const vocalGainNode = audioCtx.createGain();
+    const ravenscroftGainNode = audioCtx.createGain();
+    const generalGainNode = audioCtx.createGain();
+
+    // Default Mix Balancing Initialization
+    bellGainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
+    vocalGainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
+    ravenscroftGainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
+    generalGainNode.gain.setValueAtTime(1.0, audioCtx.currentTime);
+
+    bellGainNode.connect(audioCtx.destination);
+    vocalGainNode.connect(audioCtx.destination);
+    ravenscroftGainNode.connect(audioCtx.destination);
+    generalGainNode.connect(audioCtx.destination);
 
     let currentAudioMode = 'bell-vocal'; 
     let isCurrentlyLocked = false;
@@ -617,21 +696,57 @@
     function setAudioMode(mode) {
         if (isCurrentlyLocked) return; 
         currentAudioMode = mode;
+        
+        // Handle normal target classes
         document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
-        document.getElementById(`mode-${mode}`).classList.add('active');
+        document.querySelectorAll('.fader-header-btn').forEach(btn => btn.classList.remove('active'));
+        
+        // Deactivate faders by default
+        document.getElementById('fader-bell-vocal').disabled = true;
+        document.getElementById('fader-piano-vocal').disabled = true;
+
+        if (mode === 'bell-vocal') {
+            document.getElementById('mode-bell-vocal').classList.add('active');
+            document.getElementById('fader-bell-vocal').disabled = false;
+        } else if (mode === 'piano-vocal') {
+            document.getElementById('mode-piano-vocal').classList.add('active');
+            document.getElementById('fader-piano-vocal').disabled = false;
+        } else {
+            document.getElementById(`mode-${mode}`).classList.add('active');
+        }
+    }
+
+    function updateBlendValues(targetFader, val) {
+        const percentage = parseInt(val);
+        const inversePercentage = 100 - percentage;
+
+        if (targetFader === 'bell-vocal') {
+            document.getElementById('label-bv-left').innerHTML = `Bells ${percentage}%`;
+            document.getElementById('label-bv-right').innerHTML = `Solfege ${inversePercentage}%`;
+            document.getElementById('label-bv-left').className = percentage > 0 ? "highlight" : "";
+            document.getElementById('label-bv-right').className = inversePercentage > 0 ? "highlight" : "";
+            
+            // Map directly to Audio Gain properties (0.0 - 1.0)
+            bellGainNode.gain.setValueAtTime(percentage / 100, audioCtx.currentTime);
+            vocalGainNode.gain.setValueAtTime(inversePercentage / 100, audioCtx.currentTime);
+        } else if (targetFader === 'piano-vocal') {
+            document.getElementById('label-pv-left').innerHTML = `Ravenscroft ${percentage}%`;
+            document.getElementById('label-pv-right').innerHTML = `Solfege ${inversePercentage}%`;
+            document.getElementById('label-pv-left').className = percentage > 0 ? "highlight" : "";
+            document.getElementById('label-pv-right').className = inversePercentage > 0 ? "highlight" : "";
+
+            ravenscroftGainNode.gain.setValueAtTime(percentage / 100, audioCtx.currentTime);
+            vocalGainNode.gain.setValueAtTime(inversePercentage / 100, audioCtx.currentTime);
+        }
     }
 
     function blockViewportGestures(e) {
         if (isCurrentlyLocked) {
             if (e.target.id === 'lockSlider') return;
-            
             if (e.target.closest('#pianoWrapper')) {
-                if (e.type === 'touchmove') {
-                    if (e.cancelable) e.preventDefault();
-                }
+                if (e.type === 'touchmove' && e.cancelable) e.preventDefault();
                 return;
             }
-
             if (e.cancelable) e.preventDefault();
             window.scrollTo(0, lockedScrollTop);
         }
@@ -643,9 +758,7 @@
     window.addEventListener('wheel', blockViewportGestures, { passive: false });
     
     window.addEventListener('scroll', () => {
-        if (isCurrentlyLocked) {
-            window.scrollTo(0, lockedScrollTop);
-        }
+        if (isCurrentlyLocked) window.scrollTo(0, lockedScrollTop);
     });
 
     function handleSliderInput(value) {
@@ -657,17 +770,13 @@
 
     function handleSliderChange(value) {
         if (isCurrentlyLocked) {
-            if (parseInt(value) === 0) {
-                updateLockUI(false);
-            } else {
-                document.getElementById('lockSlider').value = 100;
-            }
+            if (parseInt(value) === 0) updateLockUI(false);
+            else document.getElementById('lockSlider').value = 100;
         }
     }
 
     function updateLockUI(lockState) {
         isCurrentlyLocked = lockState;
-        
         const controlsWrapper = document.getElementById('controlsWrapper');
         const pianoWrapper = document.getElementById('pianoWrapper');
         const slideLabel = document.getElementById('slideLabel');
@@ -692,8 +801,7 @@
     async function fetchAudioBuffer(url) {
         const response = await fetch(url);
         if (!response.ok) throw new Error(`HTTP error ${response.status}`);
-        const arrayBuffer = await response.arrayBuffer();
-        return await audioCtx.decodeAudioData(arrayBuffer);
+        return await audioCtx.decodeAudioData(await response.arrayBuffer());
     }
 
     async function loadAllSounds() {
@@ -708,51 +816,42 @@
 
         const loadPromises = progression.map(async (note) => {
             try {
-                if (note.voiceWav) {
-                    voiceBuffers[note.id] = await fetchAudioBuffer(note.voiceWav);
-                }
+                if (note.voiceWav) voiceBuffers[note.id] = await fetchAudioBuffer(note.voiceWav);
                 if (note.bellSourceFile) {
                     if (!bellCache[note.bellSourceFile]) {
                         bellCache[note.bellSourceFile] = await fetchAudioBuffer(note.bellSourceFile);
                     }
                     bellBuffers[note.id] = bellCache[note.bellSourceFile];
                 }
-                if (ravenscroftWavFiles[note.id]) {
-                    ravenscroftBuffers[note.id] = await fetchAudioBuffer(ravenscroftWavFiles[note.id]);
-                }
+                if (ravenscroftWavFiles[note.id]) ravenscroftBuffers[note.id] = await fetchAudioBuffer(ravenscroftWavFiles[note.id]);
             } catch (e) {
-                console.error(`Error processing asset dependencies for note context: ${note.id}`, e);
+                console.error(`Asset link dropped: ${note.id}`, e);
             } finally {
                 loadedNotesCount++;
-                let percent = Math.floor((loadedNotesCount / totalNotes) * 85);
-                progressBar.style.width = `${percent}%`;
+                progressBar.style.width = `${Math.floor((loadedNotesCount / totalNotes) * 85)}%`;
             }
         });
 
         await Promise.all(loadPromises);
-
         progressBar.style.backgroundColor = "#f9cd13";
-        progressBar.style.width = "92%";
+        progressBar.style.width = "92__";
         statusMsg.style.color = "#f9cd13";
         statusMsg.innerText = "SET!";
 
         const keys = Object.keys(instrumentConfigs);
         const samplerPromises = keys.map((key) => {
-            const config = instrumentConfigs[key];
             let urls = {};
-            urls[config.anchor] = `${config.anchor}.mp3`;
-
+            urls[instrumentConfigs[key].anchor] = `${instrumentConfigs[key].anchor}.mp3`;
             return new Promise((resolve) => {
                 samplers[key] = new Tone.Sampler({
                     urls: urls,
-                    baseUrl: config.baseUrl,
+                    baseUrl: instrumentConfigs[key].baseUrl,
                     onload: () => resolve()
-                }).toDestination();
+                }).connect(Tone.context.destination);
             });
         });
 
         await Promise.all(samplerPromises);
-
         progressBar.style.width = "100%";
         progressBar.style.backgroundColor = "#90be6d";
         statusMsg.style.color = "#90be6d";
@@ -771,94 +870,55 @@
         const badge = btn.querySelector('.color-badge');
         if (!badge) return;
         
-        const badgeStyle = window.getComputedStyle(badge);
-        const bgImage = badgeStyle.backgroundImage;
-        let colorMatch = bgImage.match(/rgb\([^)]+\)/g);
-        let targetColor = "rgba(255, 255, 255, 1)";
-        if (colorMatch && colorMatch.length > 1) {
-            targetColor = colorMatch[1];
-        } else if (colorMatch && colorMatch.length === 1) {
-            targetColor = colorMatch[0];
-        }
+        let colorMatch = window.getComputedStyle(badge).backgroundImage.match(/rgb\([^)]+\)/g);
+        let targetColor = colorMatch ? (colorMatch[1] || colorMatch[0]) : "rgba(255, 255, 255, 1)";
         
         btn.style.setProperty('--light-color', targetColor);
         btn.classList.add('playing');
-        
-        setTimeout(() => {
-            btn.classList.remove('playing');
-        }, 1200);
+        setTimeout(() => btn.classList.remove('playing'), 1200);
     }
 
     function handleInput(choice) {
         executeAudioPlay(choice);
     }
 
-    function playNativeBuffer(buffer) {
+    function playTargetBuffer(buffer, gainNodeTarget) {
         if(!buffer) return;
         const source = audioCtx.createBufferSource();
         source.buffer = buffer;
-        source.connect(audioCtx.destination);
+        source.connect(gainNodeTarget);
         source.start(0);
     }
 
-    function playVocalBufferBalanced(buffer, delayTime = 0) {
-        if(!buffer) return;
-        const source = audioCtx.createBufferSource();
-        source.buffer = buffer;
-        source.connect(solfegeGainNode);
-        source.start(audioCtx.currentTime + delayTime);
-    }
-
     function executeAudioPlay(choice) {
-        if (audioCtx.state === 'suspended') {
-            audioCtx.resume();
-        }
-        if (Tone.context.state === 'suspended') {
-            Tone.start();
-        }
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        if (Tone.context.state === 'suspended') Tone.start();
 
         triggerLightEffect(choice);
 
-        const now = audioCtx.currentTime;
-        const matchingNote = progression.find(n => n.id === choice);
-
-        let playbackNote = choice;
         if (currentAudioMode === 'bell-vocal') {
-            playNativeBuffer(bellBuffers[choice]);
-            playVocalBufferBalanced(voiceBuffers[choice], 1.1);
-        } else if (currentAudioMode === 'vocal') {
-            playVocalBufferBalanced(voiceBuffers[choice]);
-        } else if (currentAudioMode === 'both') {
-            playNativeBuffer(bellBuffers[choice]);
-            playVocalBufferBalanced(voiceBuffers[choice]);
-        } else if (currentAudioMode === 'bells') {
-            playNativeBuffer(bellBuffers[choice]);
-        } else if (currentAudioMode === 'piano') {
-            playNativeBuffer(ravenscroftBuffers[choice]);
-        } else if (currentAudioMode === 'piano-bells') {
-            playNativeBuffer(ravenscroftBuffers[choice]);
-            playNativeBuffer(bellBuffers[choice]);
+            playTargetBuffer(bellBuffers[choice], bellGainNode);
+            playTargetBuffer(voiceBuffers[choice], vocalGainNode);
         } else if (currentAudioMode === 'piano-vocal') {
-            playNativeBuffer(ravenscroftBuffers[choice]);
-            playVocalBufferBalanced(voiceBuffers[choice], 1.1);
+            playTargetBuffer(ravenscroftBuffers[choice], ravenscroftGainNode);
+            playTargetBuffer(voiceBuffers[choice], vocalGainNode);
+        } else if (currentAudioMode === 'piano-bells') {
+            playTargetBuffer(ravenscroftBuffers[choice], generalGainNode);
+            playTargetBuffer(bellBuffers[choice], generalGainNode);
+        } else if (currentAudioMode === 'piano') {
+            playTargetBuffer(ravenscroftBuffers[choice], generalGainNode);
         } else if (samplers[currentAudioMode]) {
-            if (Tone.context.state === 'suspended') {
-                Tone.start();
-            }
-            samplers[currentAudioMode].triggerAttackRelease(playbackNote, "1m");
+            samplers[currentAudioMode].triggerAttackRelease(choice, "1m");
         }
     }
 
     document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible') {
-            if (audioCtx && audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-            if (window.Tone && Tone.context && Tone.context.state === 'suspended') {
-                Tone.context.resume();
-            }
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+            if (window.Tone && Tone.context && Tone.context.state === 'suspended') Tone.context.resume();
         }
     });
 </script>
 </body>
 </html>
+
