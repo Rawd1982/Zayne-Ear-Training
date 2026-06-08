@@ -1,5 +1,4 @@
 
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -534,15 +533,14 @@
         <div class="controls-panel-wrapper" id="controlsWrapper">
             <div class="controls-panel">
                 
-                <!-- ROW 1: Mixing Faders -->
                 <div class="fader-grid">
                     <div class="fader-card" id="card-bell-vocal">
                         <button class="fader-header-btn active" id="mode-bell-vocal" onclick="setAudioMode('bell-vocal')">
                             <span>Bells / Solfege Blend</span>
                         </button>
                         <div class="fader-metrics">
-                            <span id="label-bv-left" class="highlight">Bells 50%</span>
-                            <span id="label-bv-right" class="highlight">Solfege 50%</span>
+                            <span id="label-bv-left" class="highlight">Bells 100%</span>
+                            <span id="label-bv-right" class="highlight">Solfege 100%</span>
                         </div>
                         <input type="range" min="0" max="100" value="50" class="blend-slider" id="fader-bell-vocal" oninput="updateBlendValues('bell-vocal', this.value)">
                     </div>
@@ -552,14 +550,13 @@
                             <span>Ravenscroft / Solfege Blend</span>
                         </button>
                         <div class="fader-metrics">
-                            <span id="label-pv-left" class="highlight">Ravenscroft 50%</span>
-                            <span id="label-pv-right" class="highlight">Solfege 50%</span>
+                            <span id="label-pv-left" class="highlight">Ravenscroft 100%</span>
+                            <span id="label-pv-right" class="highlight">Solfege 100%</span>
                         </div>
                         <input type="range" min="0" max="100" value="50" class="blend-slider" id="fader-piano-vocal" oninput="updateBlendValues('piano-vocal', this.value)" disabled>
                     </div>
                 </div>
 
-                <!-- ROW 2: Single Row Grid Layout for All 5 Alternate Nodes -->
                 <div class="single-row-grid">
                     <button class="mode-btn" id="mode-seq-bell-vocal" onclick="setAudioMode('seq-bell-vocal')">Bells → Solfège</button>
                     <button class="mode-btn" id="mode-seq-piano-vocal" onclick="setAudioMode('seq-piano-vocal')">Piano → Solfège</button>
@@ -607,7 +604,7 @@
     const ravenscroftGainNode = audioCtx.createGain();
     const generalGainNode = audioCtx.createGain();
 
-    // Default initialization: both sounds initialized at 1.0 full gain profile
+    // Start with both nodes at full volume capacity (1.0) for the 50/50 default mid-point
     bellGainNode.gain.setValueAtTime(1.0, audioCtx.currentTime);
     vocalGainNode.gain.setValueAtTime(1.0, audioCtx.currentTime);
     ravenscroftGainNode.gain.setValueAtTime(1.0, audioCtx.currentTime);
@@ -725,29 +722,32 @@
 
     function updateBlendValues(targetFader, val) {
         const percentage = parseInt(val);
-        const inversePercentage = 100 - percentage;
 
-        // Custom full-dynamic mix logic: 
-        // Instruments stay at full 1.0 volume at center split, dropping off only on their respective opposite halves.
-        let leftGain = percentage <= 50 ? 1.0 : (100 - percentage) / 50;
-        let rightGain = percentage >= 50 ? 1.0 : percentage / 50;
+        // CORRECTED GAIN CURVE PROFILE:
+        // Left slider boundary (0) = 100% Instrument / 0% Solfege
+        // Center slider split (50)  = 100% Instrument / 100% Solfege
+        // Right slider boundary (100) = 0% Instrument / 100% Solfege
+        let instrumentGain = percentage <= 50 ? 1.0 : (100 - percentage) / 50;
+        let solfegeGain = percentage >= 50 ? 1.0 : percentage / 50;
 
         if (targetFader === 'bell-vocal') {
-            document.getElementById('label-bv-left').innerHTML = `Bells ${percentage}%`;
-            document.getElementById('label-bv-right').innerHTML = `Solfege ${inversePercentage}%`;
-            document.getElementById('label-bv-left').className = percentage > 0 ? "highlight" : "";
-            document.getElementById('label-bv-right').className = inversePercentage > 0 ? "highlight" : "";
+            // Update percentage labels to display metrics accurately
+            document.getElementById('label-bv-left').innerHTML = `Bells ${100 - percentage}%`;
+            document.getElementById('label-bv-right').innerHTML = `Solfege ${percentage}%`;
+            document.getElementById('label-bv-left').className = (100 - percentage) > 0 ? "highlight" : "";
+            document.getElementById('label-bv-right').className = percentage > 0 ? "highlight" : "";
             
-            bellGainNode.gain.setValueAtTime(leftGain, audioCtx.currentTime);
-            vocalGainNode.gain.setValueAtTime(rightGain, audioCtx.currentTime);
+            // Map calculated values to Web Audio parameters directly
+            bellGainNode.gain.setValueAtTime(instrumentGain, audioCtx.currentTime);
+            vocalGainNode.gain.setValueAtTime(solfegeGain, audioCtx.currentTime);
         } else if (targetFader === 'piano-vocal') {
-            document.getElementById('label-pv-left').innerHTML = `Ravenscroft ${percentage}%`;
-            document.getElementById('label-pv-right').innerHTML = `Solfege ${inversePercentage}%`;
-            document.getElementById('label-pv-left').className = percentage > 0 ? "highlight" : "";
-            document.getElementById('label-pv-right').className = inversePercentage > 0 ? "highlight" : "";
+            document.getElementById('label-pv-left').innerHTML = `Ravenscroft ${100 - percentage}%`;
+            document.getElementById('label-pv-right').innerHTML = `Solfege ${percentage}%`;
+            document.getElementById('label-pv-left').className = (100 - percentage) > 0 ? "highlight" : "";
+            document.getElementById('label-pv-right').className = percentage > 0 ? "highlight" : "";
 
-            ravenscroftGainNode.gain.setValueAtTime(leftGain, audioCtx.currentTime);
-            vocalGainNode.gain.setValueAtTime(rightGain, audioCtx.currentTime);
+            ravenscroftGainNode.gain.setValueAtTime(instrumentGain, audioCtx.currentTime);
+            vocalGainNode.gain.setValueAtTime(solfegeGain, audioCtx.currentTime);
         }
     }
 
@@ -914,11 +914,9 @@
             playTargetBuffer(ravenscroftBuffers[choice], ravenscroftGainNode);
             playTargetBuffer(voiceBuffers[choice], vocalGainNode);
         } else if (currentAudioMode === 'seq-bell-vocal') {
-            // Sequential playback timing at 0.6 seconds delay
             playTargetBuffer(bellBuffers[choice], generalGainNode);
             playTargetBuffer(voiceBuffers[choice], generalGainNode, 0.6);
         } else if (currentAudioMode === 'seq-piano-vocal') {
-            // Sequential playback timing at 0.6 seconds delay
             playTargetBuffer(ravenscroftBuffers[choice], generalGainNode);
             playTargetBuffer(voiceBuffers[choice], generalGainNode, 0.6);
         } else if (samplers[currentAudioMode]) {
