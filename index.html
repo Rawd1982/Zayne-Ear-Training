@@ -61,7 +61,7 @@
 
         .controls-panel-wrapper {
             position: relative;
-            max-width: 850px;
+            max-width: 1100px;
             width: 100%;
             margin-bottom: 15px;
         }
@@ -77,10 +77,10 @@
             width: 100%;
         }
 
-        /* Top row configuration for the two blend fader blocks */
+        /* Top row configuration configured for THREE blend fader blocks */
         .fader-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 8px;
             width: 100%;
         }
@@ -93,7 +93,7 @@
             width: 100%;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 992px) {
             .fader-grid {
                 grid-template-columns: 1fr;
             }
@@ -534,23 +534,34 @@
             <div class="controls-panel">
                 
                 <div class="fader-grid">
+                    <div class="fader-card" id="card-bell-piano">
+                        <button class="fader-header-btn active" id="mode-bell-piano" onclick="setAudioMode('bell-piano')">
+                            <span>Bells / Ravenscroft 275 Blend</span>
+                        </button>
+                        <div class="fader-metrics">
+                            <span id="label-bp-left" class="highlight">Bells 100%</span>
+                            <span id="label-bp-right" class="highlight">Ravenscroft 275 100%</span>
+                        </div>
+                        <input type="range" min="0" max="100" value="50" class="blend-slider" id="fader-bell-piano" oninput="updateBlendValues('bell-piano', this.value)">
+                    </div>
+
                     <div class="fader-card" id="card-bell-vocal">
-                        <button class="fader-header-btn active" id="mode-bell-vocal" onclick="setAudioMode('bell-vocal')">
+                        <button class="fader-header-btn" id="mode-bell-vocal" onclick="setAudioMode('bell-vocal')">
                             <span>Bells / Solfege Blend</span>
                         </button>
                         <div class="fader-metrics">
                             <span id="label-bv-left" class="highlight">Bells 100%</span>
                             <span id="label-bv-right" class="highlight">Solfege 100%</span>
                         </div>
-                        <input type="range" min="0" max="100" value="50" class="blend-slider" id="fader-bell-vocal" oninput="updateBlendValues('bell-vocal', this.value)">
+                        <input type="range" min="0" max="100" value="50" class="blend-slider" id="fader-bell-vocal" oninput="updateBlendValues('bell-vocal', this.value)" disabled>
                     </div>
 
                     <div class="fader-card" id="card-piano-vocal">
                         <button class="fader-header-btn" id="mode-piano-vocal" onclick="setAudioMode('piano-vocal')">
-                            <span>Ravenscroft / Solfege Blend</span>
+                            <span>Ravenscroft 275 / Solfege Blend</span>
                         </button>
                         <div class="fader-metrics">
-                            <span id="label-pv-left" class="highlight">Ravenscroft 100%</span>
+                            <span id="label-pv-left" class="highlight">Ravenscroft 275 100%</span>
                             <span id="label-pv-right" class="highlight">Solfege 100%</span>
                         </div>
                         <input type="range" min="0" max="100" value="50" class="blend-slider" id="fader-piano-vocal" oninput="updateBlendValues('piano-vocal', this.value)" disabled>
@@ -598,24 +609,33 @@
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     const audioCtx = new AudioContext();
     
-    // Create mixing target points
+    // Web Audio Gain Targets
     const bellGainNode = audioCtx.createGain();
     const vocalGainNode = audioCtx.createGain();
     const ravenscroftGainNode = audioCtx.createGain();
     const generalGainNode = audioCtx.createGain();
 
-    // Start with both nodes at full volume capacity (1.0) for the 50/50 default mid-point
+    // Secondary dedicated target points to handle independent mix configurations cleanly
+    const bellPianoMixGainBell = audioCtx.createGain();
+    const bellPianoMixGainPiano = audioCtx.createGain();
+
+    // Default initialization to 1.0 capacity
     bellGainNode.gain.setValueAtTime(1.0, audioCtx.currentTime);
     vocalGainNode.gain.setValueAtTime(1.0, audioCtx.currentTime);
     ravenscroftGainNode.gain.setValueAtTime(1.0, audioCtx.currentTime);
     generalGainNode.gain.setValueAtTime(1.0, audioCtx.currentTime);
+    bellPianoMixGainBell.gain.setValueAtTime(1.0, audioCtx.currentTime);
+    bellPianoMixGainPiano.gain.setValueAtTime(1.0, audioCtx.currentTime);
 
     bellGainNode.connect(audioCtx.destination);
     vocalGainNode.connect(audioCtx.destination);
     ravenscroftGainNode.connect(audioCtx.destination);
     generalGainNode.connect(audioCtx.destination);
+    bellPianoMixGainBell.connect(audioCtx.destination);
+    bellPianoMixGainPiano.connect(audioCtx.destination);
 
-    let currentAudioMode = 'bell-vocal'; 
+    // Initial default state configuration
+    let currentAudioMode = 'bell-piano'; 
     let isCurrentlyLocked = false;
     let lockedScrollTop = 0;
 
@@ -706,10 +726,14 @@
         document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
         document.querySelectorAll('.fader-header-btn').forEach(btn => btn.classList.remove('active'));
         
+        document.getElementById('fader-bell-piano').disabled = true;
         document.getElementById('fader-bell-vocal').disabled = true;
         document.getElementById('fader-piano-vocal').disabled = true;
 
-        if (mode === 'bell-vocal') {
+        if (mode === 'bell-piano') {
+            document.getElementById('mode-bell-piano').classList.add('active');
+            document.getElementById('fader-bell-piano').disabled = false;
+        } else if (mode === 'bell-vocal') {
             document.getElementById('mode-bell-vocal').classList.add('active');
             document.getElementById('fader-bell-vocal').disabled = false;
         } else if (mode === 'piano-vocal') {
@@ -723,31 +747,37 @@
     function updateBlendValues(targetFader, val) {
         const percentage = parseInt(val);
 
-        // CORRECTED GAIN CURVE PROFILE:
-        // Left slider boundary (0) = 100% Instrument / 0% Solfege
-        // Center slider split (50)  = 100% Instrument / 100% Solfege
-        // Right slider boundary (100) = 0% Instrument / 100% Solfege
-        let instrumentGain = percentage <= 50 ? 1.0 : (100 - percentage) / 50;
-        let solfegeGain = percentage >= 50 ? 1.0 : percentage / 50;
+        // Constant-Full Dynamic Split Mix Profile Curve:
+        // Left slider boundary (0) = 100% Left Source / 0% Right Source
+        // Center slider split (50)  = 100% Left Source / 100% Right Source
+        // Right slider boundary (100) = 0% Left Source / 100% Right Source
+        let leftSideGain = percentage <= 50 ? 1.0 : (100 - percentage) / 50;
+        let rightSideGain = percentage >= 50 ? 1.0 : percentage / 50;
 
-        if (targetFader === 'bell-vocal') {
-            // Update percentage labels to display metrics accurately
+        if (targetFader === 'bell-piano') {
+            document.getElementById('label-bp-left').innerHTML = `Bells ${100 - percentage}%`;
+            document.getElementById('label-bp-right').innerHTML = `Ravenscroft 275 ${percentage}%`;
+            document.getElementById('label-bp-left').className = (100 - percentage) > 0 ? "highlight" : "";
+            document.getElementById('label-bp-right').className = percentage > 0 ? "highlight" : "";
+            
+            bellPianoMixGainBell.gain.setValueAtTime(leftSideGain, audioCtx.currentTime);
+            bellPianoMixGainPiano.gain.setValueAtTime(rightSideGain, audioCtx.currentTime);
+        } else if (targetFader === 'bell-vocal') {
             document.getElementById('label-bv-left').innerHTML = `Bells ${100 - percentage}%`;
             document.getElementById('label-bv-right').innerHTML = `Solfege ${percentage}%`;
             document.getElementById('label-bv-left').className = (100 - percentage) > 0 ? "highlight" : "";
             document.getElementById('label-bv-right').className = percentage > 0 ? "highlight" : "";
             
-            // Map calculated values to Web Audio parameters directly
-            bellGainNode.gain.setValueAtTime(instrumentGain, audioCtx.currentTime);
-            vocalGainNode.gain.setValueAtTime(solfegeGain, audioCtx.currentTime);
+            bellGainNode.gain.setValueAtTime(leftSideGain, audioCtx.currentTime);
+            vocalGainNode.gain.setValueAtTime(rightSideGain, audioCtx.currentTime);
         } else if (targetFader === 'piano-vocal') {
-            document.getElementById('label-pv-left').innerHTML = `Ravenscroft ${100 - percentage}%`;
+            document.getElementById('label-pv-left').innerHTML = `Ravenscroft 275 ${100 - percentage}%`;
             document.getElementById('label-pv-right').innerHTML = `Solfege ${percentage}%`;
             document.getElementById('label-pv-left').className = (100 - percentage) > 0 ? "highlight" : "";
             document.getElementById('label-pv-right').className = percentage > 0 ? "highlight" : "";
 
-            ravenscroftGainNode.gain.setValueAtTime(instrumentGain, audioCtx.currentTime);
-            vocalGainNode.gain.setValueAtTime(solfegeGain, audioCtx.currentTime);
+            ravenscroftGainNode.gain.setValueAtTime(leftSideGain, audioCtx.currentTime);
+            vocalGainNode.gain.setValueAtTime(rightSideGain, audioCtx.currentTime);
         }
     }
 
@@ -907,7 +937,10 @@
 
         triggerLightEffect(choice);
 
-        if (currentAudioMode === 'bell-vocal') {
+        if (currentAudioMode === 'bell-piano') {
+            playTargetBuffer(bellBuffers[choice], bellPianoMixGainBell);
+            playTargetBuffer(ravenscroftBuffers[choice], bellPianoMixGainPiano);
+        } else if (currentAudioMode === 'bell-vocal') {
             playTargetBuffer(bellBuffers[choice], bellGainNode);
             playTargetBuffer(voiceBuffers[choice], vocalGainNode);
         } else if (currentAudioMode === 'piano-vocal') {
@@ -933,5 +966,3 @@
 </script>
 </body>
 </html>
-
-
