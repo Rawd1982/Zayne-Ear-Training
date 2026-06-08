@@ -77,7 +77,6 @@
             width: 100%;
         }
 
-        /* Top row configuration configured for THREE blend fader blocks */
         .fader-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -85,7 +84,6 @@
             width: 100%;
         }
 
-        /* Compact single row configuration for the five alternate buttons */
         .single-row-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -137,7 +135,6 @@
             border-color: transparent;
         }
 
-        /* Fader Cards */
         .fader-card {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.05);
@@ -212,7 +209,6 @@
             cursor: not-allowed;
         }
 
-        /* Loading Panel */
         .loading-zone {
             display: flex;
             flex-direction: column;
@@ -261,7 +257,6 @@
             line-height: 1;
         }
 
-        /* Lock Screen Interface Layer */
         .slide-lock-container {
             width: 100%;
             max-width: 400px;
@@ -619,7 +614,14 @@
     const bellPianoMixGainBell = audioCtx.createGain();
     const bellPianoMixGainPiano = audioCtx.createGain();
 
-    // Default initialization to 1.0 capacity
+    // Interaction states to track if faders have been tweaked yet
+    let faderTouched = {
+        'bell-piano': false,
+        'bell-vocal': false,
+        'piano-vocal': false
+    };
+
+    // Default initialization to full 1.0 (100%) capability so page-load audio sounds rich out of the gate
     bellGainNode.gain.setValueAtTime(1.0, audioCtx.currentTime);
     vocalGainNode.gain.setValueAtTime(1.0, audioCtx.currentTime);
     ravenscroftGainNode.gain.setValueAtTime(1.0, audioCtx.currentTime);
@@ -634,7 +636,6 @@
     bellPianoMixGainBell.connect(audioCtx.destination);
     bellPianoMixGainPiano.connect(audioCtx.destination);
 
-    // Initial default state configuration
     let currentAudioMode = 'bell-piano'; 
     let isCurrentlyLocked = false;
     let lockedScrollTop = 0;
@@ -746,38 +747,41 @@
 
     function updateBlendValues(targetFader, val) {
         const percentage = parseInt(val);
+        
+        // Lock interaction rule active on modification
+        faderTouched[targetFader] = true;
 
-        // Constant-Full Dynamic Split Mix Profile Curve:
-        // Left slider boundary (0) = 100% Left Source / 0% Right Source
-        // Center slider split (50)  = 100% Left Source / 100% Right Source
-        // Right slider boundary (100) = 0% Left Source / 100% Right Source
-        let leftSideGain = percentage <= 50 ? 1.0 : (100 - percentage) / 50;
-        let rightSideGain = percentage >= 50 ? 1.0 : percentage / 50;
+        // Proportional balance profile scaling logic (e.g., 75% slider position = 75% gain on left channel)
+        let leftSideGain = percentage / 100;
+        let rightSideGain = (100 - percentage) / 100;
+
+        const currentTime = audioCtx.currentTime;
+        const rampTime = 0.03; // Smooth anti-click gain ramp
 
         if (targetFader === 'bell-piano') {
-            document.getElementById('label-bp-left').innerHTML = `Bells ${100 - percentage}%`;
-            document.getElementById('label-bp-right').innerHTML = `Ravenscroft 275 ${percentage}%`;
-            document.getElementById('label-bp-left').className = (100 - percentage) > 0 ? "highlight" : "";
-            document.getElementById('label-bp-right').className = percentage > 0 ? "highlight" : "";
+            document.getElementById('label-bp-left').innerHTML = `Bells ${percentage}%`;
+            document.getElementById('label-bp-right').innerHTML = `Ravenscroft 275 ${100 - percentage}%`;
+            document.getElementById('label-bp-left').className = percentage > 0 ? "highlight" : "";
+            document.getElementById('label-bp-right').className = (100 - percentage) > 0 ? "highlight" : "";
             
-            bellPianoMixGainBell.gain.setValueAtTime(leftSideGain, audioCtx.currentTime);
-            bellPianoMixGainPiano.gain.setValueAtTime(rightSideGain, audioCtx.currentTime);
+            bellPianoMixGainBell.gain.linearRampToValueAtTime(leftSideGain, currentTime + rampTime);
+            bellPianoMixGainPiano.gain.linearRampToValueAtTime(rightSideGain, currentTime + rampTime);
         } else if (targetFader === 'bell-vocal') {
-            document.getElementById('label-bv-left').innerHTML = `Bells ${100 - percentage}%`;
-            document.getElementById('label-bv-right').innerHTML = `Solfege ${percentage}%`;
-            document.getElementById('label-bv-left').className = (100 - percentage) > 0 ? "highlight" : "";
-            document.getElementById('label-bv-right').className = percentage > 0 ? "highlight" : "";
+            document.getElementById('label-bv-left').innerHTML = `Bells ${percentage}%`;
+            document.getElementById('label-bv-right').innerHTML = `Solfege ${100 - percentage}%`;
+            document.getElementById('label-bv-left').className = percentage > 0 ? "highlight" : "";
+            document.getElementById('label-bv-right').className = (100 - percentage) > 0 ? "highlight" : "";
             
-            bellGainNode.gain.setValueAtTime(leftSideGain, audioCtx.currentTime);
-            vocalGainNode.gain.setValueAtTime(rightSideGain, audioCtx.currentTime);
+            bellGainNode.gain.linearRampToValueAtTime(leftSideGain, currentTime + rampTime);
+            vocalGainNode.gain.linearRampToValueAtTime(rightSideGain, currentTime + rampTime);
         } else if (targetFader === 'piano-vocal') {
-            document.getElementById('label-pv-left').innerHTML = `Ravenscroft 275 ${100 - percentage}%`;
-            document.getElementById('label-pv-right').innerHTML = `Solfege ${percentage}%`;
-            document.getElementById('label-pv-left').className = (100 - percentage) > 0 ? "highlight" : "";
-            document.getElementById('label-pv-right').className = percentage > 0 ? "highlight" : "";
+            document.getElementById('label-pv-left').innerHTML = `Ravenscroft 275 ${percentage}%`;
+            document.getElementById('label-pv-right').innerHTML = `Solfege ${100 - percentage}%`;
+            document.getElementById('label-pv-left').className = percentage > 0 ? "highlight" : "";
+            document.getElementById('label-pv-right').className = (100 - percentage) > 0 ? "highlight" : "";
 
-            ravenscroftGainNode.gain.setValueAtTime(leftSideGain, audioCtx.currentTime);
-            vocalGainNode.gain.setValueAtTime(rightSideGain, audioCtx.currentTime);
+            ravenscroftGainNode.gain.linearRampToValueAtTime(leftSideGain, currentTime + rampTime);
+            vocalGainNode.gain.linearRampToValueAtTime(rightSideGain, currentTime + rampTime);
         }
     }
 
@@ -901,6 +905,14 @@
         setTimeout(() => {
             loadingZone.classList.add('hidden');
             lockInterface.classList.remove('hidden');
+            
+            // Set initial dynamic display layout info to 50/50 visual balance markers
+            document.getElementById('label-bp-left').innerHTML = `Bells 50%`;
+            document.getElementById('label-bp-right').innerHTML = `Ravenscroft 275 50%`;
+            document.getElementById('label-bv-left').innerHTML = `Bells 50%`;
+            document.getElementById('label-bv-right').innerHTML = `Solfege 50%`;
+            document.getElementById('label-pv-left').innerHTML = `Ravenscroft 275 50%`;
+            document.getElementById('label-pv-right').innerHTML = `Solfege 50%`;
         }, 600);
     }
     loadAllSounds();
@@ -938,14 +950,31 @@
         triggerLightEffect(choice);
 
         if (currentAudioMode === 'bell-piano') {
-            playTargetBuffer(bellBuffers[choice], bellPianoMixGainBell);
-            playTargetBuffer(ravenscroftBuffers[choice], bellPianoMixGainPiano);
+            if (!faderTouched['bell-piano']) {
+                // Untouched initial rule: Play both full volume
+                playTargetBuffer(bellBuffers[choice], generalGainNode);
+                playTargetBuffer(ravenscroftBuffers[choice], generalGainNode);
+            } else {
+                // Touched mix state: Obey exact proportional slider math assignment layout
+                playTargetBuffer(bellBuffers[choice], bellPianoMixGainBell);
+                playTargetBuffer(ravenscroftBuffers[choice], bellPianoMixGainPiano);
+            }
         } else if (currentAudioMode === 'bell-vocal') {
-            playTargetBuffer(bellBuffers[choice], bellGainNode);
-            playTargetBuffer(voiceBuffers[choice], vocalGainNode);
+            if (!faderTouched['bell-vocal']) {
+                playTargetBuffer(bellBuffers[choice], generalGainNode);
+                playTargetBuffer(voiceBuffers[choice], generalGainNode);
+            } else {
+                playTargetBuffer(bellBuffers[choice], bellGainNode);
+                playTargetBuffer(voiceBuffers[choice], vocalGainNode);
+            }
         } else if (currentAudioMode === 'piano-vocal') {
-            playTargetBuffer(ravenscroftBuffers[choice], ravenscroftGainNode);
-            playTargetBuffer(voiceBuffers[choice], vocalGainNode);
+            if (!faderTouched['piano-vocal']) {
+                playTargetBuffer(ravenscroftBuffers[choice], generalGainNode);
+                playTargetBuffer(voiceBuffers[choice], generalGainNode);
+            } else {
+                playTargetBuffer(ravenscroftBuffers[choice], ravenscroftGainNode);
+                playTargetBuffer(voiceBuffers[choice], vocalGainNode);
+            }
         } else if (currentAudioMode === 'seq-bell-vocal') {
             playTargetBuffer(bellBuffers[choice], generalGainNode);
             playTargetBuffer(voiceBuffers[choice], generalGainNode, 0.6);
