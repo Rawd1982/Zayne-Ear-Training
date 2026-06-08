@@ -1,5 +1,4 @@
 
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -68,14 +67,42 @@
         }
 
         .controls-panel {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 6px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
             background-color: var(--keyboard-bg);
-            padding: 8px;
+            padding: 14px;
             border-radius: 16px;
             border: 2px solid #1e293b;
             width: 100%;
+        }
+
+        .category-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .category-title {
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #0d9488;
+            margin-left: 4px;
+            margin-bottom: 2px;
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+        }
+
+        @media (max-width: 768px) {
+            .button-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
         .controls-panel-wrapper.locked::after {
@@ -87,12 +114,6 @@
             border-radius: 16px;
             z-index: 10;
             cursor: not-allowed;
-        }
-
-        @media (max-width: 768px) {
-            .controls-panel {
-                grid-template-columns: repeat(2, 1fr);
-            }
         }
 
         .mode-btn {
@@ -110,12 +131,15 @@
             align-items: center;
             justify-content: center;
             line-height: 1.2;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            background-color: rgba(255, 255, 255, 0.02);
         }
 
         .mode-btn.active {
             background-color: var(--accent);
             color: var(--text-main);
             box-shadow: 0 4px 12px rgba(214, 40, 40, 0.3); 
+            border-color: transparent;
         }
 
         /* Loading Zone Area */
@@ -262,7 +286,6 @@
             position: relative;
         }
 
-        /* Prevent scrolling of keys while locked */
         .keyboard-wrapper.locked {
             overflow-x: hidden !important;
             overflow-y: hidden !important;
@@ -438,16 +461,38 @@
     <div class="game-panel">
         <div class="controls-panel-wrapper" id="controlsWrapper">
             <div class="controls-panel">
-                <button class="mode-btn active" id="mode-bell-vocal" onclick="setAudioMode('bell-vocal')">Bell then Solfège</button>
-                <button class="mode-btn" id="mode-vocal" onclick="setAudioMode('vocal')">Solfège</button>
-                <button class="mode-btn" id="mode-both" onclick="setAudioMode('both')">Solfège/Bells</button>
-                <button class="mode-btn" id="mode-bells" onclick="setAudioMode('bells')">Bells</button>
-                <button class="mode-btn" id="mode-piano" onclick="setAudioMode('piano')">Ravenscroft 275</button>
-                <button class="mode-btn" id="mode-piano-bells" onclick="setAudioMode('piano-bells')">Ravenscroft & Bells</button>
-                <button class="mode-btn" id="mode-guitar" onclick="setAudioMode('guitar')">Guitar</button>
-                <button class="mode-btn" id="mode-rhodes" onclick="setAudioMode('rhodes')">Rhodes</button>
-                <button class="mode-btn" id="mode-piano-vocal" onclick="setAudioMode('piano-vocal')">Ravenscroft then Solfège</button>
-                <button class="mode-btn" id="mode-organ" onclick="setAudioMode('organ')">Rock Organ</button>
+                
+                <!-- Category 1: Hybrid Guidance Modes -->
+                <div class="category-group">
+                    <div class="category-title">Hybrid Training Modes</div>
+                    <div class="button-grid">
+                        <button class="mode-btn active" id="mode-bell-vocal" onclick="setAudioMode('bell-vocal')">Bell then Solfège</button>
+                        <button class="mode-btn" id="mode-piano-vocal" onclick="setAudioMode('piano-vocal')">Ravenscroft then Solfège</button>
+                        <button class="mode-btn" id="mode-both" onclick="setAudioMode('both')">Solfège/Bells Joint</button>
+                        <button class="mode-btn" id="mode-piano-bells" onclick="setAudioMode('piano-bells')">Ravenscroft/Bells</button>
+                    </div>
+                </div>
+
+                <!-- Category 2: Core Targets -->
+                <div class="category-group">
+                    <div class="category-title">Core Targets</div>
+                    <div class="button-grid">
+                        <button class="mode-btn" id="mode-vocal" onclick="setAudioMode('vocal')">Solfège Only</button>
+                        <button class="mode-btn" id="mode-bells" onclick="setAudioMode('bells')">Bells Only</button>
+                    </div>
+                </div>
+
+                <!-- Category 3: Instruments -->
+                <div class="category-group">
+                    <div class="category-title">Virtual Instruments</div>
+                    <div class="button-grid">
+                        <button class="mode-btn" id="mode-piano" onclick="setAudioMode('piano')">Ravenscroft 275</button>
+                        <button class="mode-btn" id="mode-rhodes" onclick="setAudioMode('rhodes')">Rhodes Piano</button>
+                        <button class="mode-btn" id="mode-guitar" onclick="setAudioMode('guitar')">Nylon Guitar</button>
+                        <button class="mode-btn" id="mode-organ" onclick="setAudioMode('organ')">Rock Organ</button>
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -804,7 +849,6 @@
         }
     }
 
-    // Auto-resume audio instances instantly upon switching tabs/apps back into view
     document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible') {
             if (audioCtx && audioCtx.state === 'suspended') {
