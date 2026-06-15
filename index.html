@@ -86,7 +86,8 @@
 
         .test-mode-grid {
             display: grid;
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
             width: 100%;
             margin-top: 2px;
         }
@@ -99,7 +100,7 @@
         }
 
         @media (max-width: 992px) {
-            .fader-grid {
+            .fader-grid, .test-mode-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -162,6 +163,11 @@
             gap: 8px;
         }
 
+        .test-card.interactive {
+            background: rgba(243, 114, 44, 0.03);
+            border: 1px solid rgba(243, 114, 44, 0.25);
+        }
+
         .test-options-row {
             display: flex;
             gap: 10px;
@@ -189,7 +195,11 @@
             box-shadow: 0 2px 8px rgba(13, 148, 136, 0.3);
         }
 
-        /* High Visibility GO Test Execution Trigger Element Button Styles */
+        .test-card.interactive .test-sub-btn.active {
+            background: #f3722c;
+            box-shadow: 0 2px 8px rgba(243, 114, 44, 0.3);
+        }
+
         .test-go-btn {
             flex: 1;
             background: #e65c40;
@@ -226,6 +236,9 @@
 
         .fader-header-btn.active {
             color: #0d9488;
+        }
+        .test-card.interactive .fader-header-btn.active {
+            color: #f3722c;
         }
 
         .fader-metrics {
@@ -511,6 +524,16 @@
             box-shadow: 1px 1px 3px rgba(0,0,0,0.5);
             background: var(--light-color, #222222);
         }
+
+        /* Success and failure color overrides for Interactive Testing Mode */
+        .naturals-layer .bell-btn.success-flash, .sharps-layer .bell-btn.success-flash {
+            background: #22c55e !important;
+            border-bottom-color: #15803d !important;
+        }
+        .naturals-layer .bell-btn.error-flash, .sharps-layer .bell-btn.error-flash {
+            background: #ef4444 !important;
+            border-bottom-color: #b91c1c !important;
+        }
         
         .color-badge {
             width: 44px;
@@ -592,6 +615,7 @@
         <div class="controls-panel-wrapper" id="controlsWrapper">
             <div class="controls-panel">
                 
+                <!-- ROW 1: 3-Button Mixing Fader Grid Profile -->
                 <div class="fader-grid">
                     <div class="fader-card" id="card-bell-piano">
                         <button class="fader-header-btn active" id="mode-bell-piano" onclick="setAudioMode('bell-piano')">
@@ -627,19 +651,34 @@
                     </div>
                 </div>
 
+                <!-- TEST MODE GRID SECTION -->
                 <div class="test-mode-grid">
+                    <!-- MODE 1: ISOLATED VERBAL TEST PANEL -->
                     <div class="test-card">
                         <button class="fader-header-btn" id="mode-test-holder" onclick="setAudioMode('test-mode')">
-                            <span>🎯 Isolated Test Mode (Keys Light Up)</span>
+                            <span>🎯 Isolated Test Mode (Instant Light Up)</span>
                         </button>
                         <div class="test-options-row">
-                            <button class="test-sub-btn active" id="test-sub-ravenscroft" onclick="setTestSubMode('ravenscroft')">Ravenscroft 275 Only</button>
+                            <button class="test-sub-btn active" id="test-sub-ravenscroft" onclick="setTestSubMode('ravenscroft')">Ravenscroft Only</button>
                             <button class="test-sub-btn" id="test-sub-bells" onclick="setTestSubMode('bells')">Bells Only</button>
                             <button class="test-go-btn" id="test-go-trigger" onclick="playRandomTestNote()">GO ⚡</button>
                         </div>
                     </div>
+
+                    <!-- MODE 2: INTERACTIVE INPUT TEST PANEL -->
+                    <div class="test-card interactive">
+                        <button class="fader-header-btn" id="mode-interactive-holder" onclick="setAudioMode('interactive-test')">
+                            <span>🎹 Interactive Test Mode (Press Key to Answer)</span>
+                        </button>
+                        <div class="test-options-row">
+                            <button class="test-sub-btn active" id="inter-sub-ravenscroft" onclick="setInteractiveSubMode('ravenscroft')">Ravenscroft Only</button>
+                            <button class="test-sub-btn" id="inter-sub-bells" onclick="setInteractiveSubMode('bells')">Bells Only</button>
+                            <button class="test-go-btn" id="inter-go-trigger" onclick="playInteractiveTestNote()">GO ⚡</button>
+                        </div>
+                    </div>
                 </div>
 
+                <!-- ROW 2: Compact Alternate Buttons -->
                 <div class="single-row-grid">
                     <button class="mode-btn" id="mode-seq-bell-vocal" onclick="setAudioMode('seq-bell-vocal')">Bells → Solfège</button>
                     <button class="mode-btn" id="mode-seq-piano-vocal" onclick="setAudioMode('seq-piano-vocal')">Piano → Solfège</button>
@@ -681,24 +720,20 @@
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     const audioCtx = new AudioContext();
     
-    // Web Audio Gain Targets
     const bellGainNode = audioCtx.createGain();
     const vocalGainNode = audioCtx.createGain();
     const ravenscroftGainNode = audioCtx.createGain();
     const generalGainNode = audioCtx.createGain();
 
-    // Secondary dedicated target points to handle independent mix configurations cleanly
     const bellPianoMixGainBell = audioCtx.createGain();
     const bellPianoMixGainPiano = audioCtx.createGain();
 
-    // Interaction states to track if faders have been tweaked yet
     let faderTouched = {
         'bell-piano': false,
         'bell-vocal': false,
         'piano-vocal': false
     };
 
-    // Default initialization to full 1.0 (100%) capability so page-load audio sounds rich out of the gate
     bellGainNode.gain.setValueAtTime(1.0, audioCtx.currentTime);
     vocalGainNode.gain.setValueAtTime(1.0, audioCtx.currentTime);
     ravenscroftGainNode.gain.setValueAtTime(1.0, audioCtx.currentTime);
@@ -715,6 +750,8 @@
 
     let currentAudioMode = 'bell-piano'; 
     let currentTestSubSelection = 'ravenscroft'; 
+    let currentInteractiveSubSelection = 'ravenscroft';
+    let targetActiveTestNote = null; // Stores hidden note target for the interactive input testing system
     let isCurrentlyLocked = false;
     let lockedScrollTop = 0;
 
@@ -808,6 +845,12 @@
         document.getElementById('fader-bell-piano').disabled = true;
         document.getElementById('fader-bell-vocal').disabled = true;
         document.getElementById('fader-piano-vocal').disabled = true;
+        
+        // Reset interactive testing target if switching entirely out of it
+        if(mode !== 'interactive-test') {
+            targetActiveTestNote = null;
+            clearAllFlashEffects();
+        }
 
         if (mode === 'bell-piano') {
             document.getElementById('mode-bell-piano').classList.add('active');
@@ -820,6 +863,8 @@
             document.getElementById('fader-piano-vocal').disabled = false;
         } else if (mode === 'test-mode') {
             document.getElementById('mode-test-holder').classList.add('active');
+        } else if (mode === 'interactive-test') {
+            document.getElementById('mode-interactive-holder').classList.add('active');
         } else {
             document.getElementById(`mode-${mode}`).classList.add('active');
         }
@@ -841,15 +886,58 @@
         setAudioMode('test-mode');
     }
 
-    // Isolated test action router that picks a random progression element
+    function setInteractiveSubMode(type) {
+        if (isCurrentlyLocked) return;
+        currentInteractiveSubSelection = type;
+        
+        document.getElementById('inter-sub-ravenscroft').classList.remove('active');
+        document.getElementById('inter-sub-bells').classList.remove('active');
+        
+        if (type === 'ravenscroft') {
+            document.getElementById('inter-sub-ravenscroft').classList.add('active');
+        } else {
+            document.getElementById('inter-sub-bells').classList.add('active');
+        }
+        
+        setAudioMode('interactive-test');
+    }
+
+    function clearAllFlashEffects() {
+        document.querySelectorAll('.bell-btn').forEach(b => {
+            b.classList.remove('playing', 'success-flash', 'error-flash');
+        });
+    }
+
+    // Mode 1: Plays note and instantly highlights it
     function playRandomTestNote() {
-        // Enforce mode focus if they just tap GO instantly
         setAudioMode('test-mode');
+        clearAllFlashEffects();
 
         const randomIndex = Math.floor(Math.random() * progression.length);
         const randomNoteId = progression[randomIndex].id;
         
         executeAudioPlay(randomNoteId);
+    }
+
+    // Mode 2: Plays note silently on the UI layer, waiting for input confirmation
+    function playInteractiveTestNote() {
+        setAudioMode('interactive-test');
+        clearAllFlashEffects();
+
+        const randomIndex = Math.floor(Math.random() * progression.length);
+        targetActiveTestNote = progression[randomIndex].id;
+        
+        triggerInstrumentAudioOnly(targetActiveTestNote, currentInteractiveSubSelection);
+    }
+
+    function triggerInstrumentAudioOnly(choice, instrumentSrc) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        
+        if (instrumentSrc === 'ravenscroft') {
+            playTargetBuffer(ravenscroftBuffers[choice], generalGainNode);
+        } else if (instrumentSrc === 'bells') {
+            playTargetBuffer(bellBuffers[choice], generalGainNode);
+        }
     }
 
     function updateBlendValues(targetFader, val) {
@@ -1021,8 +1109,7 @@
     loadAllSounds();
 
     function triggerLightEffect(choice) {
-        // Clear old visual flags first so multiple triggers don't bleed into each other
-        document.querySelectorAll('.bell-btn').forEach(b => b.classList.remove('playing'));
+        clearAllFlashEffects();
 
         const btn = document.getElementById(`btn-${choice}`);
         if (!btn) return;
@@ -1035,13 +1122,48 @@
         btn.style.setProperty('--light-color', targetColor);
         btn.classList.add('playing');
         
-        // Retain highlight in Test Mode for monitoring correctness; clear quickly in live modes
-        if (currentAudioMode !== 'test-mode') {
+        // Keep highlighted if we are looking at standard verbal test mode
+        if (currentAudioMode !== 'test-mode' && currentAudioMode !== 'interactive-test') {
             setTimeout(() => btn.classList.remove('playing'), 1200);
         }
     }
 
     function handleInput(choice) {
+        // Evaluate input response checks if Interactive mode system tracking is armed
+        if (currentAudioMode === 'interactive-test' && targetActiveTestNote !== null) {
+            const chosenBtn = document.getElementById(`btn-${choice}`);
+            const correctBtn = document.getElementById(`btn-${targetActiveTestNote}`);
+            
+            if (choice === targetActiveTestNote) {
+                // Correct choice handling
+                clearAllFlashEffects();
+                if (chosenBtn) chosenBtn.classList.add('success-flash');
+                triggerInstrumentAudioOnly(choice, currentInteractiveSubSelection);
+                
+                // Disarm test slot since they nailed it
+                targetActiveTestNote = null;
+                setTimeout(clearAllFlashEffects, 1000);
+            } else {
+                // Incorrect choice handling
+                clearAllFlashEffects();
+                if (chosenBtn) chosenBtn.classList.add('error-flash');
+                
+                // Highlight the true anchor solution to let them self-correct visually
+                if (correctBtn) {
+                    const badge = correctBtn.querySelector('.color-badge');
+                    let colorMatch = window.getComputedStyle(badge).backgroundImage.match(/rgb\([^)]+\)/g);
+                    let targetColor = colorMatch ? (colorMatch[1] || colorMatch[0]) : "rgba(255, 255, 255, 1)";
+                    correctBtn.style.setProperty('--light-color', targetColor);
+                    correctBtn.classList.add('playing');
+                }
+                
+                // Play it back as an ear correction assist anchor
+                triggerInstrumentAudioOnly(targetActiveTestNote, currentInteractiveSubSelection);
+            }
+            return;
+        }
+
+        // Standard operational routing
         executeAudioPlay(choice);
     }
 
@@ -1109,3 +1231,4 @@
 </script>
 </body>
 </html>
+
