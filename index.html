@@ -173,6 +173,7 @@
             gap: 10px;
             width: 100%;
             align-items: center;
+            height: 38px;
         }
 
         .test-sub-btn {
@@ -186,6 +187,7 @@
             border-radius: 6px;
             cursor: pointer;
             transition: all 0.15s ease;
+            height: 100%;
         }
 
         .test-sub-btn.active {
@@ -212,11 +214,17 @@
             cursor: pointer;
             letter-spacing: 1px;
             box-shadow: 0 4px 10px rgba(230, 92, 64, 0.3);
-            transition: transform 0.05s, background 0.1s;
+            transition: transform 0.05s, background 0.1s, opacity 0.2s ease;
+            height: 100%;
         }
         .test-go-btn:active {
             transform: scale(0.96);
             background: #c75b20;
+        }
+        
+        .test-go-btn.hidden-btn {
+            opacity: 0;
+            pointer-events: none;
         }
 
         .fader-header-btn {
@@ -525,7 +533,6 @@
             background: var(--light-color, #222222);
         }
 
-        /* Success and failure color overrides for Interactive Testing Mode */
         .naturals-layer .bell-btn.success-flash, .sharps-layer .bell-btn.success-flash {
             background: #22c55e !important;
             border-bottom-color: #15803d !important;
@@ -751,7 +758,8 @@
     let currentAudioMode = 'bell-piano'; 
     let currentTestSubSelection = 'ravenscroft'; 
     let currentInteractiveSubSelection = 'ravenscroft';
-    let targetActiveTestNote = null; // Stores hidden note target for the interactive input testing system
+    let targetActiveTestNote = null; 
+    let hasAnsweringAttemptedOnCurrentNote = false; 
     let isCurrentlyLocked = false;
     let lockedScrollTop = 0;
 
@@ -846,9 +854,10 @@
         document.getElementById('fader-bell-vocal').disabled = true;
         document.getElementById('fader-piano-vocal').disabled = true;
         
-        // Reset interactive testing target if switching entirely out of it
         if(mode !== 'interactive-test') {
             targetActiveTestNote = null;
+            hasAnsweringAttemptedOnCurrentNote = false;
+            document.getElementById('inter-go-trigger').classList.remove('hidden-btn');
             clearAllFlashEffects();
         }
 
@@ -900,6 +909,8 @@
         }
         
         setAudioMode('interactive-test');
+        document.getElementById('inter-go-trigger').classList.remove('hidden-btn');
+        targetActiveTestNote = null;
     }
 
     function clearAllFlashEffects() {
@@ -908,7 +919,6 @@
         });
     }
 
-    // Mode 1: Plays note and instantly highlights it
     function playRandomTestNote() {
         setAudioMode('test-mode');
         clearAllFlashEffects();
@@ -919,13 +929,15 @@
         executeAudioPlay(randomNoteId);
     }
 
-    // Mode 2: Plays note silently on the UI layer, waiting for input confirmation
     function playInteractiveTestNote() {
         setAudioMode('interactive-test');
         clearAllFlashEffects();
+        
+        document.getElementById('inter-go-trigger').classList.add('hidden-btn');
 
         const randomIndex = Math.floor(Math.random() * progression.length);
         targetActiveTestNote = progression[randomIndex].id;
+        hasAnsweringAttemptedOnCurrentNote = false; 
         
         triggerInstrumentAudioOnly(targetActiveTestNote, currentInteractiveSubSelection);
     }
@@ -1122,33 +1134,31 @@
         btn.style.setProperty('--light-color', targetColor);
         btn.classList.add('playing');
         
-        // Keep highlighted if we are looking at standard verbal test mode
         if (currentAudioMode !== 'test-mode' && currentAudioMode !== 'interactive-test') {
             setTimeout(() => btn.classList.remove('playing'), 1200);
         }
     }
 
     function handleInput(choice) {
-        // Evaluate input response checks if Interactive mode system tracking is armed
         if (currentAudioMode === 'interactive-test' && targetActiveTestNote !== null) {
             const chosenBtn = document.getElementById(`btn-${choice}`);
             const correctBtn = document.getElementById(`btn-${targetActiveTestNote}`);
             
             if (choice === targetActiveTestNote) {
-                // Correct choice handling
                 clearAllFlashEffects();
                 if (chosenBtn) chosenBtn.classList.add('success-flash');
                 triggerInstrumentAudioOnly(choice, currentInteractiveSubSelection);
                 
-                // Disarm test slot since they nailed it
                 targetActiveTestNote = null;
-                setTimeout(clearAllFlashEffects, 1000);
+                hasAnsweringAttemptedOnCurrentNote = false;
+                
+                setTimeout(() => {
+                    playInteractiveTestNote();
+                }, 1200);
             } else {
-                // Incorrect choice handling
                 clearAllFlashEffects();
                 if (chosenBtn) chosenBtn.classList.add('error-flash');
                 
-                // Highlight the true anchor solution to let them self-correct visually
                 if (correctBtn) {
                     const badge = correctBtn.querySelector('.color-badge');
                     let colorMatch = window.getComputedStyle(badge).backgroundImage.match(/rgb\([^)]+\)/g);
@@ -1157,13 +1167,12 @@
                     correctBtn.classList.add('playing');
                 }
                 
-                // Play it back as an ear correction assist anchor
                 triggerInstrumentAudioOnly(targetActiveTestNote, currentInteractiveSubSelection);
+                hasAnsweringAttemptedOnCurrentNote = true;
             }
             return;
         }
 
-        // Standard operational routing
         executeAudioPlay(choice);
     }
 
@@ -1231,4 +1240,3 @@
 </script>
 </body>
 </html>
-
