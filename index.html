@@ -84,7 +84,6 @@
             width: 100%;
         }
 
-        /* Test Mode Grid Container Row style */
         .test-mode-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -153,7 +152,6 @@
             gap: 6px;
         }
 
-        /* Test Card Layout Stylings */
         .test-card {
             background: rgba(13, 148, 136, 0.04);
             border: 1px solid rgba(13, 148, 136, 0.2);
@@ -168,14 +166,15 @@
             display: flex;
             gap: 10px;
             width: 100%;
+            align-items: center;
         }
 
         .test-sub-btn {
-            flex: 1;
+            flex: 2;
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: var(--text-sub);
-            padding: 6px;
+            padding: 8px;
             font-size: 0.75rem;
             font-weight: 700;
             border-radius: 6px;
@@ -188,6 +187,26 @@
             color: white;
             border-color: transparent;
             box-shadow: 0 2px 8px rgba(13, 148, 136, 0.3);
+        }
+
+        /* High Visibility GO Test Execution Trigger Element Button Styles */
+        .test-go-btn {
+            flex: 1;
+            background: #e65c40;
+            border: none;
+            color: white;
+            padding: 8px;
+            font-size: 0.85rem;
+            font-weight: 900;
+            border-radius: 6px;
+            cursor: pointer;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 10px rgba(230, 92, 64, 0.3);
+            transition: transform 0.05s, background 0.1s;
+        }
+        .test-go-btn:active {
+            transform: scale(0.96);
+            background: #c75b20;
         }
 
         .fader-header-btn {
@@ -616,6 +635,7 @@
                         <div class="test-options-row">
                             <button class="test-sub-btn active" id="test-sub-ravenscroft" onclick="setTestSubMode('ravenscroft')">Ravenscroft 275 Only</button>
                             <button class="test-sub-btn" id="test-sub-bells" onclick="setTestSubMode('bells')">Bells Only</button>
+                            <button class="test-go-btn" id="test-go-trigger" onclick="playRandomTestNote()">GO ⚡</button>
                         </div>
                     </div>
                 </div>
@@ -694,7 +714,7 @@
     bellPianoMixGainPiano.connect(audioCtx.destination);
 
     let currentAudioMode = 'bell-piano'; 
-    let currentTestSubSelection = 'ravenscroft'; // Initial sub-state config choice tracking variable 
+    let currentTestSubSelection = 'ravenscroft'; 
     let isCurrentlyLocked = false;
     let lockedScrollTop = 0;
 
@@ -805,7 +825,6 @@
         }
     }
 
-    // Secondary sub selector logic for the custom profile test target options block
     function setTestSubMode(type) {
         if (isCurrentlyLocked) return;
         currentTestSubSelection = type;
@@ -819,8 +838,18 @@
             document.getElementById('test-sub-bells').classList.add('active');
         }
         
-        // Auto force transition context switch to target node profile seamlessly
         setAudioMode('test-mode');
+    }
+
+    // Isolated test action router that picks a random progression element
+    function playRandomTestNote() {
+        // Enforce mode focus if they just tap GO instantly
+        setAudioMode('test-mode');
+
+        const randomIndex = Math.floor(Math.random() * progression.length);
+        const randomNoteId = progression[randomIndex].id;
+        
+        executeAudioPlay(randomNoteId);
     }
 
     function updateBlendValues(targetFader, val) {
@@ -992,6 +1021,9 @@
     loadAllSounds();
 
     function triggerLightEffect(choice) {
+        // Clear old visual flags first so multiple triggers don't bleed into each other
+        document.querySelectorAll('.bell-btn').forEach(b => b.classList.remove('playing'));
+
         const btn = document.getElementById(`btn-${choice}`);
         if (!btn) return;
         const badge = btn.querySelector('.color-badge');
@@ -1002,7 +1034,11 @@
         
         btn.style.setProperty('--light-color', targetColor);
         btn.classList.add('playing');
-        setTimeout(() => btn.classList.remove('playing'), 1200);
+        
+        // Retain highlight in Test Mode for monitoring correctness; clear quickly in live modes
+        if (currentAudioMode !== 'test-mode') {
+            setTimeout(() => btn.classList.remove('playing'), 1200);
+        }
     }
 
     function handleInput(choice) {
@@ -1048,7 +1084,6 @@
                 playTargetBuffer(voiceBuffers[choice], vocalGainNode);
             }
         } else if (currentAudioMode === 'test-mode') {
-            // Test Engine router logic profile block
             if (currentTestSubSelection === 'ravenscroft') {
                 playTargetBuffer(ravenscroftBuffers[choice], generalGainNode);
             } else if (currentTestSubSelection === 'bells') {
