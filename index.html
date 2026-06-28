@@ -1,4 +1,3 @@
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -13,6 +12,8 @@
             --text-sub: #94a3b8;
             --keyboard-bg: #0b0f19;
             --accent: #d62828; 
+            --teal: #0d9488;
+            --orange: #f3722c;
         }
 
         html, body {
@@ -69,71 +70,140 @@
         .controls-panel {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 16px;
             background-color: var(--keyboard-bg);
-            padding: 16px;
+            padding: 20px;
             border-radius: 16px;
             border: 2px solid #1e293b;
             width: 100%;
         }
 
-        .fader-grid {
+        .section-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-sub);
+            margin: 0 0 8px 0;
+            font-weight: 800;
+            border-left: 3px solid var(--teal);
+            padding-left: 8px;
+        }
+
+        /* NEW MIXER GRID LAYOUT */
+        .mixer-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        @media (max-width: 768px) {
+            .mixer-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .fader-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             gap: 8px;
+            text-align: center;
+        }
+
+        .fader-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .fader-metrics {
+            font-size: 0.75rem;
+            font-family: monospace;
+            color: var(--teal);
+            font-weight: bold;
+        }
+
+        .blend-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            background: #334155;
+            border-radius: 3px;
+            outline: none;
+            margin: 8px 0;
+        }
+        .blend-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--teal);
+            cursor: pointer;
+            box-shadow: 0 0 6px rgba(13, 148, 136, 0.5);
+        }
+        .blend-slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border: none;
+            border-radius: 50%;
+            background: var(--teal);
+            cursor: pointer;
+        }
+
+        /* MODES & TOOLS SECTIONS */
+        .modes-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .single-row-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
             width: 100%;
         }
 
         .test-mode-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            width: 100%;
-            margin-top: 2px;
-        }
-
-        .single-row-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 6px;
+            gap: 12px;
             width: 100%;
         }
 
         @media (max-width: 992px) {
-            .fader-grid, .test-mode-grid {
+            .test-mode-grid, .single-row-grid {
                 grid-template-columns: 1fr;
             }
         }
 
-        .controls-panel-wrapper.locked::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(1px);
-            border-radius: 16px;
-            z-index: 10;
-            cursor: not-allowed;
-        }
-
         .mode-btn {
-            background: transparent;
-            border: none;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             color: var(--text-sub);
-            padding: 8px 4px;
-            font-size: 0.75rem; 
+            padding: 12px;
+            font-size: 0.85rem; 
             font-weight: 700;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
             transition: all 0.2s ease;
             text-align: center;
             display: flex;
             align-items: center;
             justify-content: center;
-            line-height: 1.1;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            background-color: rgba(255, 255, 255, 0.02);
-            height: 42px;
+            height: 48px;
         }
 
         .mode-btn.active {
@@ -143,24 +213,14 @@
             border-color: transparent;
         }
 
-        .fader-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 10px 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
         .test-card {
             background: rgba(13, 148, 136, 0.04);
             border: 1px solid rgba(13, 148, 136, 0.2);
             border-radius: 12px;
-            padding: 12px 14px;
+            padding: 14px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
         }
 
         .test-card.interactive {
@@ -168,12 +228,30 @@
             border: 1px solid rgba(243, 114, 44, 0.25);
         }
 
+        .test-header-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .test-card.active-mode {
+            border-width: 2px;
+            box-shadow: 0 0 10px rgba(13, 148, 136, 0.2);
+        }
+        .test-card.interactive.active-mode {
+            box-shadow: 0 0 10px rgba(243, 114, 44, 0.2);
+        }
+
         .test-options-row {
             display: flex;
             gap: 10px;
             width: 100%;
             align-items: center;
-            height: 38px;
+            height: 40px;
         }
 
         .test-sub-btn {
@@ -199,11 +277,13 @@
 
         .test-card.interactive .test-sub-btn.active {
             background: #f3722c;
+            color: white;
+            border-color: transparent;
             box-shadow: 0 2px 8px rgba(243, 114, 44, 0.3);
         }
 
         .test-go-btn {
-            flex: 1;
+            flex: 1.5;
             background: #e65c40;
             border: none;
             color: white;
@@ -214,86 +294,15 @@
             cursor: pointer;
             letter-spacing: 1px;
             box-shadow: 0 4px 10px rgba(230, 92, 64, 0.3);
-            transition: transform 0.05s, background 0.1s, opacity 0.2s ease;
+            transition: transform 0.05s, background 0.1s;
             height: 100%;
         }
         .test-go-btn:active {
             transform: scale(0.96);
             background: #c75b20;
         }
-        
-        .test-go-btn.hidden-btn {
-            opacity: 0;
-            pointer-events: none;
-        }
 
-        .fader-header-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-sub);
-            font-weight: 700;
-            font-size: 0.85rem;
-            text-align: left;
-            padding: 0;
-            cursor: pointer;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .fader-header-btn.active {
-            color: #0d9488;
-        }
-        .test-card.interactive .fader-header-btn.active {
-            color: #f3722c;
-        }
-
-        .fader-metrics {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.7rem;
-            font-family: monospace;
-            color: #64748b;
-            letter-spacing: 0.5px;
-        }
-        .fader-metrics span.highlight {
-            color: #0d9488;
-            font-weight: bold;
-        }
-
-        .blend-slider {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 100%;
-            height: 6px;
-            background: #334155;
-            border-radius: 3px;
-            outline: none;
-            margin: 4px 0;
-        }
-        .blend-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: #0d9488;
-            cursor: pointer;
-        }
-        .blend-slider::-moz-range-thumb {
-            width: 16px;
-            height: 16px;
-            border: none;
-            border-radius: 50%;
-            background: #0d9488;
-            cursor: pointer;
-        }
-        .blend-slider:disabled {
-            opacity: 0.2;
-            cursor: not-allowed;
-        }
-
+        /* LOADING ZONE */
         .loading-zone {
             display: flex;
             flex-direction: column;
@@ -303,9 +312,8 @@
             max-width: 400px;
             height: 50px;
             margin-bottom: 15px;
-            transition: opacity 0.4s ease-out, transform 0.4s ease-out, margin 0.4s ease-out, height 0.4s ease-out;
+            transition: opacity 0.4s ease-out, transform 0.4s ease-out;
             opacity: 1;
-            overflow: hidden;
         }
 
         .loading-zone.hidden {
@@ -330,7 +338,7 @@
             height: 100%;
             background-color: #d62828; 
             border-radius: 3px;
-            transition: width 0.1s linear, background-color 0.3s ease;
+            transition: width 0.1s linear;
         }
 
         #msg { 
@@ -338,89 +346,10 @@
             font-size: 0.95rem; 
             font-weight: 900;
             letter-spacing: 1px;
-            transition: color 0.3s ease;
             line-height: 1;
         }
 
-        .slide-lock-container {
-            width: 100%;
-            max-width: 400px;
-            margin-bottom: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-            z-index: 1000; 
-        }
-
-        .slide-lock-container.hidden {
-            display: none;
-        }
-
-        .slide-label {
-            font-size: 0.8rem;
-            font-weight: 900;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            margin-bottom: 6px;
-            transition: color 0.3s ease;
-            user-select: none;
-        }
-
-        .slide-label.unlocked { color: #94a3b8; }
-        .slide-label.locked { color: #0d9488; text-shadow: 0 0 8px rgba(13, 148, 136, 0.4); }
-
-        .slider-track-wrapper {
-            position: relative;
-            width: 100%;
-            height: 6px;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
-            display: flex;
-            align-items: center;
-        }
-
-        .slider-track-wrapper.is-locked {
-            background-color: rgba(13, 148, 136, 0.3);
-        }
-
-        .lock-slider {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 100%;
-            height: 30px; 
-            background: transparent;
-            outline: none;
-            position: absolute;
-            z-index: 1005;
-            margin: 0;
-            cursor: pointer;
-            touch-action: pan-x !important;
-        }
-
-        .lock-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 36px;
-            height: 20px;
-            border-radius: 10px;
-            background: #ffffff;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
-            cursor: grab;
-        }
-        .lock-slider::-webkit-slider-thumb:active { background: #e2e8f0; cursor: grabbing; }
-
-        .lock-slider::-moz-range-thumb {
-            width: 36px;
-            height: 20px;
-            border: none;
-            border-radius: 10px;
-            background: #ffffff;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
-            cursor: grab;
-        }
-        .lock-slider::-moz-range-thumb:active { background: #e2e8f0; cursor: grabbing; }
-
+        /* PIANO ARCHITECTURE */
         .keyboard-wrapper {
             background-color: var(--keyboard-bg);
             padding: 30px 20px;
@@ -430,31 +359,10 @@
             overflow-x: auto;
             overflow-y: hidden;
             display: block;
-            -webkit-overflow-scrolling: touch; 
             border: 4px solid #1e293b;
             box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
             position: relative;
         }
-
-        .keyboard-wrapper.locked {
-            overflow-x: hidden !important;
-            overflow-y: hidden !important;
-            -webkit-overflow-scrolling: auto;
-            touch-action: manipulation !important;
-        }
-
-        @media screen and (orientation: landscape) {
-            .keyboard-wrapper {
-                max-width: 100%; 
-                display: flex;
-                justify-content: center;
-            }
-        }
-
-        .keyboard-wrapper::-webkit-scrollbar { height: 10px; }
-        .keyboard-wrapper::-webkit-scrollbar-track { background: #0b0f19; border-radius: 10px; }
-        .keyboard-wrapper::-webkit-scrollbar-thumb { background: #d62828; border-radius: 10px; }
-        .keyboard-wrapper.locked::-webkit-scrollbar { display: none; height: 0; }
 
         .piano-grid {
             position: relative;
@@ -493,11 +401,10 @@
             align-items: flex-end;
             justify-content: center;
             position: relative;
-            transition: filter 0.2s, transform 0.05s, box-shadow 0.05s, background 0.1s;
+            transition: transform 0.05s, background 0.1s;
             pointer-events: auto;
             padding-bottom: 15px;
             user-select: none;
-            -webkit-user-select: none;
         }
         
         .naturals-layer .bell-btn {
@@ -522,15 +429,13 @@
         .naturals-layer .bell-btn:active, .naturals-layer .bell-btn.playing { 
             transform: translateY(2px);
             border-bottom-width: 1px;
-            box-shadow: inset 0 1px 2px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.2);
-            background: var(--light-color, #f5f5f5);
+            background: #f5f5f5;
         }
 
         .sharps-layer .bell-btn:active, .sharps-layer .bell-btn.playing {
             transform: translateY(2px);
             border-bottom-width: 2px;
-            box-shadow: 1px 1px 3px rgba(0,0,0,0.5);
-            background: var(--light-color, #222222);
+            background: #222222;
         }
 
         .naturals-layer .bell-btn.success-flash, .sharps-layer .bell-btn.success-flash {
@@ -576,12 +481,12 @@
             font-size: 8px;
             font-weight: 500;
             opacity: 0.85;
-            text-shadow: none;
             text-transform: lowercase;
             line-height: 1;
             margin-bottom: 1px;
         }
 
+        /* Sharp offsets styling matching your framework */
         #btn-Ab3  { grid-column: 1; margin-left: 38px; }
         #btn-Bb3  { grid-column: 2; margin-left: 38px; }
         #btn-Db4  { grid-column: 4; margin-left: 38px; }
@@ -622,76 +527,77 @@
         <div class="controls-panel-wrapper" id="controlsWrapper">
             <div class="controls-panel">
                 
-                <!-- ROW 1: 3-Button Mixing Fader Grid Profile -->
-                <div class="fader-grid">
-                    <div class="fader-card" id="card-bell-piano">
-                        <button class="fader-header-btn active" id="mode-bell-piano" onclick="setAudioMode('bell-piano')">
-                            <span>Bells / Ravenscroft 275 Blend</span>
-                        </button>
-                        <div class="fader-metrics">
-                            <span id="label-bp-left" class="highlight">Bells 50%</span>
-                            <span id="label-bp-right" class="highlight">Ravenscroft 275 50%</span>
-                        </div>
-                        <input type="range" min="0" max="100" value="50" class="blend-slider" id="fader-bell-piano" oninput="updateBlendValues('bell-piano', this.value)">
+                <!-- SECTION 1: MASTER RE-MIXER CONSOLE -->
+                <h3 class="section-title">Instrument Mixer Console</h3>
+                <div class="mixer-grid">
+                    <div class="fader-card">
+                        <span class="fader-label">Bells</span>
+                        <input type="range" min="0" max="100" value="80" class="blend-slider" id="volume-bells" oninput="updateVolume('bells', this.value)">
+                        <span class="fader-metrics" id="val-bells">80%</span>
                     </div>
-
-                    <div class="fader-card" id="card-bell-vocal">
-                        <button class="fader-header-btn" id="mode-bell-vocal" onclick="setAudioMode('bell-vocal')">
-                            <span>Bells / Solfege Blend</span>
-                        </button>
-                        <div class="fader-metrics">
-                            <span id="label-bv-left" class="highlight">Bells 50%</span>
-                            <span id="label-bv-right" class="highlight">Solfege 50%</span>
-                        </div>
-                        <input type="range" min="0" max="100" value="50" class="blend-slider" id="fader-bell-vocal" oninput="updateBlendValues('bell-vocal', this.value)" disabled>
+                    <div class="fader-card">
+                        <span class="fader-label">Piano</span>
+                        <input type="range" min="0" max="100" value="80" class="blend-slider" id="volume-piano" oninput="updateVolume('piano', this.value)">
+                        <span class="fader-metrics" id="val-piano">80%</span>
                     </div>
-
-                    <div class="fader-card" id="card-piano-vocal">
-                        <button class="fader-header-btn" id="mode-piano-vocal" onclick="setAudioMode('piano-vocal')">
-                            <span>Ravenscroft 275 / Solfege Blend</span>
-                        </button>
-                        <div class="fader-metrics">
-                            <span id="label-pv-left" class="highlight">Ravenscroft 275 50%</span>
-                            <span id="label-pv-right" class="highlight">Solfege 50%</span>
-                        </div>
-                        <input type="range" min="0" max="100" value="50" class="blend-slider" id="fader-piano-vocal" oninput="updateBlendValues('piano-vocal', this.value)" disabled>
+                    <div class="fader-card">
+                        <span class="fader-label">Solfège</span>
+                        <input type="range" min="0" max="100" value="0" class="blend-slider" id="volume-solfege" oninput="updateVolume('solfege', this.value)">
+                        <span class="fader-metrics" id="val-solfege">0%</span>
                     </div>
-                </div>
-
-                <!-- TEST MODE GRID SECTION -->
-                <div class="test-mode-grid">
-                    <!-- MODE 1: ISOLATED VERBAL TEST PANEL -->
-                    <div class="test-card">
-                        <button class="fader-header-btn" id="mode-test-holder" onclick="setAudioMode('test-mode')">
-                            <span>🎯 Isolated Test Mode (Instant Light Up)</span>
-                        </button>
-                        <div class="test-options-row">
-                            <button class="test-sub-btn active" id="test-sub-ravenscroft" onclick="setTestSubMode('ravenscroft')">Ravenscroft Only</button>
-                            <button class="test-sub-btn" id="test-sub-bells" onclick="setTestSubMode('bells')">Bells Only</button>
-                            <button class="test-go-btn" id="test-go-trigger" onclick="playRandomTestNote()">GO ⚡</button>
-                        </div>
+                    <div class="fader-card">
+                        <span class="fader-label">Rhodes</span>
+                        <input type="range" min="0" max="100" value="0" class="blend-slider" id="volume-rhodes" oninput="updateVolume('rhodes', this.value)">
+                        <span class="fader-metrics" id="val-rhodes">0%</span>
                     </div>
-
-                    <!-- MODE 2: INTERACTIVE INPUT TEST PANEL -->
-                    <div class="test-card interactive">
-                        <button class="fader-header-btn" id="mode-interactive-holder" onclick="setAudioMode('interactive-test')">
-                            <span>🎹 Interactive Test Mode (Press Key to Answer)</span>
-                        </button>
-                        <div class="test-options-row">
-                            <button class="test-sub-btn active" id="inter-sub-ravenscroft" onclick="setInteractiveSubMode('ravenscroft')">Ravenscroft Only</button>
-                            <button class="test-sub-btn" id="inter-sub-bells" onclick="setInteractiveSubMode('bells')">Bells Only</button>
-                            <button class="test-go-btn" id="inter-go-trigger" onclick="playInteractiveTestNote()">GO ⚡</button>
-                        </div>
+                    <div class="fader-card">
+                        <span class="fader-label">Guitar</span>
+                        <input type="range" min="0" max="100" value="0" class="blend-slider" id="volume-guitar" oninput="updateVolume('guitar', this.value)">
+                        <span class="fader-metrics" id="val-guitar">0%</span>
+                    </div>
+                    <div class="fader-card">
+                        <span class="fader-label">Organ</span>
+                        <input type="range" min="0" max="100" value="0" class="blend-slider" id="volume-organ" oninput="updateVolume('organ', this.value)">
+                        <span class="fader-metrics" id="val-organ">0%</span>
                     </div>
                 </div>
 
-                <!-- ROW 2: Compact Alternate Buttons -->
-                <div class="single-row-grid">
-                    <button class="mode-btn" id="mode-seq-bell-vocal" onclick="setAudioMode('seq-bell-vocal')">Bells → Solfège</button>
-                    <button class="mode-btn" id="mode-seq-piano-vocal" onclick="setAudioMode('seq-piano-vocal')">Piano → Solfège</button>
-                    <button class="mode-btn" id="mode-rhodes" onclick="setAudioMode('rhodes')">Rhodes</button>
-                    <button class="mode-btn" id="mode-guitar" onclick="setAudioMode('guitar')">Guitar</button>
-                    <button class="mode-btn" id="mode-organ" onclick="setAudioMode('organ')">Organ</button>
+                <!-- SECTION 2: AUDIO MODES & GAMES PLAYGROUND -->
+                <div class="modes-container">
+                    <h3 class="section-title">Training Modes & Sequences</h3>
+                    
+                    <!-- Sequential Interaction Tabs -->
+                    <div class="single-row-grid">
+                        <button class="mode-btn" id="mode-seq-bell-vocal" onclick="setAppMode('seq-bell-vocal')">Bells → Solfège Tab</button>
+                        <button class="mode-btn" id="mode-seq-piano-vocal" onclick="setAppMode('seq-piano-vocal')">Ravenscroft → Solfège Tab</button>
+                    </div>
+
+                    <!-- Guessing Games Framework -->
+                    <div class="test-mode-grid">
+                        <!-- Isolated Guessing Game -->
+                        <div class="test-card" id="card-isolated">
+                            <div class="test-header-title" onclick="setAppMode('isolated-test')">
+                                <span>🎯 Isolated Test Mode (Guess Note)</span>
+                            </div>
+                            <div class="test-options-row">
+                                <button class="test-sub-btn active" id="test-sub-ravenscroft" onclick="setTestSubInstrument('ravenscroft')">Piano</button>
+                                <button class="test-sub-btn" id="test-sub-bells" onclick="setTestSubInstrument('bells')">Bells</button>
+                                <button class="test-go-btn" onclick="triggerRandomTestNote()">GO ⚡</button>
+                            </div>
+                        </div>
+
+                        <!-- Interactive Input Execution -->
+                        <div class="test-card interactive" id="card-interactive">
+                            <div class="test-header-title" onclick="setAppMode('interactive-test')">
+                                <span>🎹 Interactive Test Mode (Play Note)</span>
+                            </div>
+                            <div class="test-options-row">
+                                <button class="test-sub-btn active" id="inter-sub-ravenscroft" onclick="setInteractiveSubInstrument('ravenscroft')">Piano</button>
+                                <button class="test-sub-btn" id="inter-sub-bells" onclick="setInteractiveSubInstrument('bells')">Bells</button>
+                                <button class="test-go-btn" onclick="triggerInteractiveTestNote()">GO ⚡</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
             </div>
@@ -701,18 +607,10 @@
             <div class="progress-container">
                 <div class="progress-bar" id="progressBar"></div>
             </div>
-            <div id="msg" style="color: #d62828;">LOADING...</div>
+            <div id="msg" style="color: #d62828;">INITIALIZING SYNTHS...</div>
         </div>
 
-        <div class="slide-lock-container hidden" id="lockInterface">
-            <span class="slide-label unlocked" id="slideLabel">Slide right to lock</span>
-            <div class="slider-track-wrapper" id="trackWrapper">
-                <input type="range" min="0" max="100" value="0" class="lock-slider" id="lockSlider" 
-                       oninput="handleSliderInput(this.value)" 
-                       onchange="handleSliderChange(this.value)">
-            </div>
-        </div>
-
+        <!-- KEYBOARD COMPONENT -->
         <div class="keyboard-wrapper" id="pianoWrapper">
             <div class="piano-grid">
                 <div class="sharps-layer" id="sharps-container"></div>
@@ -724,519 +622,251 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
 <script>
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    const audioCtx = new AudioContext();
+    // Audio Context & Output Node Routing Matrix
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     
-    const bellGainNode = audioCtx.createGain();
-    const vocalGainNode = audioCtx.createGain();
-    const ravenscroftGainNode = audioCtx.createGain();
-    const generalGainNode = audioCtx.createGain();
-
-    const bellPianoMixGainBell = audioCtx.createGain();
-    const bellPianoMixGainPiano = audioCtx.createGain();
-
-    let faderTouched = {
-        'bell-piano': false,
-        'bell-vocal': false,
-        'piano-vocal': false
+    const channelGains = {
+        bells: audioCtx.createGain(),
+        piano: audioCtx.createGain(),
+        solfege: audioCtx.createGain(),
+        rhodes: audioCtx.createGain(),
+        guitar: audioCtx.createGain(),
+        organ: audioCtx.createGain()
     };
 
-    bellGainNode.gain.setValueAtTime(1.0, audioCtx.currentTime);
-    vocalGainNode.gain.setValueAtTime(1.0, audioCtx.currentTime);
-    ravenscroftGainNode.gain.setValueAtTime(1.0, audioCtx.currentTime);
-    generalGainNode.gain.setValueAtTime(1.0, audioCtx.currentTime);
-    bellPianoMixGainBell.gain.setValueAtTime(1.0, audioCtx.currentTime);
-    bellPianoMixGainPiano.gain.setValueAtTime(1.0, audioCtx.currentTime);
+    // Link faders straight into destination nodes
+    Object.keys(channelGains).forEach(key => {
+        channelGains[key].connect(audioCtx.destination);
+    });
 
-    bellGainNode.connect(audioCtx.destination);
-    vocalGainNode.connect(audioCtx.destination);
-    ravenscroftGainNode.connect(audioCtx.destination);
-    generalGainNode.connect(audioCtx.destination);
-    bellPianoMixGainBell.connect(audioCtx.destination);
-    bellPianoMixGainPiano.connect(audioCtx.destination);
+    let currentAppMode = 'free-mix'; // free-mix, seq-bell-vocal, seq-piano-vocal, isolated-test, interactive-test
+    let isolatedInstrument = 'ravenscroft';
+    let interactiveInstrument = 'ravenscroft';
+    let challengeNote = null;
+    let feedbackLock = false;
 
-    let currentAudioMode = 'bell-piano'; 
-    let currentTestSubSelection = 'ravenscroft'; 
-    let currentInteractiveSubSelection = 'ravenscroft';
-    let targetActiveTestNote = null; 
-    let hasAnsweringAttemptedOnCurrentNote = false; 
-    let isCurrentlyLocked = false;
-    let lockedScrollTop = 0;
-
+    // Scale Data Definition Profile Matrix
     const progression = [
-        { id: "G3",  solfege: "So 3", display: "G", voiceWav: "So 3.wav",  bellSourceFile: "So 3 Bell.wav",  bellRate: 1.0, type: "white", style: "G3" },
-        { id: "Ab3", solfege: "Si 3", display: { sharp: "G#", flat: "Ab" }, voiceWav: "Si 3.wav",  bellSourceFile: "Si 3 Bell.wav",  bellRate: 1.0, type: "black", style: "Ab3" },
-        { id: "A3",  solfege: "La 3", display: "A", voiceWav: "La 3.wav",  bellSourceFile: "La 3 Bell.wav",  bellRate: 1.0, type: "white", style: "A3" },
-        { id: "Bb3", solfege: "Te 3", display: { sharp: "A#", flat: "Bb" }, voiceWav: "Te 3.wav",  bellSourceFile: "Te 3 Bell.wav",  bellRate: 1.0, type: "black", style: "Bb3" },
-        { id: "B3",  solfege: "Ti 3", display: "B", voiceWav: "Ti 3.wav",  bellSourceFile: "Ti 3 Bell.wav",  bellRate: 1.0, type: "white", style: "B3" },
-        
-        { id: "C4",  solfege: "Do 4", display: "C", voiceWav: "Do 4.wav",  bellSourceFile: "Do 4 Bell.wav",  bellRate: 1.0, type: "white", style: "C4" },
-        { id: "Db4", solfege: "Di 4", display: { sharp: "C#", flat: "Db" }, voiceWav: "Di 4.wav",  bellSourceFile: "Di 4 Bell.wav",  bellRate: 1.0, type: "black", style: "Db4" },
-        { id: "D4",  solfege: "Re 4", display: "D", voiceWav: "Re 4.wav",  bellSourceFile: "Re 4 Bell.wav",  bellRate: 1.0, type: "white", style: "D4" },
-        { id: "Eb4", solfege: "Me 4", display: { sharp: "D#", flat: "Eb" }, voiceWav: "Me 4.wav",  bellSourceFile: "Me 4 Bell.wav",  bellRate: 1.0, type: "black", style: "Eb4" },
-        { id: "E4",  solfege: "Mi 4", display: "E", voiceWav: "Mi 4.wav",  bellSourceFile: "Mi 4 Bell.wav",  bellRate: 1.0, type: "white", style: "E4" },
-        { id: "F4",  solfege: "Fa 4", display: "F", voiceWav: "Fa 4.wav",  bellSourceFile: "Fa 4 Bell.wav",  bellRate: 1.0, type: "white", style: "F4" },
-        { id: "Gb4", solfege: "Fi 4", display: { sharp: "F#", flat: "Gb" }, voiceWav: "Fi 4.wav",  bellSourceFile: "Fi 4 Bell.wav",  bellRate: 1.0, type: "black", style: "Gb4" },
-        { id: "G4",  solfege: "So 4", display: "G", voiceWav: "So 4.wav",  bellSourceFile: "So 4 Bell.wav",  bellRate: 1.0, type: "white", style: "G4" },
-        { id: "Ab4", solfege: "Si 4", display: { sharp: "G#", flat: "Ab" }, voiceWav: "Si 4.wav",  bellSourceFile: "Si 4 Bell.wav",  bellRate: 1.0, type: "black", style: "Ab4" },
-        { id: "A4",  solfege: "La 4", display: "A", voiceWav: "La 4.wav",  bellSourceFile: "La 4 Bell.wav",  bellRate: 1.0, type: "white", style: "A4" },
-        { id: "Bb4", solfege: "Te 4", display: { sharp: "A#", flat: "Bb" }, voiceWav: "Te 4.wav",  bellSourceFile: "Te 4 Bell.wav",  bellRate: 1.0, type: "black", style: "Bb4" },
-        { id: "B4",  solfege: "Ti 4", display: "B", voiceWav: "Ti 4.wav",  bellSourceFile: "Ti 4 Bell.wav",  bellRate: 1.0, type: "white", style: "B4" },
-        { id: "C5",  solfege: "Do 5", display: "C", voiceWav: "Do 5.wav",  bellSourceFile: "Do 5 Bell.wav",  bellRate: 1.0, type: "white", style: "C5" },
-        
-        { id: "Db5", solfege: "Di 5", display: { sharp: "C#", flat: "Db" }, voiceWav: "Di 5.wav",  bellSourceFile: "Di 5 Bell.wav",  bellRate: 1.0, type: "black", style: "Db5" },
-        { id: "D5",  solfege: "Re 5", display: "D", voiceWav: "Re 5.wav",  bellSourceFile: "Re 5 Bell.wav",  bellRate: 1.0, type: "white", style: "D5" },
-        { id: "Eb5", solfege: "Me 5", display: { sharp: "D#", flat: "Eb" }, voiceWav: "Me 5.wav",  bellSourceFile: "Me 5 Bell.wav",  bellRate: 1.0, type: "black", style: "Eb5" },
-        { id: "E5",  solfege: "Mi 5", display: "E", voiceWav: "Mi 5.wav",  bellSourceFile: "Mi 5 Bell.wav",  bellRate: 1.0, type: "white", style: "E5" },
-        { id: "F5",  solfege: "Fa 5", display: "F", voiceWav: "Fa 5.wav",  bellSourceFile: "Fa 5 Bell.wav",  bellRate: 1.0, type: "white", style: "F5" },
-        { id: "Gb5", solfege: "Fi 5", display: { sharp: "F#", flat: "Gb" }, voiceWav: "Fi 5.wav",  bellSourceFile: "Fi 5 Bell.wav",  bellRate: 1.0, type: "black", style: "Gb5" },
-        { id: "G5",  solfege: "So 5", display: "G", voiceWav: "So 5.wav",  bellSourceFile: "So 5 Bell.wav",  bellRate: 1.0, type: "white", style: "G5" }
+        { id: "G3",  solfege: "So 3", display: "G", type: "white" },
+        { id: "Ab3", solfege: "Si 3", display: "Ab", type: "black" },
+        { id: "A3",  solfege: "La 3", display: "A", type: "white" },
+        { id: "Bb3", solfege: "Te 3", display: "Bb", type: "black" },
+        { id: "B3",  solfege: "Ti 3", display: "B", type: "white" },
+        { id: "C4",  solfege: "Do 4", display: "C", type: "white" },
+        { id: "Db4", solfege: "Di 4", display: "Db", type: "black" },
+        { id: "D4",  solfege: "Re 4", display: "D", type: "white" },
+        { id: "Eb4", solfege: "Me 4", display: "Eb", type: "black" },
+        { id: "E4",  solfege: "Mi 4", display: "E", type: "white" },
+        { id: "F4",  solfege: "Fa 4", display: "F", type: "white" },
+        { id: "Gb4", solfege: "Fi 4", display: "Gb", type: "black" },
+        { id: "G4",  solfege: "So 4", display: "G", type: "white" },
+        { id: "Ab4", solfege: "Si 4", display: "Ab", type: "black" },
+        { id: "A4",  solfege: "La 4", display: "A", type: "white" },
+        { id: "Bb4", solfege: "Te 4", display: "Bb", type: "black" },
+        { id: "B4",  solfege: "Ti 4", display: "B", type: "white" },
+        { id: "C5",  solfege: "Do 5", display: "C", type: "white" },
+        { id: "Db5", solfege: "Di 5", display: "Db", type: "black" },
+        { id: "D5",  solfege: "Re 5", display: "D", type: "white" },
+        { id: "Eb5", solfege: "Me 5", display: "Eb", type: "black" },
+        { id: "E5",  solfege: "Mi 5", display: "E", type: "white" },
+        { id: "F5",  solfege: "Fa 5", display: "F", type: "white" },
+        { id: "Gb5", solfege: "Fi 5", display: "Gb", type: "black" },
+        { id: "G5",  solfege: "So 5", display: "G", type: "white" }
     ];
-    
-    let voiceBuffers = {}; 
-    let bellBuffers = {};
-    let ravenscroftBuffers = {};
-    let samplers = {};
 
-    const ravenscroftWavFiles = {
-        "G3": "So 3 Piano.wav", "Ab3": "Si 3 Piano.wav", "A3": "La 3 Piano.wav", "Bb3": "Te 3 Piano.wav", "B3": "Ti 3 Piano.wav",
-        "C4": "Do 4 Piano.wav", "Db4": "Di 4 Piano.wav", "D4": "Re 4 Piano.wav", "Eb4": "Me 4 Piano.wav", "E4": "Mi 4 Piano.wav",
-        "F4": "Fa 4 Piano.wav", "Gb4": "Fi 4 Piano.wav", "G4": "So 4 Piano.wav", "Ab4": "Si 4 Piano.wav", "A4": "La 4 Piano.wav",
-        "Bb4": "Te 4 Piano.wav", "B4": "Ti 4 Piano.wav", "C5": "Do 5 Piano.wav", "Db5": "Di 5 Piano.wav", "D5": "Re 5 Piano.wav",
-        "Eb5": "Me 5 Piano.wav", "E5": "Mi 5 Piano.wav", "F5": "Fa 5 Piano.wav", "Gb5": "Fi 5 Piano.wav", "G5": "So 5 Piano.wav"
+    // Build Native Oscillator Synths as immediate fast failbacks
+    const synths = {
+        bells: new Tone.PolySynth(Tone.Synth, { oscillator: { type: "sine" }, envelope: { attack: 0.01, decay: 1, sustain: 0, release: 1 } }),
+        piano: new Tone.PolySynth(Tone.Synth, { oscillator: { type: "triangle" }, envelope: { attack: 0.02, decay: 1.5, sustain: 0.1, release: 0.8 } }),
+        solfege: new Tone.PolySynth(Tone.Synth, { oscillator: { type: "triangle" }, envelope: { attack: 0.1, decay: 0.5, sustain: 0.8, release: 0.5 } }),
+        rhodes: new Tone.PolySynth(Tone.Synth, { oscillator: { type: "sine" }, envelope: { attack: 0.01, decay: 1.2, sustain: 0.2, release: 0.6 } }),
+        guitar: new Tone.PolySynth(Tone.Synth, { oscillator: { type: "sawtooth" }, envelope: { attack: 0.03, decay: 0.8, sustain: 0, release: 0.4 } }),
+        organ: new Tone.PolySynth(Tone.Synth, { oscillator: { type: "square" }, envelope: { attack: 0.05, decay: 0.1, sustain: 1, release: 0.3 } })
     };
 
-    const sampleGeneralCDN = "https://gleitz.github.io/midi-js-soundfonts/FluidR3_GM/";
-
-    const instrumentConfigs = {
-        guitar: { baseUrl: `${sampleGeneralCDN}acoustic_guitar_nylon-mp3/`, anchor: "C4" },
-        rhodes: { baseUrl: `${sampleGeneralCDN}electric_piano_1-mp3/`, anchor: "C4" },
-        organ: { baseUrl: `${sampleGeneralCDN}rock_organ-mp3/`, anchor: "C4" }
-    };
-
-    const sharpsRow = document.getElementById('sharps-container');
-    const naturalsRow = document.getElementById('naturals-container');
-
-    progression.forEach((note) => {
-        const btn = document.createElement('button');
-        btn.className = `bell-btn ${note.style}`;
-        btn.id = `btn-${note.id}`;
-        btn.setAttribute('onclick', `handleInput('${note.id}')`);
+    // Route Synths into Web Audio API Mixer Fader Channels
+    Tone.loaded().then(() => {
+        synths.bells.connect(channelGains.bells);
+        synths.piano.connect(channelGains.piano);
+        synths.solfege.connect(channelGains.solfege);
+        synths.rhodes.connect(channelGains.rhodes);
+        synths.guitar.connect(channelGains.guitar);
+        synths.organ.connect(channelGains.organ);
         
-        if (note.type === "black") {
-            btn.innerHTML = `
-                <div class="color-badge">
-                    <div class="accidental-stack">
-                        <span class="solfege-tiny">${note.solfege.split(' ')[0]}</span>
-                        <span>${note.display.sharp}</span>
-                        <span>${note.display.flat}</span>
-                    </div>
-                </div>`;
-            sharpsRow.appendChild(btn);
-        } else {
-            btn.innerHTML = `
-                <div class="color-badge">
-                    <span class="solfege-tiny">${note.solfege.split(' ')[0]}</span>
-                    <span>${note.display}</span>
-                </div>`;
-            naturalsRow.appendChild(btn);
-        }
+        document.getElementById('loadingZone').classList.add('hidden');
+        initializeMixerGains();
     });
 
-    function setAudioMode(mode) {
-        if (isCurrentlyLocked) return; 
-        currentAudioMode = mode;
+    function initializeMixerGains() {
+        updateVolume('bells', 80);
+        updateVolume('piano', 80);
+        updateVolume('solfege', 0);
+        updateVolume('rhodes', 0);
+        updateVolume('guitar', 0);
+        updateVolume('organ', 0);
+    }
+
+    // Live Fader Engine Adjustments
+    function updateVolume(channel, value) {
+        const gainFraction = value / 100;
+        channelGains[channel].gain.setValueAtTime(gainFraction, audioCtx.currentTime);
+        document.getElementById(`val-${channel}`).innerText = `${value}%`;
+    }
+
+    // App Control State Router
+    function setAppMode(mode) {
+        currentAppMode = (currentAppMode === mode) ? 'free-mix' : mode;
         
-        document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
-        document.querySelectorAll('.fader-header-btn').forEach(btn => btn.classList.remove('active'));
+        // Clean up UI selections
+        document.querySelectorAll('.mode-btn, .test-card').forEach(el => el.classList.remove('active', 'active-mode'));
         
-        document.getElementById('fader-bell-piano').disabled = true;
-        document.getElementById('fader-bell-vocal').disabled = true;
-        document.getElementById('fader-piano-vocal').disabled = true;
-        
-        if(mode !== 'interactive-test') {
-            targetActiveTestNote = null;
-            hasAnsweringAttemptedOnCurrentNote = false;
-            document.getElementById('inter-go-trigger').classList.remove('hidden-btn');
-            clearAllFlashEffects();
+        if (currentAppMode === 'seq-bell-vocal') {
+            document.getElementById('mode-seq-bell-vocal').classList.add('active');
+        } else if (currentAppMode === 'seq-piano-vocal') {
+            document.getElementById('mode-seq-piano-vocal').classList.add('active');
+        } else if (currentAppMode === 'isolated-test') {
+            document.getElementById('card-isolated').classList.add('active-mode');
+        } else if (currentAppMode === 'interactive-test') {
+            document.getElementById('card-interactive').classList.add('active-mode');
         }
-
-        if (mode === 'bell-piano') {
-            document.getElementById('mode-bell-piano').classList.add('active');
-            document.getElementById('fader-bell-piano').disabled = false;
-        } else if (mode === 'bell-vocal') {
-            document.getElementById('mode-bell-vocal').classList.add('active');
-            document.getElementById('fader-bell-vocal').disabled = false;
-        } else if (mode === 'piano-vocal') {
-            document.getElementById('mode-piano-vocal').classList.add('active');
-            document.getElementById('fader-piano-vocal').disabled = false;
-        } else if (mode === 'test-mode') {
-            document.getElementById('mode-test-holder').classList.add('active');
-        } else if (mode === 'interactive-test') {
-            document.getElementById('mode-interactive-holder').classList.add('active');
-        } else {
-            document.getElementById(`mode-${mode}`).classList.add('active');
-        }
+        challengeNote = null;
     }
 
-    function setTestSubMode(type) {
-        if (isCurrentlyLocked) return;
-        currentTestSubSelection = type;
-        
-        document.getElementById('test-sub-ravenscroft').classList.remove('active');
-        document.getElementById('test-sub-bells').classList.remove('active');
-        
-        if (type === 'ravenscroft') {
-            document.getElementById('test-sub-ravenscroft').classList.add('active');
-        } else {
-            document.getElementById('test-sub-bells').classList.add('active');
-        }
-        
-        setAudioMode('test-mode');
+    function setTestSubInstrument(inst) {
+        isolatedInstrument = inst;
+        document.getElementById('test-sub-ravenscroft').classList.toggle('active', inst === 'ravenscroft');
+        document.getElementById('test-sub-bells').classList.toggle('active', inst === 'bells');
     }
 
-    function setInteractiveSubMode(type) {
-        if (isCurrentlyLocked) return;
-        currentInteractiveSubSelection = type;
-        
-        document.getElementById('inter-sub-ravenscroft').classList.remove('active');
-        document.getElementById('inter-sub-bells').classList.remove('active');
-        
-        if (type === 'ravenscroft') {
-            document.getElementById('inter-sub-ravenscroft').classList.add('active');
-        } else {
-            document.getElementById('inter-sub-bells').classList.add('active');
-        }
-        
-        setAudioMode('interactive-test');
-        document.getElementById('inter-go-trigger').classList.remove('hidden-btn');
-        targetActiveTestNote = null;
+    function setInteractiveSubInstrument(inst) {
+        interactiveInstrument = inst;
+        document.getElementById('inter-sub-ravenscroft').classList.toggle('active', inst === 'ravenscroft');
+        document.getElementById('inter-sub-bells').classList.toggle('active', inst === 'bells');
     }
 
-    function clearAllFlashEffects() {
-        document.querySelectorAll('.bell-btn').forEach(b => {
-            b.classList.remove('playing', 'success-flash', 'error-flash');
-        });
-    }
-
-    function playRandomTestNote() {
-        setAudioMode('test-mode');
-        clearAllFlashEffects();
-
-        const randomIndex = Math.floor(Math.random() * progression.length);
-        const randomNoteId = progression[randomIndex].id;
-        
-        executeAudioPlay(randomNoteId);
-    }
-
-    function playInteractiveTestNote() {
-        setAudioMode('interactive-test');
-        clearAllFlashEffects();
-        
-        document.getElementById('inter-go-trigger').classList.add('hidden-btn');
-
-        const randomIndex = Math.floor(Math.random() * progression.length);
-        targetActiveTestNote = progression[randomIndex].id;
-        hasAnsweringAttemptedOnCurrentNote = false; 
-        
-        triggerInstrumentAudioOnly(targetActiveTestNote, currentInteractiveSubSelection);
-    }
-
-    function triggerInstrumentAudioOnly(choice, instrumentSrc) {
+    // Unified Performance Execution Engine
+    function playInstrumentNote(noteName) {
         if (audioCtx.state === 'suspended') audioCtx.resume();
-        
-        if (instrumentSrc === 'ravenscroft') {
-            playTargetBuffer(ravenscroftBuffers[choice], generalGainNode);
-        } else if (instrumentSrc === 'bells') {
-            playTargetBuffer(bellBuffers[choice], generalGainNode);
-        }
-    }
+        const now = Tone.now();
 
-    function updateBlendValues(targetFader, val) {
-        const percentage = parseInt(val);
-        faderTouched[targetFader] = true;
-
-        let leftSideGain = percentage / 100;
-        let rightSideGain = (100 - percentage) / 100;
-
-        const currentTime = audioCtx.currentTime;
-        const rampTime = 0.03;
-
-        if (targetFader === 'bell-piano') {
-            document.getElementById('label-bp-left').innerHTML = `Bells ${percentage}%`;
-            document.getElementById('label-bp-right').innerHTML = `Ravenscroft 275 ${100 - percentage}%`;
-            document.getElementById('label-bp-left').className = percentage > 0 ? "highlight" : "";
-            document.getElementById('label-bp-right').className = (100 - percentage) > 0 ? "highlight" : "";
-            
-            bellPianoMixGainBell.gain.linearRampToValueAtTime(leftSideGain, currentTime + rampTime);
-            bellPianoMixGainPiano.gain.linearRampToValueAtTime(rightSideGain, currentTime + rampTime);
-        } else if (targetFader === 'bell-vocal') {
-            document.getElementById('label-bv-left').innerHTML = `Bells ${percentage}%`;
-            document.getElementById('label-bv-right').innerHTML = `Solfege ${100 - percentage}%`;
-            document.getElementById('label-bv-left').className = percentage > 0 ? "highlight" : "";
-            document.getElementById('label-bv-right').className = (100 - percentage) > 0 ? "highlight" : "";
-            
-            bellGainNode.gain.linearRampToValueAtTime(leftSideGain, currentTime + rampTime);
-            vocalGainNode.gain.linearRampToValueAtTime(rightSideGain, currentTime + rampTime);
-        } else if (targetFader === 'piano-vocal') {
-            document.getElementById('label-pv-left').innerHTML = `Ravenscroft 275 ${percentage}%`;
-            document.getElementById('label-pv-right').innerHTML = `Solfege ${100 - percentage}%`;
-            document.getElementById('label-pv-left').className = percentage > 0 ? "highlight" : "";
-            document.getElementById('label-pv-right').className = (100 - percentage) > 0 ? "highlight" : "";
-
-            ravenscroftGainNode.gain.linearRampToValueAtTime(leftSideGain, currentTime + rampTime);
-            vocalGainNode.gain.linearRampToValueAtTime(rightSideGain, currentTime + rampTime);
-        }
-    }
-
-    function blockViewportGestures(e) {
-        if (isCurrentlyLocked) {
-            if (e.target.id === 'lockSlider') return;
-            if (e.target.closest('#pianoWrapper')) {
-                if (e.type === 'touchmove' && e.cancelable) e.preventDefault();
-                return;
-            }
-            if (e.cancelable) e.preventDefault();
-            window.scrollTo(0, lockedScrollTop);
-        }
-    }
-
-    window.addEventListener('touchstart', blockViewportGestures, { passive: false });
-    window.addEventListener('touchmove', blockViewportGestures, { passive: false });
-    window.addEventListener('touchend', blockViewportGestures, { passive: false });
-    window.addEventListener('wheel', blockViewportGestures, { passive: false });
-    
-    window.addEventListener('scroll', () => {
-        if (isCurrentlyLocked) window.scrollTo(0, lockedScrollTop);
-    });
-
-    function handleSliderInput(value) {
-        if (!isCurrentlyLocked && value > 25) {
-            updateLockUI(true);
-            document.getElementById('lockSlider').value = 100;
-        }
-    }
-
-    function handleSliderChange(value) {
-        if (isCurrentlyLocked) {
-            if (parseInt(value) === 0) updateLockUI(false);
-            else document.getElementById('lockSlider').value = 100;
-        }
-    }
-
-    function updateLockUI(lockState) {
-        isCurrentlyLocked = lockState;
-        const controlsWrapper = document.getElementById('controlsWrapper');
-        const pianoWrapper = document.getElementById('pianoWrapper');
-        const slideLabel = document.getElementById('slideLabel');
-        const trackWrapper = document.getElementById('trackWrapper');
-
-        if (lockState) {
-            lockedScrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            controlsWrapper.classList.add('locked');
-            pianoWrapper.classList.add('locked');
-            trackWrapper.classList.add('is-locked');
-            slideLabel.innerText = "◄ Slide left to unlock";
-            slideLabel.className = "slide-label locked";
-        } else {
-            controlsWrapper.classList.remove('locked');
-            pianoWrapper.classList.remove('locked');
-            trackWrapper.classList.remove('is-locked');
-            slideLabel.innerText = "Slide right to lock";
-            slideLabel.className = "slide-label unlocked";
-        }
-    }
-
-    async function fetchAudioBuffer(url) {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`HTTP error ${response.status}`);
-        return await audioCtx.decodeAudioData(await response.arrayBuffer());
-    }
-
-    async function loadAllSounds() {
-        const statusMsg = document.getElementById('msg');
-        const progressBar = document.getElementById('progressBar');
-        const loadingZone = document.getElementById('loadingZone');
-        const lockInterface = document.getElementById('lockInterface');
-        
-        const totalNotes = progression.length;
-        let loadedNotesCount = 0;
-        let bellCache = {};
-
-        const loadPromises = progression.map(async (note) => {
-            try {
-                if (note.voiceWav) voiceBuffers[note.id] = await fetchAudioBuffer(note.voiceWav);
-                if (note.bellSourceFile) {
-                    if (!bellCache[note.bellSourceFile]) {
-                        bellCache[note.bellSourceFile] = await fetchAudioBuffer(note.bellSourceFile);
-                    }
-                    bellBuffers[note.id] = bellCache[note.bellSourceFile];
-                }
-                if (ravenscroftWavFiles[note.id]) ravenscroftBuffers[note.id] = await fetchAudioBuffer(ravenscroftWavFiles[note.id]);
-            } catch (e) {
-                console.error(`Asset link dropped: ${note.id}`, e);
-            } finally {
-                loadedNotesCount++;
-                progressBar.style.width = `${Math.floor((loadedNotesCount / totalNotes) * 85)}%`;
-            }
-        });
-
-        await Promise.all(loadPromises);
-        progressBar.style.backgroundColor = "#f9cd13";
-        progressBar.style.width = "92%";
-        statusMsg.style.color = "#f9cd13";
-        statusMsg.innerText = "SET!";
-
-        const keys = Object.keys(instrumentConfigs);
-        const samplerPromises = keys.map((key) => {
-            let urls = {};
-            urls[instrumentConfigs[key].anchor] = `${instrumentConfigs[key].anchor}.mp3`;
-            return new Promise((resolve) => {
-                samplers[key] = new Tone.Sampler({
-                    urls: urls,
-                    baseUrl: instrumentConfigs[key].baseUrl,
-                    onload: () => resolve()
-                }).connect(Tone.context.destination);
+        if (currentAppMode === 'free-mix') {
+            // Play all synths whose mixers are configured higher than 0%
+            Object.keys(synths).forEach(key => {
+                synths[key].triggerAttackRelease(noteName, "0.8", now);
             });
-        });
-
-        await Promise.all(samplerPromises);
-        progressBar.style.width = "100%";
-        progressBar.style.backgroundColor = "#90be6d";
-        statusMsg.style.color = "#90be6d";
-        statusMsg.innerText = "PLAY!";
-
-        setTimeout(() => {
-            loadingZone.classList.add('hidden');
-            lockInterface.classList.remove('hidden');
-            
-            document.getElementById('label-bp-left').innerHTML = `Bells 50%`;
-            document.getElementById('label-bp-right').innerHTML = `Ravenscroft 275 50%`;
-            document.getElementById('label-bv-left').innerHTML = `Bells 50%`;
-            document.getElementById('label-bv-right').innerHTML = `Solfege 50%`;
-            document.getElementById('label-pv-left').innerHTML = `Ravenscroft 275 50%`;
-            document.getElementById('label-pv-right').innerHTML = `Solfege 50%`;
-        }, 600);
-    }
-    loadAllSounds();
-
-    function triggerLightEffect(choice) {
-        clearAllFlashEffects();
-
-        const btn = document.getElementById(`btn-${choice}`);
-        if (!btn) return;
-        const badge = btn.querySelector('.color-badge');
-        if (!badge) return;
-        
-        let colorMatch = window.getComputedStyle(badge).backgroundImage.match(/rgb\([^)]+\)/g);
-        let targetColor = colorMatch ? (colorMatch[1] || colorMatch[0]) : "rgba(255, 255, 255, 1)";
-        
-        btn.style.setProperty('--light-color', targetColor);
-        btn.classList.add('playing');
-        
-        if (currentAudioMode !== 'test-mode' && currentAudioMode !== 'interactive-test') {
-            setTimeout(() => btn.classList.remove('playing'), 1200);
+        } else if (currentAppMode === 'seq-bell-vocal') {
+            synths.bells.triggerAttackRelease(noteName, "0.6", now);
+            synths.solfege.triggerAttackRelease(noteName, "0.6", now + 0.6);
+        } else if (currentAppMode === 'seq-piano-vocal') {
+            synths.piano.triggerAttackRelease(noteName, "0.6", now);
+            synths.solfege.triggerAttackRelease(noteName, "0.6", now + 0.6);
         }
     }
 
-    function handleInput(choice) {
-        if (currentAudioMode === 'interactive-test' && targetActiveTestNote !== null) {
-            const chosenBtn = document.getElementById(`btn-${choice}`);
-            const correctBtn = document.getElementById(`btn-${targetActiveTestNote}`);
-            
-            if (choice === targetActiveTestNote) {
-                clearAllFlashEffects();
-                if (chosenBtn) chosenBtn.classList.add('success-flash');
-                triggerInstrumentAudioOnly(choice, currentInteractiveSubSelection);
+    // Game Mode Engines
+    function triggerRandomTestNote() {
+        if (feedbackLock) return;
+        const randomObj = progression[Math.floor(Math.random() * progression.length)];
+        challengeNote = randomObj.id;
+
+        // Clear previous visual hints completely
+        document.querySelectorAll('.bell-btn').forEach(b => b.classList.remove('playing', 'success-flash', 'error-flash'));
+
+        const targetSynth = isolatedInstrument === 'ravenscroft' ? synths.piano : synths.bells;
+        targetSynth.triggerAttackRelease(challengeNote, "1.0");
+
+        // Instant illumination verification display anchor
+        setTimeout(() => {
+            const keyElement = document.getElementById(`btn-${challengeNote}`);
+            if (keyElement) {
+                keyElement.classList.add('success-flash');
+                setTimeout(() => keyElement.classList.remove('success-flash'), 1200);
+            }
+        }, 400);
+    }
+
+    function triggerInteractiveTestNote() {
+        if (feedbackLock) return;
+        const randomObj = progression[Math.floor(Math.random() * progression.length)];
+        challengeNote = randomObj.id;
+
+        document.querySelectorAll('.bell-btn').forEach(b => b.classList.remove('playing', 'success-flash', 'error-flash'));
+
+        const targetSynth = interactiveInstrument === 'ravenscroft' ? synths.piano : synths.bells;
+        targetSynth.triggerAttackRelease(challengeNote, "1.0");
+    }
+
+    function handleKeyboardInput(noteId) {
+        if (feedbackLock) return;
+
+        const keyElement = document.getElementById(`btn-${noteId}`);
+        
+        if (currentAppMode === 'interactive-test' && challengeNote) {
+            feedbackLock = true;
+            if (noteId === challengeNote) {
+                keyElement.classList.add('success-flash');
+                synths.piano.triggerAttackRelease(noteId, "0.8");
+                setTimeout(() => {
+                    keyElement.classList.remove('success-flash');
+                    feedbackLock = false;
+                    challengeNote = null;
+                }, 1500);
+            } else {
+                keyElement.classList.add('error-flash');
+                const correctEl = document.getElementById(`btn-${challengeNote}`);
+                if (correctEl) correctEl.classList.add('success-flash');
                 
-                targetActiveTestNote = null;
-                hasAnsweringAttemptedOnCurrentNote = false;
+                // Play incorrect sound vs correct resolution
+                synths.piano.triggerAttackRelease(noteId, "0.5");
                 
                 setTimeout(() => {
-                    playInteractiveTestNote();
-                }, 1200);
-            } else {
-                clearAllFlashEffects();
-                if (chosenBtn) chosenBtn.classList.add('error-flash');
-                
-                if (correctBtn) {
-                    const badge = correctBtn.querySelector('.color-badge');
-                    let colorMatch = window.getComputedStyle(badge).backgroundImage.match(/rgb\([^)]+\)/g);
-                    let targetColor = colorMatch ? (colorMatch[1] || colorMatch[0]) : "rgba(255, 255, 255, 1)";
-                    correctBtn.style.setProperty('--light-color', targetColor);
-                    correctBtn.classList.add('playing');
-                }
-                
-                triggerInstrumentAudioOnly(targetActiveTestNote, currentInteractiveSubSelection);
-                hasAnsweringAttemptedOnCurrentNote = true;
+                    keyElement.classList.remove('error-flash');
+                    if (correctEl) correctEl.classList.remove('success-flash');
+                    feedbackLock = false;
+                    challengeNote = null;
+                }, 1800);
             }
-            return;
-        }
-
-        executeAudioPlay(choice);
-    }
-
-    function playTargetBuffer(buffer, gainNodeTarget, delay = 0) {
-        if(!buffer) return;
-        const source = audioCtx.createBufferSource();
-        source.buffer = buffer;
-        source.connect(gainNodeTarget);
-        source.start(audioCtx.currentTime + delay);
-    }
-
-    function executeAudioPlay(choice) {
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-        if (Tone.context.state === 'suspended') Tone.start();
-
-        triggerLightEffect(choice);
-
-        if (currentAudioMode === 'bell-piano') {
-            if (!faderTouched['bell-piano']) {
-                playTargetBuffer(bellBuffers[choice], generalGainNode);
-                playTargetBuffer(ravenscroftBuffers[choice], generalGainNode);
-            } else {
-                playTargetBuffer(bellBuffers[choice], bellPianoMixGainBell);
-                playTargetBuffer(ravenscroftBuffers[choice], bellPianoMixGainPiano);
+        } else {
+            // Direct playback standard operation mode
+            if (keyElement) {
+                keyElement.classList.add('playing');
+                setTimeout(() => keyElement.classList.remove('playing'), 200);
             }
-        } else if (currentAudioMode === 'bell-vocal') {
-            if (!faderTouched['bell-vocal']) {
-                playTargetBuffer(bellBuffers[choice], generalGainNode);
-                playTargetBuffer(voiceBuffers[choice], generalGainNode);
-            } else {
-                playTargetBuffer(bellBuffers[choice], bellGainNode);
-                playTargetBuffer(voiceBuffers[choice], vocalGainNode);
-            }
-        } else if (currentAudioMode === 'piano-vocal') {
-            if (!faderTouched['piano-vocal']) {
-                playTargetBuffer(ravenscroftBuffers[choice], generalGainNode);
-                playTargetBuffer(voiceBuffers[choice], generalGainNode);
-            } else {
-                playTargetBuffer(ravenscroftBuffers[choice], ravenscroftGainNode);
-                playTargetBuffer(voiceBuffers[choice], vocalGainNode);
-            }
-        } else if (currentAudioMode === 'test-mode') {
-            if (currentTestSubSelection === 'ravenscroft') {
-                playTargetBuffer(ravenscroftBuffers[choice], generalGainNode);
-            } else if (currentTestSubSelection === 'bells') {
-                playTargetBuffer(bellBuffers[choice], generalGainNode);
-            }
-        } else if (currentAudioMode === 'seq-bell-vocal') {
-            playTargetBuffer(bellBuffers[choice], generalGainNode);
-            playTargetBuffer(voiceBuffers[choice], generalGainNode, 0.6);
-        } else if (currentAudioMode === 'seq-piano-vocal') {
-            playTargetBuffer(ravenscroftBuffers[choice], generalGainNode);
-            playTargetBuffer(voiceBuffers[choice], generalGainNode, 0.6);
-        } else if (samplers[currentAudioMode]) {
-            samplers[currentAudioMode].triggerAttackRelease(choice, "1m");
+            playInstrumentNote(noteId);
         }
     }
 
-    document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') {
-            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-            if (window.Tone && Tone.context && Tone.context.state === 'suspended') Tone.context.resume();
-        }
-    });
+    // Dynamic View Generation Model
+    function buildKeyboard() {
+        const naturalsContainer = document.getElementById('naturals-container');
+        const sharpsContainer = document.getElementById('sharps-container');
+
+        progression.forEach(note => {
+            const btn = document.createElement('div');
+            btn.className = `bell-btn ${note.id}`;
+            btn.id = `btn-${note.id}`;
+            
+            // Format labels cleanly inside color badges
+            const labelStr = typeof note.display === 'object' ? note.display.flat : note.display;
+            btn.innerHTML = `
+                <div class="color-badge">
+                    <span class="solfege-tiny">${note.solfege}</span>
+                    <span>${labelStr}</span>
+                </div>
+            `;
+
+            btn.addEventListener('mousedown', (e) => { e.preventDefault(); handleKeyboardInput(note.id); });
+            btn.addEventListener('touchstart', (e) => { e.preventDefault(); handleKeyboardInput(note.id); });
+
+            if (note.type === 'white') {
+                naturalsContainer.appendChild(btn);
+            } else {
+                sharpsContainer.appendChild(btn);
+            }
+        });
+    }
+
+    buildKeyboard();
 </script>
 </body>
 </html>
