@@ -302,52 +302,6 @@
             background: #c75b20;
         }
 
-        /* LOADING ZONE */
-        .loading-zone {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            max-width: 400px;
-            height: 50px;
-            margin-bottom: 15px;
-            transition: opacity 0.4s ease-out, transform 0.4s ease-out;
-            opacity: 1;
-        }
-
-        .loading-zone.hidden {
-            opacity: 0;
-            transform: scaleY(0);
-            height: 0;
-            margin-bottom: 0;
-            pointer-events: none;
-        }
-
-        .progress-container {
-            width: 100%;
-            height: 6px;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
-            overflow: hidden;
-            margin-bottom: 6px;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 100%;
-            background-color: #d62828; 
-            border-radius: 3px;
-        }
-
-        #msg { 
-            text-align: center; 
-            font-size: 0.95rem; 
-            font-weight: 900;
-            letter-spacing: 1px;
-            line-height: 1;
-        }
-
         /* PIANO ARCHITECTURE */
         .keyboard-wrapper {
             background-color: var(--keyboard-bg);
@@ -602,13 +556,6 @@
             </div>
         </div>
 
-        <div class="loading-zone" id="loadingZone">
-            <div class="progress-container">
-                <div class="progress-bar" id="progressBar"></div>
-            </div>
-            <div id="msg" style="color: #d62828;">INITIALIZING SYNTHS...</div>
-        </div>
-
         <!-- KEYBOARD COMPONENT -->
         <div class="keyboard-wrapper" id="pianoWrapper">
             <div class="piano-grid">
@@ -621,24 +568,13 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
 <script>
-    // Audio Context & Output Node Routing Matrix
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    
-    const channelGains = {
-        bells: audioCtx.createGain(),
-        piano: audioCtx.createGain(),
-        solfege: audioCtx.createGain(),
-        rhodes: audioCtx.createGain(),
-        guitar: audioCtx.createGain(),
-        organ: audioCtx.createGain()
-    };
+    // Audio Context Setup
+    let audioCtx = null;
+    let channelGains = {};
+    let synths = {};
+    let isAudioStarted = false;
 
-    // Link faders straight into destination nodes
-    Object.keys(channelGains).forEach(key => {
-        channelGains[key].connect(audioCtx.destination);
-    });
-
-    let currentAppMode = 'free-mix'; // free-mix, seq-bell-vocal, seq-piano-vocal, isolated-test, interactive-test
+    let currentAppMode = 'free-mix'; 
     let isolatedInstrument = 'ravenscroft';
     let interactiveInstrument = 'ravenscroft';
     let challengeNote = null;
@@ -673,51 +609,71 @@
         { id: "G5",  solfege: "So 5", display: "G", type: "white" }
     ];
 
-    // Build Native Oscillator Synths
-    const synths = {
-        bells: new Tone.PolySynth(Tone.Synth, { oscillator: { type: "sine" }, envelope: { attack: 0.01, decay: 1, sustain: 0, release: 1 } }),
-        piano: new Tone.PolySynth(Tone.Synth, { oscillator: { type: "triangle" }, envelope: { attack: 0.02, decay: 1.5, sustain: 0.1, release: 0.8 } }),
-        solfege: new Tone.PolySynth(Tone.Synth, { oscillator: { type: "triangle" }, envelope: { attack: 0.1, decay: 0.5, sustain: 0.8, release: 0.5 } }),
-        rhodes: new Tone.PolySynth(Tone.Synth, { oscillator: { type: "sine" }, envelope: { attack: 0.01, decay: 1.2, sustain: 0.2, release: 0.6 } }),
-        guitar: new Tone.PolySynth(Tone.Synth, { oscillator: { type: "sawtooth" }, envelope: { attack: 0.03, decay: 0.8, sustain: 0, release: 0.4 } }),
-        organ: new Tone.PolySynth(Tone.Synth, { oscillator: { type: "square" }, envelope: { attack: 0.05, decay: 0.1, sustain: 1, release: 0.3 } })
-    };
+    // Initialize Audio explicitly on user interaction to avoid loading locks
+    function ensureAudioStarted() {
+        if (isAudioStarted) return;
+        
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        Tone.setContext(audioCtx);
 
-    // Connect everything immediately since oscillators don't need to wait for sample asset loading
-    function initApp() {
+        channelGains = {
+            bells: audioCtx.createGain(),
+            piano: audioCtx.createGain(),
+            solfege: audioCtx.createGain(),
+            rhodes: audioCtx.createGain(),
+            guitar: audioCtx.createGain(),
+            organ: audioCtx.createGain()
+        };
+
+        Object.keys(channelGains).forEach(key => {
+            channelGains[key].connect(audioCtx.destination);
+        });
+
+        synths = {
+            bells: new Tone.PolySynth(Tone.Synth, { oscillator: { type: "sine" }, envelope: { attack: 0.01, decay: 1, sustain: 0, release: 1 } }),
+            piano: new Tone.PolySynth(Tone.Synth, { oscillator: { type: "triangle" }, envelope: { attack: 0.02, decay: 1.5, sustain: 0.1, release: 0.8 } }),
+            solfege: new Tone.PolySynth(Tone.Synth, { oscillator: { type: "triangle" }, envelope: { attack: 0.1, decay: 0.5, sustain: 0.8, release: 0.5 } }),
+            rhodes: new Tone.PolySynth(Tone.Synth, { oscillator: { type: "sine" }, envelope: { attack: 0.01, decay: 1.2, sustain: 0.2, release: 0.6 } }),
+            guitar: new Tone.PolySynth(Tone.Synth, { oscillator: { type: "sawtooth" }, envelope: { attack: 0.03, decay: 0.8, sustain: 0, release: 0.4 } }),
+            organ: new Tone.PolySynth(Tone.Synth, { oscillator: { type: "square" }, envelope: { attack: 0.05, decay: 0.1, sustain: 1, release: 0.3 } })
+        };
+
         synths.bells.connect(channelGains.bells);
         synths.piano.connect(channelGains.piano);
         synths.solfege.connect(channelGains.solfege);
         synths.rhodes.connect(channelGains.rhodes);
         synths.guitar.connect(channelGains.guitar);
         synths.organ.connect(channelGains.organ);
-        
-        // Hide loading bar immediately
-        document.getElementById('loadingZone').classList.add('hidden');
-        initializeMixerGains();
-    }
 
-    function initializeMixerGains() {
-        updateVolume('bells', 80);
-        updateVolume('piano', 80);
-        updateVolume('solfege', 0);
-        updateVolume('rhodes', 0);
-        updateVolume('guitar', 0);
-        updateVolume('organ', 0);
+        // Map UI volumes to initial gains
+        updateVolume('bells', document.getElementById('volume-bells').value);
+        updateVolume('piano', document.getElementById('volume-piano').value);
+        updateVolume('solfege', document.getElementById('volume-solfege').value);
+        updateVolume('rhodes', document.getElementById('volume-rhodes').value);
+        updateVolume('guitar', document.getElementById('volume-guitar').value);
+        updateVolume('organ', document.getElementById('volume-organ').value);
+
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+
+        isAudioStarted = true;
     }
 
     // Live Fader Engine Adjustments
     function updateVolume(channel, value) {
+        document.getElementById(`val-${channel}`).innerText = `${value}%`;
+        if (!isAudioStarted) return;
+        
         const gainFraction = value / 100;
         channelGains[channel].gain.setValueAtTime(gainFraction, audioCtx.currentTime);
-        document.getElementById(`val-${channel}`).innerText = `${value}%`;
     }
 
     // App Control State Router
     function setAppMode(mode) {
+        ensureAudioStarted();
         currentAppMode = (currentAppMode === mode) ? 'free-mix' : mode;
         
-        // Clean up UI selections
         document.querySelectorAll('.mode-btn, .test-card').forEach(el => el.classList.remove('active', 'active-mode'));
         
         if (currentAppMode === 'seq-bell-vocal') {
@@ -746,11 +702,10 @@
 
     // Unified Performance Execution Engine
     function playInstrumentNote(noteName) {
-        if (audioCtx.state === 'suspended') audioCtx.resume();
+        ensureAudioStarted();
         const now = Tone.now();
 
         if (currentAppMode === 'free-mix') {
-            // Play all synths whose mixers are configured higher than 0%
             Object.keys(synths).forEach(key => {
                 synths[key].triggerAttackRelease(noteName, "0.8", now);
             });
@@ -765,17 +720,16 @@
 
     // Game Mode Engines
     function triggerRandomTestNote() {
+        ensureAudioStarted();
         if (feedbackLock) return;
         const randomObj = progression[Math.floor(Math.random() * progression.length)];
         challengeNote = randomObj.id;
 
-        // Clear previous visual hints completely
         document.querySelectorAll('.bell-btn').forEach(b => b.classList.remove('playing', 'success-flash', 'error-flash'));
 
         const targetSynth = isolatedInstrument === 'ravenscroft' ? synths.piano : synths.bells;
         targetSynth.triggerAttackRelease(challengeNote, "1.0");
 
-        // Instant illumination verification display anchor
         setTimeout(() => {
             const keyElement = document.getElementById(`btn-${challengeNote}`);
             if (keyElement) {
@@ -786,6 +740,7 @@
     }
 
     function triggerInteractiveTestNote() {
+        ensureAudioStarted();
         if (feedbackLock) return;
         const randomObj = progression[Math.floor(Math.random() * progression.length)];
         challengeNote = randomObj.id;
@@ -797,6 +752,7 @@
     }
 
     function handleKeyboardInput(noteId) {
+        ensureAudioStarted();
         if (feedbackLock) return;
 
         const keyElement = document.getElementById(`btn-${noteId}`);
@@ -816,7 +772,6 @@
                 const correctEl = document.getElementById(`btn-${challengeNote}`);
                 if (correctEl) correctEl.classList.add('success-flash');
                 
-                // Play incorrect sound vs correct resolution
                 synths.piano.triggerAttackRelease(noteId, "0.5");
                 
                 setTimeout(() => {
@@ -827,7 +782,6 @@
                 }, 1800);
             }
         } else {
-            // Direct playback standard operation mode
             if (keyElement) {
                 keyElement.classList.add('playing');
                 setTimeout(() => keyElement.classList.remove('playing'), 200);
@@ -836,7 +790,7 @@
         }
     }
 
-    // Dynamic View Generation Model
+    // Dynamic Keyboard Generator
     function buildKeyboard() {
         const naturalsContainer = document.getElementById('naturals-container');
         const sharpsContainer = document.getElementById('sharps-container');
@@ -846,7 +800,6 @@
             btn.className = `bell-btn ${note.id}`;
             btn.id = `btn-${note.id}`;
             
-            // Format labels cleanly inside color badges
             const labelStr = typeof note.display === 'object' ? note.display.flat : note.display;
             btn.innerHTML = `
                 <div class="color-badge">
@@ -866,9 +819,8 @@
         });
     }
 
-    // Run layout building and immediately boot synths
+    // Initialize layout immediately
     buildKeyboard();
-    initApp();
 </script>
 </body>
 </html>
