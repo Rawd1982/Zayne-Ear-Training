@@ -89,7 +89,7 @@
             padding-left: 8px;
         }
 
-        /* NEW MIXER GRID LAYOUT */
+        /* MIXER GRID LAYOUT */
         .mixer-grid {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
@@ -334,11 +334,10 @@
         }
 
         .progress-bar {
-            width: 0%;
+            width: 100%;
             height: 100%;
             background-color: #d62828; 
             border-radius: 3px;
-            transition: width 0.1s linear;
         }
 
         #msg { 
@@ -486,7 +485,7 @@
             margin-bottom: 1px;
         }
 
-        /* Sharp offsets styling matching your framework */
+        /* Sharp offsets layout placement mapping profiles */
         #btn-Ab3  { grid-column: 1; margin-left: 38px; }
         #btn-Bb3  { grid-column: 2; margin-left: 38px; }
         #btn-Db4  { grid-column: 4; margin-left: 38px; }
@@ -674,7 +673,7 @@
         { id: "G5",  solfege: "So 5", display: "G", type: "white" }
     ];
 
-    // Build Native Oscillator Synths as immediate fast failbacks
+    // Build Native Oscillator Synths
     const synths = {
         bells: new Tone.PolySynth(Tone.Synth, { oscillator: { type: "sine" }, envelope: { attack: 0.01, decay: 1, sustain: 0, release: 1 } }),
         piano: new Tone.PolySynth(Tone.Synth, { oscillator: { type: "triangle" }, envelope: { attack: 0.02, decay: 1.5, sustain: 0.1, release: 0.8 } }),
@@ -684,8 +683,8 @@
         organ: new Tone.PolySynth(Tone.Synth, { oscillator: { type: "square" }, envelope: { attack: 0.05, decay: 0.1, sustain: 1, release: 0.3 } })
     };
 
-    // Route Synths into Web Audio API Mixer Fader Channels
-    Tone.loaded().then(() => {
+    // Connect everything immediately since oscillators don't need to wait for sample asset loading
+    function initApp() {
         synths.bells.connect(channelGains.bells);
         synths.piano.connect(channelGains.piano);
         synths.solfege.connect(channelGains.solfege);
@@ -693,9 +692,10 @@
         synths.guitar.connect(channelGains.guitar);
         synths.organ.connect(channelGains.organ);
         
+        // Hide loading bar immediately
         document.getElementById('loadingZone').classList.add('hidden');
         initializeMixerGains();
-    });
+    }
 
     function initializeMixerGains() {
         updateVolume('bells', 80);
@@ -866,7 +866,9 @@
         });
     }
 
+    // Run layout building and immediately boot synths
     buildKeyboard();
+    initApp();
 </script>
 </body>
 </html>
