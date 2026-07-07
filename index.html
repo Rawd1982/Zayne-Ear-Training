@@ -147,11 +147,10 @@
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 12px;
-            padding: 12px 14px;
+            padding: 10px 14px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            transition: background 0.2s ease, border-color 0.2s ease;
+            gap: 6px;
         }
 
         .test-card {
@@ -254,7 +253,7 @@
             font-weight: bold;
         }
 
-        /* Enhanced Integrated Slider Formatting */
+        /* Isolated Integrated Fader Styles */
         .blend-slider {
             -webkit-appearance: none;
             appearance: none;
@@ -262,66 +261,30 @@
             height: 6px;
             background: #1e293b;
             border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 4px;
+            border-radius: 3px;
             outline: none;
-            margin: 8px 0 4px 0;
+            margin: 4px 0;
             transition: all 0.2s ease;
         }
-        
         .blend-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
             width: 14px;
-            height: 18px;
-            border-radius: 4px;
-            background: #475569;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            height: 14px;
+            border-radius: 50%;
+            background: #0d9488;
             cursor: pointer;
-            transition: background 0.15s ease, transform 0.1s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+            box-shadow: 0 0 8px rgba(13, 148, 136, 0.5);
         }
-        
         .blend-slider::-moz-range-thumb {
             width: 14px;
-            height: 18px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 4px;
-            background: #475569;
+            height: 14px;
+            border: none;
+            border-radius: 50%;
+            background: #0d9488;
             cursor: pointer;
-            transition: background 0.15s ease, transform 0.1s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+            box-shadow: 0 0 8px rgba(13, 148, 136, 0.5);
         }
-
-        /* Contextual integration adjustments when parent fader card is highlighted */
-        .fader-card:has(.fader-header-btn.active) {
-            background: rgba(13, 148, 136, 0.02);
-            border-color: rgba(13, 148, 136, 0.15);
-        }
-
-        .fader-card:has(.fader-header-btn.active) .blend-slider {
-            background: #0f172a;
-            border-color: rgba(13, 148, 136, 0.2);
-        }
-
-        .fader-card:has(.fader-header-btn.active) .blend-slider::-webkit-slider-thumb {
-            background: #0d9488;
-            border-color: rgba(255, 255, 255, 0.3);
-            box-shadow: 0 0 8px rgba(13, 148, 136, 0.4);
-        }
-
-        .fader-card:has(.fader-header-btn.active) .blend-slider::-moz-range-thumb {
-            background: #0d9488;
-            border-color: rgba(255, 255, 255, 0.3);
-            box-shadow: 0 0 8px rgba(13, 148, 136, 0.4);
-        }
-
-        .blend-slider::-webkit-slider-thumb:hover {
-            transform: scale(1.05);
-        }
-        .blend-slider::-moz-range-thumb:hover {
-            transform: scale(1.05);
-        }
-
         .blend-slider:disabled {
             opacity: 0.2;
             cursor: not-allowed;
