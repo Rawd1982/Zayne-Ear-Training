@@ -581,7 +581,6 @@
             margin-bottom: 1px;
         }
 
-        /* Accurate Grid Assignments for Chromatic Range G3-G5 */
         #btn-Ab3  { grid-column: 1; margin-left: 38px; }
         #btn-Bb3  { grid-column: 2; margin-left: 38px; }
         #btn-Db4  { grid-column: 4; margin-left: 38px; }
@@ -593,19 +592,19 @@
         #btn-Eb5  { grid-column: 12; margin-left: 38px; }
         #btn-Gb5  { grid-column: 14; margin-left: 38px; }
 
-        /* Color Anchors Linked Explicitly to Chromatic Code Anchors */
-        .bell-btn.G3 .color-badge,  .bell-btn.G4 .color-badge,  .bell-btn.G5 .color-badge   { background: linear-gradient(to bottom, #3a6d6b, #4d908e); --badge-flash: #4d908e; } 
-        .bell-btn.Ab3 .color-badge, .bell-btn.Ab4 .color-badge, .bell-btn.Ab5 .color-badge  { background: linear-gradient(to bottom, #1d5f7a, #277da1); --badge-flash: #277da1; } 
-        .bell-btn.A3 .color-badge,  .bell-btn.A4 .color-badge                               { background: linear-gradient(to bottom, #513970, #6a4c93); --badge-flash: #6a4c93; } 
-        .bell-btn.Bb3 .color-badge, .bell-btn.Bb4 .color-badge                              { background: linear-gradient(to bottom, #654e80, #8367a6); --badge-flash: #8367a6; } 
-        .bell-btn.B3 .color-badge,  .bell-btn.B4 .color-badge                               { background: linear-gradient(to bottom, #c4436e, #f35b8c); --badge-flash: #f35b8c; } 
-        .bell-btn.C4 .color-badge,  .bell-btn.C5 .color-badge                               { background: linear-gradient(to bottom, #ab1f1f, #d62828); --badge-flash: #d62828; } 
-        .bell-btn.Db4 .color-badge, .bell-btn.Db5 .color-badge                              { background: linear-gradient(to bottom, #bd4931, #e65c40); --badge-flash: #e65c40; } 
-        .bell-btn.D4 .color-badge,  .bell-btn.D5 .color-badge                               { background: linear-gradient(to bottom, #c75b20, #f3722c); --badge-flash: #f3722c; } 
-        .bell-btn.Eb4 .color-badge, .bell-btn.Eb5 .color-badge                              { background: linear-gradient(to bottom, #cca23c, #f9c74f); --badge-flash: #f9c74f; } 
-        .bell-btn.E4 .color-badge,  .bell-btn.E5 .color-badge                               { background: linear-gradient(to bottom, #cca60f, #f9cd13); --badge-flash: #f9cd13; } 
-        .bell-btn.F4 .color-badge,  .bell-btn.F5 .color-badge                               { background: linear-gradient(to bottom, #729955, #90be6d); --badge-flash: #90be6d; } 
-        .bell-btn.Gb4 .color-badge, .bell-btn.Gb5 .color-badge                              { background: linear-gradient(to bottom, #32826a, #43aa8b); --badge-flash: #43aa8b; } 
+        /* Absolute Pitch Color Anchors */
+        .bell-btn.G3 .color-badge,  .bell-btn.G4 .color-badge,  .bell-btn.G5 .color-badge   { background: linear-gradient(to bottom, #3a6d6b, #4d908e); } 
+        .bell-btn.Ab3 .color-badge, .bell-btn.Ab4 .color-badge, .bell-btn.Ab5 .color-badge  { background: linear-gradient(to bottom, #1d5f7a, #277da1); } 
+        .bell-btn.A3 .color-badge,  .bell-btn.A4 .color-badge                               { background: linear-gradient(to bottom, #513970, #6a4c93); } 
+        .bell-btn.Bb3 .color-badge, .bell-btn.Bb4 .color-badge                              { background: linear-gradient(to bottom, #654e80, #8367a6); } 
+        .bell-btn.B3 .color-badge,  .bell-btn.B4 .color-badge                               { background: linear-gradient(to bottom, #c4436e, #f35b8c); } 
+        .bell-btn.C4 .color-badge,  .bell-btn.C5 .color-badge                               { background: linear-gradient(to bottom, #ab1f1f, #d62828); } 
+        .bell-btn.Db4 .color-badge, .bell-btn.Db5 .color-badge                              { background: linear-gradient(to bottom, #bd4931, #e65c40); } 
+        .bell-btn.D4 .color-badge,  .bell-btn.D5 .color-badge                               { background: linear-gradient(to bottom, #c75b20, #f3722c); } 
+        .bell-btn.Eb4 .color-badge, .bell-btn.Eb5 .color-badge                              { background: linear-gradient(to bottom, #cca23c, #f9c74f); } 
+        .bell-btn.E4 .color-badge,  .bell-btn.E5 .color-badge                               { background: linear-gradient(to bottom, #cca60f, #f9cd13); } 
+        .bell-btn.F4 .color-badge,  .bell-btn.F5 .color-badge                               { background: linear-gradient(to bottom, #729955, #90be6d); } 
+        .bell-btn.Gb4 .color-badge, .bell-btn.Gb5 .color-badge                              { background: linear-gradient(to bottom, #32826a, #43aa8b); } 
     </style>
 </head>
 <body>
@@ -622,6 +621,7 @@
         <div class="controls-panel-wrapper" id="controlsWrapper">
             <div class="controls-panel">
                 
+                <!-- ROW 1: 3-Button Mixing Fader Grid Profile -->
                 <div class="fader-grid">
                     <div class="fader-card" id="card-bell-piano">
                         <button class="fader-header-btn active" id="mode-bell-piano" onclick="setAudioMode('bell-piano')">
@@ -657,7 +657,9 @@
                     </div>
                 </div>
 
+                <!-- TEST MODE GRID SECTION -->
                 <div class="test-mode-grid">
+                    <!-- MODE 1: ISOLATED VERBAL TEST PANEL -->
                     <div class="test-card">
                         <button class="fader-header-btn" id="mode-test-holder" onclick="setAudioMode('test-mode')">
                             <span>🎯 Isolated Test Mode (Instant Light Up)</span>
@@ -669,6 +671,7 @@
                         </div>
                     </div>
 
+                    <!-- MODE 2: INTERACTIVE INPUT TEST PANEL -->
                     <div class="test-card interactive">
                         <button class="fader-header-btn" id="mode-interactive-holder" onclick="setAudioMode('interactive-test')">
                             <span>🎹 Interactive Test Mode (Press Key to Answer)</span>
@@ -681,6 +684,7 @@
                     </div>
                 </div>
 
+                <!-- ROW 2: Compact Alternate Buttons -->
                 <div class="single-row-grid">
                     <button class="mode-btn" id="mode-seq-bell-vocal" onclick="setAudioMode('seq-bell-vocal')">Bells → Solfège</button>
                     <button class="mode-btn" id="mode-seq-piano-vocal" onclick="setAudioMode('seq-piano-vocal')">Piano → Solfège</button>
@@ -758,35 +762,34 @@
     let isCurrentlyLocked = false;
     let lockedScrollTop = 0;
 
-    // Fixed Structure: Extracted flat definitions instead of object-nesting to prevent object text compilation issues
     const progression = [
-        { id: "G3",  solfege: "So 3", flatText: "G", sharpText: "G", voiceWav: "So 3.wav",  bellSourceFile: "So 3 Bell.wav",  bellRate: 1.0, type: "white", style: "G3" },
-        { id: "Ab3", solfege: "Si 3", flatText: "Ab", sharpText: "G#", voiceWav: "Si 3.wav",  bellSourceFile: "Si 3 Bell.wav",  bellRate: 1.0, type: "black", style: "Ab3" },
-        { id: "A3",  solfege: "La 3", flatText: "A", sharpText: "A", voiceWav: "La 3.wav",  bellSourceFile: "La 3 Bell.wav",  bellRate: 1.0, type: "white", style: "A3" },
-        { id: "Bb3", solfege: "Te 3", flatText: "Bb", sharpText: "A#", voiceWav: "Te 3.wav",  bellSourceFile: "Te 3 Bell.wav",  bellRate: 1.0, type: "black", style: "Bb3" },
-        { id: "B3",  solfege: "Ti 3", flatText: "B", sharpText: "B", voiceWav: "Ti 3.wav",  bellSourceFile: "Ti 3 Bell.wav",  bellRate: 1.0, type: "white", style: "B3" },
+        { id: "G3",  solfege: "So 3", display: "G", voiceWav: "So 3.wav",  bellSourceFile: "So 3 Bell.wav",  bellRate: 1.0, type: "white", style: "G3" },
+        { id: "Ab3", solfege: "Si 3", display: { sharp: "G#", flat: "Ab" }, voiceWav: "Si 3.wav",  bellSourceFile: "Si 3 Bell.wav",  bellRate: 1.0, type: "black", style: "Ab3" },
+        { id: "A3",  solfege: "La 3", display: "A", voiceWav: "La 3.wav",  bellSourceFile: "La 3 Bell.wav",  bellRate: 1.0, type: "white", style: "A3" },
+        { id: "Bb3", solfege: "Te 3", display: { sharp: "A#", flat: "Bb" }, voiceWav: "Te 3.wav",  bellSourceFile: "Te 3 Bell.wav",  bellRate: 1.0, type: "black", style: "Bb3" },
+        { id: "B3",  solfege: "Ti 3", display: "B", voiceWav: "Ti 3.wav",  bellSourceFile: "Ti 3 Bell.wav",  bellRate: 1.0, type: "white", style: "B3" },
         
-        { id: "C4",  solfege: "Do 4", flatText: "C", sharpText: "C", voiceWav: "Do 4.wav",  bellSourceFile: "Do 4 Bell.wav",  bellRate: 1.0, type: "white", style: "C4" },
-        { id: "Db4", solfege: "Di 4", flatText: "Db", sharpText: "C#", voiceWav: "Di 4.wav",  bellSourceFile: "Di 4 Bell.wav",  bellRate: 1.0, type: "black", style: "Db4" },
-        { id: "D4",  solfege: "Re 4", flatText: "D", sharpText: "D", voiceWav: "Re 4.wav",  bellSourceFile: "Re 4 Bell.wav",  bellRate: 1.0, type: "white", style: "D4" },
-        { id: "Eb4", solfege: "Me 4", flatText: "Eb", sharpText: "D#", voiceWav: "Me 4.wav",  bellSourceFile: "Me 4 Bell.wav",  bellRate: 1.0, type: "black", style: "Eb4" },
-        { id: "E4",  solfege: "Mi 4", flatText: "E", sharpText: "E", voiceWav: "Mi 4.wav",  bellSourceFile: "Mi 4 Bell.wav",  bellRate: 1.0, type: "white", style: "E4" },
-        { id: "F4",  solfege: "Fa 4", flatText: "F", sharpText: "F", voiceWav: "Fa 4.wav",  bellSourceFile: "Fa 4 Bell.wav",  bellRate: 1.0, type: "white", style: "F4" },
-        { id: "Gb4", solfege: "Fi 4", flatText: "Gb", sharpText: "F#", voiceWav: "Fi 4.wav",  bellSourceFile: "Fi 4 Bell.wav",  bellRate: 1.0, type: "black", style: "Gb4" },
-        { id: "G4",  solfege: "So 4", flatText: "G", sharpText: "G", voiceWav: "So 4.wav",  bellSourceFile: "So 4 Bell.wav",  bellRate: 1.0, type: "white", style: "G4" },
-        { id: "Ab4", solfege: "Si 4", flatText: "Ab", sharpText: "G#", voiceWav: "Si 4.wav",  bellSourceFile: "Si 4 Bell.wav",  bellRate: 1.0, type: "black", style: "Ab4" },
-        { id: "A4",  solfege: "La 4", flatText: "A", sharpText: "A", voiceWav: "La 4.wav",  bellSourceFile: "La 4 Bell.wav",  bellRate: 1.0, type: "white", style: "A4" },
-        { id: "Bb4", solfege: "Te 4", flatText: "Bb", sharpText: "A#", voiceWav: "Te 4.wav",  bellSourceFile: "Te 4 Bell.wav",  bellRate: 1.0, type: "black", style: "Bb4" },
-        { id: "B4",  solfege: "Ti 4", flatText: "B", sharpText: "B", voiceWav: "Ti 4.wav",  bellSourceFile: "Ti 4 Bell.wav",  bellRate: 1.0, type: "white", style: "B4" },
-        { id: "C5",  solfege: "Do 5", flatText: "C", sharpText: "C", voiceWav: "Do 5.wav",  bellSourceFile: "Do 5 Bell.wav",  bellRate: 1.0, type: "white", style: "C5" },
+        { id: "C4",  solfege: "Do 4", display: "C", voiceWav: "Do 4.wav",  bellSourceFile: "Do 4 Bell.wav",  bellRate: 1.0, type: "white", style: "C4" },
+        { id: "Db4", solfege: "Di 4", display: { sharp: "C#", flat: "Db" }, voiceWav: "Di 4.wav",  bellSourceFile: "Di 4 Bell.wav",  bellRate: 1.0, type: "black", style: "Db4" },
+        { id: "D4",  solfege: "Re 4", display: "D", voiceWav: "Re 4.wav",  bellSourceFile: "Re 4 Bell.wav",  bellRate: 1.0, type: "white", style: "D4" },
+        { id: "Eb4", solfege: "Me 4", display: { sharp: "D#", flat: "Eb" }, voiceWav: "Me 4.wav",  bellSourceFile: "Me 4 Bell.wav",  bellRate: 1.0, type: "black", style: "Eb4" },
+        { id: "E4",  solfege: "Mi 4", display: "E", voiceWav: "Mi 4.wav",  bellSourceFile: "Mi 4 Bell.wav",  bellRate: 1.0, type: "white", style: "E4" },
+        { id: "F4",  solfege: "Fa 4", display: "F", voiceWav: "Fa 4.wav",  bellSourceFile: "Fa 4 Bell.wav",  bellRate: 1.0, type: "white", style: "F4" },
+        { id: "Gb4", solfege: "Fi 4", display: { sharp: "F#", flat: "Gb" }, voiceWav: "Fi 4.wav",  bellSourceFile: "Fi 4 Bell.wav",  bellRate: 1.0, type: "black", style: "Gb4" },
+        { id: "G4",  solfege: "So 4", display: "G", voiceWav: "So 4.wav",  bellSourceFile: "So 4 Bell.wav",  bellRate: 1.0, type: "white", style: "G4" },
+        { id: "Ab4", solfege: "Si 4", display: { sharp: "G#", flat: "Ab" }, voiceWav: "Si 4.wav",  bellSourceFile: "Si 4 Bell.wav",  bellRate: 1.0, type: "black", style: "Ab4" },
+        { id: "A4",  solfege: "La 4", display: "A", voiceWav: "La 4.wav",  bellSourceFile: "La 4 Bell.wav",  bellRate: 1.0, type: "white", style: "A4" },
+        { id: "Bb4", solfege: "Te 4", display: { sharp: "A#", flat: "Bb" }, voiceWav: "Te 4.wav",  bellSourceFile: "Te 4 Bell.wav",  bellRate: 1.0, type: "black", style: "Bb4" },
+        { id: "B4",  solfege: "Ti 4", display: "B", voiceWav: "Ti 4.wav",  bellSourceFile: "Ti 4 Bell.wav",  bellRate: 1.0, type: "white", style: "B4" },
+        { id: "C5",  solfege: "Do 5", display: "C", voiceWav: "Do 5.wav",  bellSourceFile: "Do 5 Bell.wav",  bellRate: 1.0, type: "white", style: "C5" },
         
-        { id: "Db5", solfege: "Di 5", flatText: "Db", sharpText: "C#", voiceWav: "Di 5.wav",  bellSourceFile: "Di 5 Bell.wav",  bellRate: 1.0, type: "black", style: "Db5" },
-        { id: "D5",  solfege: "Re 5", flatText: "D", sharpText: "D", voiceWav: "Re 5.wav",  bellSourceFile: "Re 5 Bell.wav",  bellRate: 1.0, type: "white", style: "D5" },
-        { id: "Eb5", solfege: "Me 5", flatText: "Eb", sharpText: "D#", voiceWav: "Me 5.wav",  bellSourceFile: "Me 5 Bell.wav",  bellRate: 1.0, type: "black", style: "Eb5" },
-        { id: "E5",  solfege: "Mi 5", flatText: "E", sharpText: "E", voiceWav: "Mi 5.wav",  bellSourceFile: "Mi 5 Bell.wav",  bellRate: 1.0, type: "white", style: "E5" },
-        { id: "F5",  solfege: "Fa 5", flatText: "F", sharpText: "F", voiceWav: "Fa 5.wav",  bellSourceFile: "Fa 5 Bell.wav",  bellRate: 1.0, type: "white", style: "F5" },
-        { id: "Gb5", solfege: "Fi 5", flatText: "Gb", sharpText: "F#", voiceWav: "Fi 5.wav",  bellSourceFile: "Fi 5 Bell.wav",  bellRate: 1.0, type: "black", style: "Gb5" },
-        { id: "G5",  solfege: "So 5", flatText: "G", sharpText: "G", voiceWav: "So 5.wav",  bellSourceFile: "So 5 Bell.wav",  bellRate: 1.0, type: "white", style: "G5" }
+        { id: "Db5", solfege: "Di 5", display: { sharp: "C#", flat: "Db" }, voiceWav: "Di 5.wav",  bellSourceFile: "Di 5 Bell.wav",  bellRate: 1.0, type: "black", style: "Db5" },
+        { id: "D5",  solfege: "Re 5", display: "D", voiceWav: "Re 5.wav",  bellSourceFile: "Re 5 Bell.wav",  bellRate: 1.0, type: "white", style: "D5" },
+        { id: "Eb5", solfege: "Me 5", display: { sharp: "D#", flat: "Eb" }, voiceWav: "Me 5.wav",  bellSourceFile: "Me 5 Bell.wav",  bellRate: 1.0, type: "black", style: "Eb5" },
+        { id: "E5",  solfege: "Mi 5", display: "E", voiceWav: "Mi 5.wav",  bellSourceFile: "Mi 5 Bell.wav",  bellRate: 1.0, type: "white", style: "E5" },
+        { id: "F5",  solfege: "Fa 5", display: "F", voiceWav: "Fa 5.wav",  bellSourceFile: "Fa 5 Bell.wav",  bellRate: 1.0, type: "white", style: "F5" },
+        { id: "Gb5", solfege: "Fi 5", display: { sharp: "F#", flat: "Gb" }, voiceWav: "Fi 5.wav",  bellSourceFile: "Fi 5 Bell.wav",  bellRate: 1.0, type: "black", style: "Gb5" },
+        { id: "G5",  solfege: "So 5", display: "G", voiceWav: "So 5.wav",  bellSourceFile: "So 5 Bell.wav",  bellRate: 1.0, type: "white", style: "G5" }
     ];
     
     let voiceBuffers = {}; 
@@ -824,8 +827,8 @@
                 <div class="color-badge">
                     <div class="accidental-stack">
                         <span class="solfege-tiny">${note.solfege.split(' ')[0]}</span>
-                        <span>${note.sharpText}</span>
-                        <span>${note.flatText}</span>
+                        <span>${note.display.sharp}</span>
+                        <span>${note.display.flat}</span>
                     </div>
                 </div>`;
             sharpsRow.appendChild(btn);
@@ -833,7 +836,7 @@
             btn.innerHTML = `
                 <div class="color-badge">
                     <span class="solfege-tiny">${note.solfege.split(' ')[0]}</span>
-                    <span>${note.flatText}</span>
+                    <span>${note.display}</span>
                 </div>`;
             naturalsRow.appendChild(btn);
         }
@@ -1116,14 +1119,17 @@
     }
     loadAllSounds();
 
-    // Fixed dynamic light color assignments by referencing the explicit fallback values inside CSS custom variables
     function triggerLightEffect(choice) {
         clearAllFlashEffects();
 
         const btn = document.getElementById(`btn-${choice}`);
         if (!btn) return;
+        const badge = btn.querySelector('.color-badge');
+        if (!badge) return;
         
-        let targetColor = window.getComputedStyle(btn).getPropertyValue('--badge-flash').trim() || "rgba(13, 148, 136, 1)";
+        let colorMatch = window.getComputedStyle(badge).backgroundImage.match(/rgb\([^)]+\)/g);
+        let targetColor = colorMatch ? (colorMatch[1] || colorMatch[0]) : "rgba(255, 255, 255, 1)";
+        
         btn.style.setProperty('--light-color', targetColor);
         btn.classList.add('playing');
         
@@ -1153,7 +1159,9 @@
                 if (chosenBtn) chosenBtn.classList.add('error-flash');
                 
                 if (correctBtn) {
-                    let targetColor = window.getComputedStyle(correctBtn).getPropertyValue('--badge-flash').trim() || "rgba(13, 148, 136, 1)";
+                    const badge = correctBtn.querySelector('.color-badge');
+                    let colorMatch = window.getComputedStyle(badge).backgroundImage.match(/rgb\([^)]+\)/g);
+                    let targetColor = colorMatch ? (colorMatch[1] || colorMatch[0]) : "rgba(255, 255, 255, 1)";
                     correctBtn.style.setProperty('--light-color', targetColor);
                     correctBtn.classList.add('playing');
                 }
