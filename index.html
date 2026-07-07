@@ -1,212 +1,778 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pitch Training Virtual Piano</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ZAYNE'S EAR TRAINING</title>
     <style>
-        /* Specific Chroma-Note Palette variables for keys */
+        * { box-sizing: border-box; }
         :root {
-            --color-c: #ff2a2a; /* Red */
-            --color-d: #ffa500; /* Orange */
-            --color-e: #ffd700; /* Yellow */
-            --color-f: #008000; /* Green */
-            --color-g: #008080; /* Teal */
-            --color-a: #0000ff; /* Blue */
-            --color-b: #8a2be2; /* Purple */
+            --bg-dark: #0f172a;
+            --panel-bg: #1e293b;
+            --text-main: #ffffff;
+            --text-sub: #94a3b8;
+            --keyboard-bg: #0b0f19;
+            --accent: #d62828; 
         }
 
-        .white-key {
-            height: 200px;
-            width: 60px;
-            z-index: 1;
-            transition: all 0.1s ease;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        html, body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-dark);
+            font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+            color: var(--text-main);
+            width: 100%;
+            height: 100%;
         }
 
-        .white-key:active, .white-key.active {
-            transform: translateY(2px);
-            box-shadow: inset 0 4px 6px rgba(0,0,0,0.15);
+        body {
+            display: flex;
+            justify-content: center;
+            padding: 20px;
         }
 
-        .black-key {
-            height: 120px;
-            width: 36px;
-            margin-left: -18px;
-            margin-right: -18px;
+        .container { width: 100%; max-width: 1200px; display: flex; flex-direction: column; align-items: center; }
+
+        h1 { 
+            font-size: 2.8rem; 
+            font-weight: 900; 
+            text-align: center; 
+            margin: 10px 0 5px 0; 
+            width: 100%; 
+            letter-spacing: 2px; 
+        }
+        
+        h1 span.w-red    { color: #d62828; } 
+        h1 span.w-yellow { color: #f9cd13; }
+        h1 span.w-teal   { color: #0d9488; }
+
+        .header-line { width: 80%; height: 2px; background: #0d9488; margin-bottom: 25px; opacity: 0.5; }
+
+        .game-panel {
+            background-color: var(--panel-bg);
+            padding: 25px;
+            border-radius: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            position: relative;
+        }
+
+        .controls-panel-wrapper {
+            position: relative;
+            max-width: 1100px;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .controls-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background-color: var(--keyboard-bg);
+            padding: 16px;
+            border-radius: 16px;
+            border: 2px solid #1e293b;
+            width: 100%;
+        }
+
+        .fader-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            width: 100%;
+        }
+
+        .test-mode-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            width: 100%;
+            margin-top: 2px;
+        }
+
+        .single-row-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+            width: 100%;
+        }
+
+        @media (max-width: 992px) {
+            .fader-grid, .test-mode-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .controls-panel-wrapper.locked::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(1px);
+            border-radius: 16px;
+            z-index: 10;
+            cursor: not-allowed;
+        }
+
+        .mode-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-sub);
+            padding: 8px 4px;
+            font-size: 0.75rem; 
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.1;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            background-color: rgba(255, 255, 255, 0.02);
+            height: 42px;
+        }
+
+        .mode-btn.active {
+            background-color: var(--accent);
+            color: var(--text-main);
+            box-shadow: 0 4px 12px rgba(214, 40, 40, 0.3); 
+            border-color: transparent;
+        }
+
+        .fader-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 10px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .test-card {
+            background: rgba(13, 148, 136, 0.04);
+            border: 1px solid rgba(13, 148, 136, 0.2);
+            border-radius: 12px;
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .test-card.interactive {
+            background: rgba(243, 114, 44, 0.03);
+            border: 1px solid rgba(243, 114, 44, 0.25);
+        }
+
+        .test-options-row {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            align-items: center;
+            height: 38px;
+        }
+
+        .test-sub-btn {
+            flex: 2;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-sub);
+            padding: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            height: 100%;
+        }
+
+        .test-sub-btn.active {
+            background: #0d9488;
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 2px 8px rgba(13, 148, 136, 0.3);
+        }
+
+        .test-card.interactive .test-sub-btn.active {
+            background: #f3722c;
+            box-shadow: 0 2px 8px rgba(243, 114, 44, 0.3);
+        }
+
+        .test-go-btn {
+            flex: 1;
+            background: #e65c40;
+            border: none;
+            color: white;
+            padding: 8px;
+            font-size: 0.85rem;
+            font-weight: 900;
+            border-radius: 6px;
+            cursor: pointer;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 10px rgba(230, 92, 64, 0.3);
+            transition: transform 0.05s, background 0.1s, opacity 0.2s ease;
+            height: 100%;
+        }
+        .test-go-btn:active {
+            transform: scale(0.96);
+            background: #c75b20;
+        }
+
+        .fader-header-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-sub);
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-align: left;
+            padding: 0;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .fader-header-btn.active { color: #0d9488; }
+        .test-card.interactive .fader-header-btn.active { color: #f3722c; }
+
+        .fader-metrics {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            font-family: monospace;
+            color: #64748b;
+            letter-spacing: 0.5px;
+        }
+        .fader-metrics span.highlight {
+            color: #0d9488;
+            font-weight: bold;
+        }
+
+        .blend-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            background: #334155;
+            border-radius: 3px;
+            outline: none;
+            margin: 4px 0;
+        }
+        .blend-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #0d9488;
+            cursor: pointer;
+        }
+        .blend-slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border: none;
+            border-radius: 50%;
+            background: #0d9488;
+            cursor: pointer;
+        }
+        .blend-slider:disabled {
+            opacity: 0.2;
+            cursor: not-allowed;
+        }
+
+        .loading-zone {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 400px;
+            height: 60px;
+            margin-bottom: 15px;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 6px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 100%;
+            background-color: #d62828; 
+            border-radius: 3px;
+        }
+
+        #msg { 
+            text-align: center; 
+            font-size: 0.95rem; 
+            font-weight: 900;
+            letter-spacing: 1px;
+            line-height: 1;
+        }
+
+        .keyboard-wrapper {
+            background-color: var(--keyboard-bg);
+            padding: 30px 20px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 1100px; 
+            overflow-x: auto;
+            overflow-y: hidden;
+            border: 4px solid #1e293b;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+        }
+
+        .piano-grid {
+            position: relative;
+            display: block;
+            width: 550px; /* Exact explicit fit computed for C4-E5 white keys */
+            height: 240px;
+            background: #000;
+            padding: 4px;
+            border-radius: 4px;
+            margin: 0 auto;
+        }
+
+        .sharps-layer {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: 100%;
+            height: 145px;
             z-index: 2;
-            background-color: #1a1a1a;
+            pointer-events: none;
+        }
+
+        .naturals-layer { 
+            display: flex;
+            gap: 5px;
+            height: 100%;
+            width: 100%;
+        }
+
+        .bell-btn {
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            position: relative;
             transition: all 0.1s ease;
+            pointer-events: auto;
+            padding-bottom: 15px;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        
+        .naturals-layer .bell-btn {
+            height: 232px;
+            flex: 1;
+            background: linear-gradient(to bottom, #eeeeee 0%, #ffffff 100%);
+            border-radius: 0 0 7px 7px;
+            box-shadow: inset 0 2px 3px #ffffff, 0 4px 6px rgba(0,0,0,0.25);
+            border-bottom: 4px solid #cccccc;
         }
 
-        .black-key:active, .black-key.active {
-            background-color: #333333;
+        .sharps-layer .bell-btn {
+            position: absolute;
+            height: 145px;
+            width: 34px;
+            background: linear-gradient(to bottom, #333333 0%, #111111 100%);
+            border-radius: 0 0 5px 5px;
+            z-index: 3;
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.2), 2px 4px 8px rgba(0,0,0,0.5);
+            border-bottom: 5px solid #000000;
+            padding-bottom: 10px;
         }
 
-        /* Subtle bottom border accent using the visual palette */
-        .key-c { border-bottom: 8px solid var(--color-c); }
-        .key-d { border-bottom: 8px solid var(--color-d); }
-        .key-e { border-bottom: 8px solid var(--color-e); }
-        .key-f { border-bottom: 8px solid var(--color-f); }
-        .key-g { border-bottom: 8px solid var(--color-g); }
-        .key-a { border-bottom: 8px solid var(--color-a); }
-        .key-b { border-bottom: 8px solid var(--color-b); }
+        /* Calculated Key Alignments spanning C4 to E5 White keys */
+        #btn-Db4  { left: 36px; }
+        #btn-Eb4  { left: 91px; }
+        #btn-Gb4  { left: 201px; }
+        #btn-Ab4  { left: 256px; }
+        #btn-Bb4  { left: 311px; }
+        #btn-Db5  { left: 421px; }
+        #btn-Eb5  { left: 476px; }
+
+        .naturals-layer .bell-btn:active, .naturals-layer .bell-btn.playing { 
+            transform: translateY(2px);
+            border-bottom-width: 1px;
+            background: #f5f5f5;
+        }
+
+        .sharps-layer .bell-btn:active, .sharps-layer .bell-btn.playing {
+            transform: translateY(2px);
+            border-bottom-width: 2px;
+            background: #222222;
+        }
+
+        .bell-btn.success-flash { background: #22c55e !important; border-bottom-color: #15803d !important; }
+        .bell-btn.error-flash { background: #ef4444 !important; border-bottom-color: #b91c1c !important; }
+        
+        .color-badge {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: #ffffff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            margin: 0 auto;
+            pointer-events: none;
+        }
+
+        .naturals-layer .color-badge { font-size: 0.95rem; }
+        .sharps-layer .color-badge { width: 28px; height: 28px; font-size: 0.65rem; border-radius: 6px; }
+
+        /* Absolute Pitch Chromatic Palette - Chroma-Note / Prodigies Mapping Consistency */
+        .bell-btn.C4 .color-badge,  .bell-btn.C5 .color-badge  { background: #d62828; } /* Red */
+        .bell-btn.Db4 .color-badge, .bell-btn.Db5 .color-badge { background: #e65c40; } /* Dark Orange */
+        .bell-btn.D4 .color-badge,  .bell-btn.D5 .color-badge  { background: #f3722c; } /* Orange */
+        .bell-btn.Eb4 .color-badge, .bell-btn.Eb5 .color-badge { background: #f9c74f; } /* Yellow-Gold */
+        .bell-btn.E4 .color-badge,  .bell-btn.E5 .color-badge  { background: #f9cd13; } /* Yellow */
+        .bell-btn.F4 .color-badge                             { background: #90be6d; } /* Light Green */
+        .bell-btn.Gb4 .color-badge                            { background: #43aa8b; } /* Dark Green */
+        .bell-btn.G4 .color-badge                             { background: #4d908e; } /* Teal-Blue */
+        .bell-btn.Ab4 .color-badge                            { background: #277da1; } /* Blue */
+        .bell-btn.A4 .color-badge                             { background: #6a4c93; } /* Purple */
+        .bell-btn.Bb4 .color-badge                            { background: #8367a6; } /* Light Purple */
+        .bell-btn.B4 .color-badge                             { background: #f35b8c; } /* Pink */
     </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col justify-between font-sans antialiased">
+<body>
 
-    <header class="w-full max-w-4xl mx-auto px-6 pt-8 pb-4 text-center">
-        <h1 class="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-red-400 via-yellow-400 to-blue-500 bg-clip-text text-transparent">
-            Pitch Training Studio
-        </h1>
-        <p class="text-slate-400 mt-2 text-sm md:text-base">
-            Select a mode to begin training. Audio will initialize on your first interaction.
-        </p>
-    </header>
+<div class="container">
+    <h1>
+        <span class="w-red">ZAYNE'S</span> 
+        <span class="w-yellow">EAR</span> 
+        <span class="w-teal">TRAINING</span>
+    </h1>
+    <div class="header-line"></div>
 
-    <main class="w-full max-w-4xl mx-auto px-4 flex flex-col items-center justify-center flex-grow gap-8">
+    <div class="game-panel">
+        <div class="controls-panel-wrapper" id="controlsWrapper">
+            <div class="controls-panel">
+                <div class="fader-grid">
+                    <div class="fader-card" id="card-bell-piano">
+                        <button class="fader-header-btn active" id="mode-bell-piano" onclick="setAudioMode('bell-piano')">
+                            <span>Bells / Piano Blend</span>
+                        </button>
+                        <div class="fader-metrics">
+                            <span id="label-bp-left" class="highlight">Bells 50%</span>
+                            <span id="label-bp-right" class="highlight">Piano 50%</span>
+                        </div>
+                        <input type="range" min="0" max="100" value="50" class="blend-slider" id="fader-bell-piano" oninput="updateBlendValues('bell-piano', this.value)">
+                    </div>
+
+                    <div class="fader-card" id="card-bell-vocal">
+                        <button class="fader-header-btn" id="mode-bell-vocal" onclick="setAudioMode('bell-vocal')">
+                            <span>Bells / Solfege Blend</span>
+                        </button>
+                        <div class="fader-metrics">
+                            <span id="label-bv-left">Bells 50%</span>
+                            <span id="label-bv-right">Solfege 50%</span>
+                        </div>
+                        <input type="range" min="0" max="100" value="50" class="blend-slider" id="fader-bell-vocal" oninput="updateBlendValues('bell-vocal', this.value)">
+                    </div>
+
+                    <div class="fader-card" id="card-piano-vocal">
+                        <button class="fader-header-btn" id="mode-piano-vocal" onclick="setAudioMode('piano-vocal')">
+                            <span>Piano / Solfege Blend</span>
+                        </button>
+                        <div class="fader-metrics">
+                            <span id="label-pv-left">Piano 50%</span>
+                            <span id="label-pv-right">Solfege 50%</span>
+                        </div>
+                        <input type="range" min="0" max="100" value="50" class="blend-slider" id="fader-piano-vocal" oninput="updateBlendValues('piano-vocal', this.value)">
+                    </div>
+                </div>
+
+                <div class="test-mode-grid">
+                    <div class="test-card" id="card-test">
+                        <button class="fader-header-btn" id="mode-test-holder" onclick="setAudioMode('test-mode')">
+                            <span>🎯 Isolated Test Mode (Instant Reveal)</span>
+                        </button>
+                        <div class="test-options-row">
+                            <button class="test-sub-btn active" id="test-sub-ravenscroft" onclick="setTestSubMode('ravenscroft')">Piano Only</button>
+                            <button class="test-sub-btn" id="test-sub-bells" onclick="setTestSubMode('bells')">Bells Only</button>
+                            <button class="test-go-btn" id="test-go-trigger" onclick="playRandomTestNote()">GO ⚡</button>
+                        </div>
+                    </div>
+
+                    <div class="test-card interactive" id="card-interactive">
+                        <button class="fader-header-btn" id="mode-interactive-holder" onclick="setAudioMode('interactive-test')">
+                            <span>🎹 Interactive Mode (Identify the Note)</span>
+                        </button>
+                        <div class="test-options-row">
+                            <button class="test-sub-btn active" id="inter-sub-ravenscroft" onclick="setInteractiveSubMode('ravenscroft')">Piano Only</button>
+                            <button class="test-sub-btn" id="inter-sub-bells" onclick="setInteractiveSubMode('bells')">Bells Only</button>
+                            <button class="test-go-btn" id="inter-go-trigger" onclick="playInteractiveTestNote()">GO ⚡</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="single-row-grid">
+                    <button class="mode-btn" id="mode-rhodes">Rhodes</button>
+                    <button class="mode-btn" id="mode-guitar">Guitar</button>
+                    <button class="mode-btn" id="mode-organ">Organ</button>
+                    <button class="mode-btn" id="mode-synth">Synth</button>
+                    <button class="mode-btn" id="mode-reset" onclick="resetApp()">Reset App</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="loading-zone" id="loadingZone">
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div id="msg" style="color: #22c55e;">APP READY. CLICK KEY TO START.</div>
+        </div>
+
+        <div class="keyboard-wrapper" id="pianoWrapper">
+            <div class="piano-grid">
+                <div class="sharps-layer" id="sharps-container"></div>
+                <div class="naturals-layer" id="naturals-container"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+<script>
+    // Strict pedagogical layout targeting exactly C4 through E5
+    const progression = [
+        { id: "C4",  display: "C",  type: "white" },
+        { id: "Db4", display: "C#", type: "black" },
+        { id: "D4",  display: "D",  type: "white" },
+        { id: "Eb4", display: "D#", type: "black" },
+        { id: "E4",  display: "E",  type: "white" },
+        { id: "F4",  display: "F",  type: "white" },
+        { id: "Gb4", display: "F#", type: "black" },
+        { id: "G4",  display: "G",  type: "white" },
+        { id: "Ab4", display: "G#", type: "black" },
+        { id: "A4",  display: "A",  type: "white" },
+        { id: "Bb4", display: "A#", type: "black" },
+        { id: "B4",  display: "B",  type: "white" },
+        { id: "C5",  display: "C",  type: "white" },
+        { id: "Db5", display: "C#", type: "black" },
+        { id: "D5",  display: "D",  type: "white" },
+        { id: "Eb5", display: "D#", type: "black" },
+        { id: "E5",  display: "E",  type: "white" }
+    ];
+
+    let currentAudioMode = 'bell-piano';
+    let currentTestSubSelection = 'ravenscroft';
+    let currentInteractiveSubSelection = 'ravenscroft';
+    let targetActiveTestNote = null;
+    let isAppInTestState = false;
+
+    // Standardized Synthesis Engines bypassing local system sample dependencies
+    const pianoSynth = new Tone.PolySynth(Tone.Synth).toDestination();
+    const bellSynth = new Tone.PolySynth(Tone.AMSynth).toDestination();
+    const vocalSynth = new Tone.PolySynth(Tone.MonoSynth).toDestination();
+
+    // Adjust settings to fit standard timbral sound profiles
+    pianoSynth.set({ volume: -6, envelope: { release: 1.2 } });
+    bellSynth.set({ volume: -4, oscillator: { type: "sine" }, envelope: { attack: 0.01, decay: 2, sustain: 0, release: 2 } });
+    vocalSynth.set({ volume: -12, filter: { Q: 1, type: "lowpass", frequency: 800 }, envelope: { attack: 0.1, release: 0.8 } });
+
+    function initKeyboard() {
+        const naturalsContainer = document.getElementById('naturals-container');
+        const sharpsContainer = document.getElementById('sharps-container');
         
-        <div class="w-full max-w-md bg-slate-800/80 backdrop-blur-md rounded-2xl p-6 border border-slate-700/50 text-center shadow-xl">
-            <div id="game-status" class="text-xs uppercase tracking-widest text-slate-400 font-semibold mb-1">
-                Free Play Mode
-            </div>
-            <div id="feedback-display" class="text-2xl font-bold text-slate-200 min-h-[40px] flex items-center justify-center">
-                Play a note to start
-            </div>
-        </div>
+        naturalsContainer.innerHTML = '';
+        sharpsContainer.innerHTML = '';
 
-        <div class="flex gap-4 justify-center">
-            <button id="btn-free" class="px-5 py-2.5 rounded-xl text-sm font-semibold bg-blue-600 hover:bg-blue-500 shadow-md transition-colors cursor-pointer">
-                Free Play
-            </button>
-            <button id="btn-quiz" class="px-5 py-2.5 rounded-xl text-sm font-semibold bg-slate-700 hover:bg-slate-600 transition-colors cursor-pointer">
-                New Ear Training Prompt
-            </button>
-        </div>
+        progression.forEach(note => {
+            const btn = document.createElement('button');
+            btn.className = `bell-btn ${note.id}`;
+            btn.id = `btn-${note.id}`;
+            
+            const badge = document.createElement('div');
+            badge.className = 'color-badge';
+            badge.innerText = note.display;
+            btn.appendChild(badge);
 
-        <div class="w-full overflow-x-auto py-6 flex justify-center scrolling-touch">
-            <div id="keyboard" class="flex bg-slate-950 p-4 rounded-3xl shadow-2xl border border-slate-800 select-none">
-                <div class="white-key key-c bg-white rounded-l-xl flex flex-col justify-end pb-3 text-center text-slate-500 font-bold text-xs" data-note="C4">C4</div>
-                <div class="black-key rounded-b-md" data-note="C#4"></div>
-                <div class="white-key key-d bg-white flex flex-col justify-end pb-3 text-center text-slate-500 font-bold text-xs" data-note="D4">D4</div>
-                <div class="black-key rounded-b-md" data-note="D#4"></div>
-                <div class="white-key key-e bg-white flex flex-col justify-end pb-3 text-center text-slate-500 font-bold text-xs" data-note="E4">E4</div>
-                <div class="white-key key-f bg-white flex flex-col justify-end pb-3 text-center text-slate-500 font-bold text-xs" data-note="F4">F4</div>
-                <div class="black-key rounded-b-md" data-note="F#4"></div>
-                <div class="white-key key-g bg-white flex flex-col justify-end pb-3 text-center text-slate-500 font-bold text-xs" data-note="G4">G4</div>
-                <div class="black-key rounded-b-md" data-note="G#4"></div>
-                <div class="white-key key-a bg-white flex flex-col justify-end pb-3 text-center text-slate-500 font-bold text-xs" data-note="A4">A4</div>
-                <div class="black-key rounded-b-md" data-note="A#4"></div>
-                <div class="white-key key-b bg-white flex flex-col justify-end pb-3 text-center text-slate-500 font-bold text-xs" data-note="B4">B4</div>
-                <div class="white-key key-c bg-white flex flex-col justify-end pb-3 text-center text-slate-500 font-bold text-xs" data-note="C5">C5</div>
-                <div class="black-key rounded-b-md" data-note="C#5"></div>
-                <div class="white-key key-d bg-white flex flex-col justify-end pb-3 text-center text-slate-500 font-bold text-xs" data-note="D5">D5</div>
-                <div class="black-key rounded-b-md" data-note="D#5"></div>
-                <div class="white-key key-e bg-white rounded-r-xl flex flex-col justify-end pb-3 text-center text-slate-500 font-bold text-xs" data-note="E5">E5</div>
-            </div>
-        </div>
+            btn.addEventListener('click', () => handleKeyInteraction(note.id));
 
-    </main>
-
-    <footer class="w-full text-center py-6 text-xs text-slate-500 border-t border-slate-800/60 mt-8">
-        Custom Ear-Training App &bull; Designed for Auditory Precision
-    </footer>
-
-    <script>
-        // Setup Polysynth with a mellow piano-like envelope configuration
-        const synth = new Tone.PolySynth(Tone.Synth, {
-            oscillator: { type: "triangle" },
-            envelope: { attack: 0.02, decay: 0.1, sustain: 0.3, release: 0.8 }
-        }).toDestination();
-
-        let targetNote = null;
-        let isQuizMode = false;
-
-        // All available keys in our designated app range
-        const validNotes = ["C4", "C#4", "D4", "D#4", "E4", "F4", "F#4", "G4", "G#4", "A4", "A#4", "B4", "C5", "C#5", "D5", "D#5", "E5"];
-
-        const feedbackDisplay = document.getElementById("feedback-display");
-        const gameStatus = document.getElementById("game-status");
-        const btnFree = document.getElementById("btn-free");
-        const btnQuiz = document.getElementById("btn-quiz");
-
-        // UI Event Listeners for mouse/touch execution
-        document.querySelectorAll('.white-key, .black-key').forEach(key => {
-            key.addEventListener('mousedown', (e) => handleNoteTrigger(e.target.dataset.note));
-            key.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                handleNoteTrigger(e.target.dataset.note);
-            });
+            if (note.type === 'white') {
+                naturalsContainer.appendChild(btn);
+            } else {
+                sharpsContainer.appendChild(btn);
+            }
         });
+    }
 
-        function handleNoteTrigger(note) {
-            // Guarantee context is running for web audio API compliance
-            if (Tone.context.state !== 'running') {
-                Tone.start();
-            }
-            
-            synth.triggerAttackRelease(note, "4n");
-            visualFeedback(note);
-
-            if (isQuizMode && targetNote) {
-                evaluateGuess(note);
-            } else {
-                feedbackDisplay.textContent = `Playing: ${note}`;
-                feedbackDisplay.className = "text-2xl font-bold text-blue-400 min-h-[40px] flex items-center justify-center";
-            }
+    async function handleKeyInteraction(noteId) {
+        if (Tone.context.state !== 'running') {
+            await Tone.start();
         }
 
-        function visualFeedback(note) {
-            const el = document.querySelector(`[data-note="${note}"]`);
-            if (el) {
-                el.classList.add('active');
-                setTimeout(() => el.classList.remove('active'), 150);
-            }
+        if (isAppInTestState && currentAudioMode === 'interactive-test') {
+            evaluateInteractiveAnswer(noteId);
+            return;
         }
 
-        function startQuizMode() {
-            isQuizMode = true;
-            btnQuiz.className = "px-5 py-2.5 rounded-xl text-sm font-semibold bg-amber-500 hover:bg-amber-400 text-slate-950 transition-colors cursor-pointer shadow-md";
-            btnFree.className = "px-5 py-2.5 rounded-xl text-sm font-semibold bg-slate-700 hover:bg-slate-600 text-slate-100 transition-colors cursor-pointer";
-            gameStatus.textContent = "Ear Training Quiz Mode";
-            
-            // Pick random target note
-            targetNote = validNotes[Math.floor(Math.random() * validNotes.length)];
-            feedbackDisplay.textContent = "Listen closely...";
-            feedbackDisplay.className = "text-2xl font-bold text-amber-400 min-h-[40px] flex items-center justify-center";
-            
-            // Play target pitch after a short gap
-            setTimeout(() => {
-                synth.triggerAttackRelease(targetNote, "2n");
-                feedbackDisplay.textContent = "Which note was that?";
-            }, 600);
-        }
+        playNoteAudio(noteId);
+        triggerVisualFlash(noteId);
+    }
 
-        function clearQuizMode() {
-            isQuizMode = false;
-            targetNote = null;
-            btnFree.className = "px-5 py-2.5 rounded-xl text-sm font-semibold bg-blue-600 hover:bg-blue-500 shadow-md transition-colors cursor-pointer";
-            btnQuiz.className = "px-5 py-2.5 rounded-xl text-sm font-semibold bg-slate-700 hover:bg-slate-600 transition-colors cursor-pointer";
-            gameStatus.textContent = "Free Play Mode";
-            feedbackDisplay.textContent = "Play a note to start";
-            feedbackDisplay.className = "text-2xl font-bold text-slate-200 min-h-[40px] flex items-center justify-center";
-        }
+    function playNoteAudio(noteId) {
+        const now = Tone.now();
+        const faderBP = parseFloat(document.getElementById('fader-bell-piano').value) / 100;
+        const faderBV = parseFloat(document.getElementById('fader-bell-vocal').value) / 100;
+        const faderPV = parseFloat(document.getElementById('fader-piano-vocal').value) / 100;
 
-        function evaluateGuess(guessedNote) {
-            if (guessedNote === targetNote) {
-                feedbackDisplay.textContent = `Correct! It was ${targetNote} 🎉`;
-                feedbackDisplay.className = "text-2xl font-bold text-emerald-400 min-h-[40px] flex items-center justify-center";
-                // Reset automatically after short delay to let them absorb the win
-                setTimeout(startQuizMode, 1500);
-            } else {
-                feedbackDisplay.textContent = `Try again! You played ${guessedNote}`;
-                feedbackDisplay.className = "text-2xl font-bold text-rose-400 min-h-[40px] flex items-center justify-center";
-            }
+        switch (currentAudioMode) {
+            case 'bell-piano':
+                bellSynth.triggerAttackRelease(noteId, "2n", now, 1 - faderBP);
+                pianoSynth.triggerAttackRelease(noteId, "2n", now, faderBP);
+                break;
+            case 'bell-vocal':
+                bellSynth.triggerAttackRelease(noteId, "2n", now, 1 - faderBV);
+                vocalSynth.triggerAttackRelease(noteId, "2n", now, faderBV);
+                break;
+            case 'piano-vocal':
+                pianoSynth.triggerAttackRelease(noteId, "2n", now, 1 - faderPV);
+                vocalSynth.triggerAttackRelease(noteId, "2n", now, faderPV);
+                break;
+            case 'test-mode':
+                if (currentTestSubSelection === 'bells') bellSynth.triggerAttackRelease(noteId, "2n");
+                else pianoSynth.triggerAttackRelease(noteId, "2n");
+                break;
+            case 'interactive-test':
+                if (currentInteractiveSubSelection === 'bells') bellSynth.triggerAttackRelease(noteId, "2n");
+                else pianoSynth.triggerAttackRelease(noteId, "2n");
+                break;
         }
+    }
 
-        btnQuiz.addEventListener('click', startQuizMode);
-        btnFree.addEventListener('click', clearQuizMode);
-    </script>
+    function triggerVisualFlash(noteId) {
+        const el = document.getElementById(`btn-${noteId}`);
+        if (!el) return;
+        el.classList.add('playing');
+        setTimeout(() => el.classList.remove('playing'), 300);
+    }
+
+    function setAudioMode(mode) {
+        currentAudioMode = mode;
+        isAppInTestState = false;
+        
+        document.querySelectorAll('.fader-header-btn, .mode-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.fader-card, .test-card').forEach(c => c.style.background = 'rgba(255,255,255,0.03)');
+
+        const modeBtnMap = {
+            'bell-piano': 'mode-bell-piano',
+            'bell-vocal': 'mode-bell-vocal',
+            'piano-vocal': 'mode-piano-vocal',
+            'test-mode': 'mode-test-holder',
+            'interactive-test': 'mode-interactive-holder'
+        };
+
+        if (modeBtnMap[mode]) document.getElementById(modeBtnMap[mode]).classList.add('active');
+        
+        const msgEl = document.getElementById('msg');
+        if (mode === 'interactive-test') {
+            msgEl.innerText = "INTERACTIVE MODE: PRESS GO TO HEAR A NOTE.";
+            msgEl.style.color = "#f3722c";
+        } else {
+            msgEl.innerText = `MODE SWAPPED TO: ${mode.toUpperCase()}`;
+            msgEl.style.color = "#22c55e";
+        }
+    }
+
+    function updateBlendValues(type, val) {
+        const v = parseInt(val);
+        if (type === 'bell-piano') {
+            document.getElementById('label-bp-left').innerText = `Bells ${100 - v}%`;
+            document.getElementById('label-bp-right').innerText = `Piano ${v}%`;
+        } else if (type === 'bell-vocal') {
+            document.getElementById('label-bv-left').innerText = `Bells ${100 - v}%`;
+            document.getElementById('label-bv-right').innerText = `Solfege ${v}%`;
+        } else if (type === 'piano-vocal') {
+            document.getElementById('label-pv-left').innerText = `Piano ${100 - v}%`;
+            document.getElementById('label-pv-right').innerText = `Solfege ${v}%`;
+        }
+    }
+
+    function setTestSubMode(type) {
+        currentTestSubSelection = type;
+        document.getElementById('test-sub-ravenscroft').classList.toggle('active', type === 'ravenscroft');
+        document.getElementById('test-sub-bells').classList.toggle('active', type === 'bells');
+    }
+
+    function setInteractiveSubMode(type) {
+        currentInteractiveSubSelection = type;
+        document.getElementById('inter-sub-ravenscroft').classList.toggle('active', type === 'ravenscroft');
+        document.getElementById('inter-sub-bells').classList.toggle('active', type === 'bells');
+    }
+
+    function playRandomTestNote() {
+        const randomNote = progression[Math.floor(Math.random() * progression.length)].id;
+        playNoteAudio(randomNote);
+        
+        // Instant revelation logic
+        document.querySelectorAll('.bell-btn').forEach(b => b.classList.remove('success-flash'));
+        const targetKey = document.getElementById(`btn-${randomNote}`);
+        targetKey.classList.add('success-flash');
+        setTimeout(() => targetKey.classList.remove('success-flash'), 1200);
+        
+        document.getElementById('msg').innerText = `PLAYED NOTE REVEALED: ${randomNote}`;
+    }
+
+    function playInteractiveTestNote() {
+        targetActiveTestNote = progression[Math.floor(Math.random() * progression.length)].id;
+        isAppInTestState = true;
+        playNoteAudio(targetActiveTestNote);
+        document.getElementById('msg').innerText = "HEAR CLOSELY... WHICH NOTE WAS IT?";
+        document.getElementById('msg').style.color = "#f9cd13";
+    }
+
+    function evaluateInteractiveAnswer(guessNoteId) {
+        const msgEl = document.getElementById('msg');
+        const targetKey = document.getElementById(`btn-${targetActiveTestNote}`);
+        
+        if (guessNoteId === targetActiveTestNote) {
+            msgEl.innerText = `CORRECT! IT WAS ${targetActiveTestNote}!`;
+            msgEl.style.color = "#22c55e";
+            targetKey.classList.add('success-flash');
+            setTimeout(() => targetKey.classList.remove('success-flash'), 1500);
+            isAppInTestState = false;
+        } else {
+            msgEl.innerText = "TRY AGAIN! LISTEN CLOSELY.";
+            msgEl.style.color = "#ef4444";
+            const wrongKey = document.getElementById(`btn-${guessNoteId}`);
+            wrongKey.classList.add('error-flash');
+            setTimeout(() => wrongKey.classList.remove('error-flash'), 600);
+        }
+    }
+
+    function resetApp() {
+        setAudioMode('bell-piano');
+        document.getElementById('fader-bell-piano').value = 50;
+        document.getElementById('fader-bell-vocal').value = 50;
+        document.getElementById('fader-piano-vocal').value = 50;
+        updateBlendValues('bell-piano', 50);
+        updateBlendValues('bell-vocal', 50);
+        updateBlendValues('piano-vocal', 50);
+        initKeyboard();
+    }
+
+    // Run layout engine setup on payload instantiation
+    window.onload = initKeyboard;
+</script>
 </body>
 </html>
