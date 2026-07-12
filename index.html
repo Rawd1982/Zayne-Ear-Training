@@ -170,7 +170,7 @@
 
         .test-options-row {
             display: flex;
-            gap: 10px;
+            gap: 6px;
             width: 100%;
             align-items: center;
             height: 38px;
@@ -181,13 +181,16 @@
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: var(--text-sub);
-            padding: 8px;
-            font-size: 0.75rem;
+            padding: 8px 4px;
+            font-size: 0.72rem;
             font-weight: 700;
             border-radius: 6px;
             cursor: pointer;
             transition: all 0.15s ease;
             height: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .test-sub-btn.active {
@@ -203,7 +206,7 @@
         }
 
         .test-go-btn {
-            flex: 1;
+            flex: 1.5;
             background: #e65c40;
             border: none;
             color: white;
@@ -663,9 +666,10 @@
                             <span>🎯 Isolated Test Mode (Instant Light Up)</span>
                         </button>
                         <div class="test-options-row">
-                            <button class="test-sub-btn active" id="test-sub-ravenscroft" onclick="setTestSubMode('ravenscroft')">Ravenscroft Only</button>
+                            <button class="test-sub-btn active" id="test-sub-ravenscroft" onclick="setTestSubMode('ravenscroft')">Piano Only</button>
                             <button class="test-sub-btn" id="test-sub-bells" onclick="setTestSubMode('bells')">Bells Only</button>
-                            <button class="test-sub-btn" id="test-sub-pianoseq" onclick="setTestSubMode('pianoseq')">Piano → Solfège</button>
+                            <button class="test-sub-btn" id="test-sub-pianoseq" onclick="setTestSubMode('pianoseq')">Piano → Solf</button>
+                            <button class="test-sub-btn" id="test-sub-bellseq" onclick="setTestSubMode('bellseq')">Bells → Solf</button>
                             <button class="test-go-btn" id="test-go-trigger" onclick="playRandomTestNote()">GO ⚡</button>
                         </div>
                     </div>
@@ -882,6 +886,7 @@
         document.getElementById('test-sub-ravenscroft').classList.remove('active');
         document.getElementById('test-sub-bells').classList.remove('active');
         document.getElementById('test-sub-pianoseq').classList.remove('active');
+        document.getElementById('test-sub-bellseq').classList.remove('active');
         
         if (type === 'ravenscroft') {
             document.getElementById('test-sub-ravenscroft').classList.add('active');
@@ -889,6 +894,8 @@
             document.getElementById('test-sub-bells').classList.add('active');
         } else if (type === 'pianoseq') {
             document.getElementById('test-sub-pianoseq').classList.add('active');
+        } else if (type === 'bellseq') {
+            document.getElementById('test-sub-bellseq').classList.add('active');
         }
         
         setAudioMode('test-mode');
@@ -951,7 +958,7 @@
         }
     }
 
-    updateBlendValues(targetFader, val) {
+    function updateBlendValues(targetFader, val) {
         const percentage = parseInt(val);
         faderTouched[targetFader] = true;
 
@@ -1144,4 +1151,104 @@
             const correctBtn = document.getElementById(`btn-${targetActiveTestNote}`);
             
             if (choice === targetActiveTestNote) {
-                clearAllFlashEffects
+                clearAllFlashEffects();
+                if (chosenBtn) chosenBtn.classList.add('success-flash');
+                triggerInstrumentAudioOnly(choice, currentInteractiveSubSelection);
+                
+                targetActiveTestNote = null;
+                hasAnsweringAttemptedOnCurrentNote = false;
+                
+                setTimeout(() => {
+                    playInteractiveTestNote();
+                }, 1200);
+            } else {
+                clearAllFlashEffects();
+                if (chosenBtn) chosenBtn.classList.add('error-flash');
+                
+                if (correctBtn) {
+                    const badge = correctBtn.querySelector('.color-badge');
+                    let colorMatch = window.getComputedStyle(badge).backgroundImage.match(/rgb\([^)]+\)/g);
+                    let targetColor = colorMatch ? (colorMatch[1] || colorMatch[0]) : "rgba(255, 255, 255, 1)";
+                    correctBtn.style.setProperty('--light-color', targetColor);
+                    correctBtn.classList.add('playing');
+                }
+                
+                triggerInstrumentAudioOnly(targetActiveTestNote, currentInteractiveSubSelection);
+                hasAnsweringAttemptedOnCurrentNote = true;
+            }
+            return;
+        }
+
+        executeAudioPlay(choice);
+    }
+
+    function playTargetBuffer(buffer, gainNodeTarget, delay = 0) {
+        if(!buffer) return;
+        const source = audioCtx.createBufferSource();
+        source.buffer = buffer;
+        source.connect(gainNodeTarget);
+        source.start(audioCtx.currentTime + delay);
+    }
+
+    function executeAudioPlay(choice) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        if (Tone.context.state === 'suspended') Tone.start();
+
+        triggerLightEffect(choice);
+
+        if (currentAudioMode === 'bell-piano') {
+            if (!faderTouched['bell-piano']) {
+                playTargetBuffer(bellBuffers[choice], generalGainNode);
+                playTargetBuffer(ravenscroftBuffers[choice], generalGainNode);
+            } else {
+                playTargetBuffer(bellBuffers[choice], bellPianoMixGainBell);
+                playTargetBuffer(ravenscroftBuffers[choice], bellPianoMixGainPiano);
+            }
+        } else if (currentAudioMode === 'bell-vocal') {
+            if (!faderTouched['bell-vocal']) {
+                playTargetBuffer(bellBuffers[choice], generalGainNode);
+                playTargetBuffer(voiceBuffers[choice], generalGainNode);
+            } else {
+                playTargetBuffer(bellBuffers[choice], bellGainNode);
+                playTargetBuffer(voiceBuffers[choice], vocalGainNode);
+            }
+        } else if (currentAudioMode === 'piano-vocal') {
+            if (!faderTouched['piano-vocal']) {
+                playTargetBuffer(ravenscroftBuffers[choice], generalGainNode);
+                playTargetBuffer(voiceBuffers[choice], generalGainNode);
+            } else {
+                playTargetBuffer(ravenscroftBuffers[choice], ravenscroftGainNode);
+                playTargetBuffer(voiceBuffers[choice], vocalGainNode);
+            }
+        } else if (currentAudioMode === 'test-mode') {
+            if (currentTestSubSelection === 'ravenscroft') {
+                playTargetBuffer(ravenscroftBuffers[choice], generalGainNode);
+            } else if (currentTestSubSelection === 'bells') {
+                playTargetBuffer(bellBuffers[choice], generalGainNode);
+            } else if (currentTestSubSelection === 'pianoseq') {
+                playTargetBuffer(ravenscroftBuffers[choice], generalGainNode);
+                playTargetBuffer(voiceBuffers[choice], generalGainNode, 0.6);
+            } else if (currentTestSubSelection === 'bellseq') {
+                playTargetBuffer(bellBuffers[choice], generalGainNode);
+                playTargetBuffer(voiceBuffers[choice], generalGainNode, 0.6);
+            }
+        } else if (currentAudioMode === 'seq-bell-vocal') {
+            playTargetBuffer(bellBuffers[choice], generalGainNode);
+            playTargetBuffer(voiceBuffers[choice], generalGainNode, 0.6);
+        } else if (currentAudioMode === 'seq-piano-vocal') {
+            playTargetBuffer(ravenscroftBuffers[choice], generalGainNode);
+            playTargetBuffer(voiceBuffers[choice], generalGainNode, 0.6);
+        } else if (samplers[currentAudioMode]) {
+            samplers[currentAudioMode].triggerAttackRelease(choice, "1m");
+        }
+    }
+
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+            if (window.Tone && Tone.context && Tone.context.state === 'suspended') Tone.context.resume();
+        }
+    });
+</script>
+</body>
+</html>
