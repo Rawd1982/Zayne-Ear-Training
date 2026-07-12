@@ -652,8 +652,8 @@
                             <span>🎯 Practice Mode (Instant Light Up)</span>
                         </button>
                         <div class="test-options-grid">
-                            <button class="test-sub-btn active" id="test-sub-ravenscroft" onclick="setTestSubMode('ravenscroft')">Piano Only</button>
-                            <button class="test-sub-btn" id="test-sub-bells" onclick="setTestSubMode('bells')">Bells Only</button>
+                            <button class="test-sub-btn active" id="test-sub-ravenscroft" onclick="setTestSubMode('ravenscroft')">Piano</button>
+                            <button class="test-sub-btn" id="test-sub-bells" onclick="setTestSubMode('bells')">Bells</button>
                             <button class="test-sub-btn" id="test-sub-pianoseq" onclick="setTestSubMode('pianoseq')">Piano → Solfège</button>
                             <button class="test-sub-btn" id="test-sub-bellseq" onclick="setTestSubMode('bellseq')">Bell → Solfège</button>
                             <button class="test-sub-btn" id="test-sub-rhodes" onclick="setTestSubMode('rhodes')">Rhodes</button>
@@ -662,8 +662,8 @@
                             <div style="visibility: hidden;"></div> 
                             
                             <div class="test-go-split-container">
-                                <button class="test-go-btn white-only-btn" id="test-go-white" onclick="playRandomTestNote(true)">NATURALS GO ⚡</button>
-                                <button class="test-go-btn" id="test-go-all" onclick="playRandomTestNote(false)">ALL KEYS GO ⚡</button>
+                                <button class="test-go-btn white-only-btn" id="test-go-white" onclick="playRandomTestNote(true)">(White Keys) GO</button>
+                                <button class="test-go-btn" id="test-go-all" onclick="playRandomTestNote(false)">(All Keys) GO</button>
                             </div>
                         </div>
                     </div>
@@ -673,8 +673,8 @@
                             <span>🎹 Test Mode (Press Key to Answer)</span>
                         </button>
                         <div class="test-options-grid">
-                            <button class="test-sub-btn active" id="inter-sub-ravenscroft" onclick="setInteractiveSubMode('ravenscroft')">Piano Only</button>
-                            <button class="test-sub-btn" id="inter-sub-bells" onclick="setInteractiveSubMode('bells')">Bells Only</button>
+                            <button class="test-sub-btn active" id="inter-sub-ravenscroft" onclick="setInteractiveSubMode('ravenscroft')">Piano</button>
+                            <button class="test-sub-btn" id="inter-sub-bells" onclick="setInteractiveSubMode('bells')">Bells</button>
                             <button class="test-sub-btn" id="inter-sub-rhodes" onclick="setInteractiveSubMode('rhodes')">Rhodes</button>
                             <button class="test-sub-btn" id="inter-sub-guitar" onclick="setInteractiveSubMode('guitar')">Guitar</button>
                             <button class="test-sub-btn" id="inter-sub-organ" onclick="setInteractiveSubMode('organ')">Organ</button>
@@ -683,8 +683,8 @@
                             <div style="visibility: hidden;"></div> 
                             
                             <div class="test-go-split-container" id="inter-go-wrapper-row">
-                                <button class="test-go-btn white-only-btn" id="inter-go-white" onclick="playInteractiveTestNote(true)">NATURALS GO ⚡</button>
-                                <button class="test-go-btn" id="inter-go-all" onclick="playInteractiveTestNote(false)">ALL KEYS GO ⚡</button>
+                                <button class="test-go-btn white-only-btn" id="inter-go-white" onclick="playInteractiveTestNote(true)">(White Keys) GO</button>
+                                <button class="test-go-btn" id="inter-go-all" onclick="playInteractiveTestNote(false)">(All Keys) GO</button>
                             </div>
                         </div>
                     </div>
@@ -761,7 +761,7 @@
     let interactiveLastModeWasWhiteOnly = false; 
 
     const progression = [
-        { id: "G3",  solfege: "So 3", display: "G", voiceWav: "So 3.wav",  bellSourceFile: "So 3 Bell.wav",  bellRate: 1.0, type: "white", style: "G3" },
+        { id: "G3",  solfefe: "So 3", display: "G", voiceWav: "So 3.wav",  bellSourceFile: "So 3 Bell.wav",  bellRate: 1.0, type: "white", style: "G3" },
         { id: "Ab3", solfege: "Si 3", display: { sharp: "G#", flat: "Ab" }, voiceWav: "Si 3.wav",  bellSourceFile: "Si 3 Bell.wav",  bellRate: 1.0, type: "black", style: "Ab3" },
         { id: "A3",  solfege: "La 3", display: "A", voiceWav: "La 3.wav",  bellSourceFile: "La 3 Bell.wav",  bellRate: 1.0, type: "white", style: "A3" },
         { id: "Bb3", solfege: "Te 3", display: { sharp: "A#", flat: "Bb" }, voiceWav: "Te 3.wav",  bellSourceFile: "Te 3 Bell.wav",  bellRate: 1.0, type: "black", style: "Bb3" },
