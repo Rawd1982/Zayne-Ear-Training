@@ -1,4 +1,3 @@
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -626,22 +625,22 @@
 
                     <div class="fader-card" id="card-bell-vocal">
                         <button class="fader-header-btn" id="mode-bell-vocal" onclick="setAudioMode('bell-vocal')">
-                            <span>Bells / Solfege Blend</span>
+                            <span>Bells / Solfège Blend</span>
                         </button>
                         <div class="fader-metrics">
                             <span id="label-bv-left" class="highlight">Bells 50%</span>
-                            <span id="label-bv-right" class="highlight">Solfege 50%</span>
+                            <span id="label-bv-right" class="highlight">Solfège 50%</span>
                         </div>
                         <input type="range" min="0" max="100" value="50" class="blend-slider" id="fader-bell-vocal" oninput="updateBlendValues('bell-vocal', this.value)" disabled>
                     </div>
 
                     <div class="fader-card" id="card-piano-vocal">
                         <button class="fader-header-btn" id="mode-piano-vocal" onclick="setAudioMode('piano-vocal')">
-                            <span>Ravenscroft 275 / Solfege Blend</span>
+                            <span>Ravenscroft 275 / Solfège Blend</span>
                         </button>
                         <div class="fader-metrics">
                             <span id="label-pv-left" class="highlight">Ravenscroft 275 50%</span>
-                            <span id="label-pv-right" class="highlight">Solfege 50%</span>
+                            <span id="label-pv-right" class="highlight">Solfège 50%</span>
                         </div>
                         <input type="range" min="0" max="100" value="50" class="blend-slider" id="fader-piano-vocal" oninput="updateBlendValues('piano-vocal', this.value)" disabled>
                     </div>
@@ -650,26 +649,28 @@
                 <div class="test-mode-grid">
                     <div class="test-card">
                         <button class="fader-header-btn" id="mode-test-holder" onclick="setAudioMode('test-mode')">
-                            <span>🎯 Isolated Test Mode (Instant Light Up)</span>
+                            <span>🎯 Practice Mode (Instant Light Up)</span>
                         </button>
                         <div class="test-options-grid">
                             <button class="test-sub-btn active" id="test-sub-ravenscroft" onclick="setTestSubMode('ravenscroft')">Piano Only</button>
                             <button class="test-sub-btn" id="test-sub-bells" onclick="setTestSubMode('bells')">Bells Only</button>
-                            <button class="test-sub-btn" id="test-sub-pianoseq" onclick="setTestSubMode('pianoseq')">Piano → Solf</button>
-                            <button class="test-sub-btn" id="test-sub-bellseq" onclick="setTestSubMode('bellseq')">Bells → Solf</button>
+                            <button class="test-sub-btn" id="test-sub-pianoseq" onclick="setTestSubMode('pianoseq')">Piano → Solfège</button>
+                            <button class="test-sub-btn" id="test-sub-bellseq" onclick="setTestSubMode('bellseq')">Bell → Solfège</button>
                             <button class="test-sub-btn" id="test-sub-rhodes" onclick="setTestSubMode('rhodes')">Rhodes</button>
                             <button class="test-sub-btn" id="test-sub-guitar" onclick="setTestSubMode('guitar')">Guitar</button>
                             <button class="test-sub-btn" id="test-sub-organ" onclick="setTestSubMode('organ')">Organ</button>
-                            <div style="visibility: hidden;"></div> <div class="test-go-split-container">
-                                <button class="test-go-btn white-only-btn" id="test-go-white" onclick="playRandomTestNote(true)">NATURALS ⚡</button>
-                                <button class="test-go-btn" id="test-go-all" onclick="playRandomTestNote(false)">ALL KEYS ⚡</button>
+                            <div style="visibility: hidden;"></div> 
+                            
+                            <div class="test-go-split-container">
+                                <button class="test-go-btn white-only-btn" id="test-go-white" onclick="playRandomTestNote(true)">NATURALS GO ⚡</button>
+                                <button class="test-go-btn" id="test-go-all" onclick="playRandomTestNote(false)">ALL KEYS GO ⚡</button>
                             </div>
                         </div>
                     </div>
 
                     <div class="test-card interactive">
                         <button class="fader-header-btn" id="mode-interactive-holder" onclick="setAudioMode('interactive-test')">
-                            <span>🎹 Interactive Test Mode (Press Key to Answer)</span>
+                            <span>🎹 Test Mode (Press Key to Answer)</span>
                         </button>
                         <div class="test-options-grid">
                             <button class="test-sub-btn active" id="inter-sub-ravenscroft" onclick="setInteractiveSubMode('ravenscroft')">Piano Only</button>
@@ -677,9 +678,13 @@
                             <button class="test-sub-btn" id="inter-sub-rhodes" onclick="setInteractiveSubMode('rhodes')">Rhodes</button>
                             <button class="test-sub-btn" id="inter-sub-guitar" onclick="setInteractiveSubMode('guitar')">Guitar</button>
                             <button class="test-sub-btn" id="inter-sub-organ" onclick="setInteractiveSubMode('organ')">Organ</button>
-                            <div style="visibility: hidden;"></div> <div style="visibility: hidden;"></div> <div style="visibility: hidden;"></div> <div class="test-go-split-container" id="inter-go-wrapper-row">
-                                <button class="test-go-btn white-only-btn" id="inter-go-white" onclick="playInteractiveTestNote(true)">NATURALS ⚡</button>
-                                <button class="test-go-btn" id="inter-go-all" onclick="playInteractiveTestNote(false)">ALL KEYS ⚡</button>
+                            <div style="visibility: hidden;"></div> 
+                            <div style="visibility: hidden;"></div> 
+                            <div style="visibility: hidden;"></div> 
+                            
+                            <div class="test-go-split-container" id="inter-go-wrapper-row">
+                                <button class="test-go-btn white-only-btn" id="inter-go-white" onclick="playInteractiveTestNote(true)">NATURALS GO ⚡</button>
+                                <button class="test-go-btn" id="inter-go-all" onclick="playInteractiveTestNote(false)">ALL KEYS GO ⚡</button>
                             </div>
                         </div>
                     </div>
@@ -753,7 +758,7 @@
     let hasAnsweringAttemptedOnCurrentNote = false; 
     let isCurrentlyLocked = false;
     let lockedScrollTop = 0;
-    let interactiveLastModeWasWhiteOnly = false; // Stores layout flag for automatic iteration loops
+    let interactiveLastModeWasWhiteOnly = false; 
 
     const progression = [
         { id: "G3",  solfege: "So 3", display: "G", voiceWav: "So 3.wav",  bellSourceFile: "So 3 Bell.wav",  bellRate: 1.0, type: "white", style: "G3" },
@@ -912,7 +917,6 @@
         setAudioMode('test-mode');
         clearAllFlashEffects();
 
-        // Filter the available notes down to only white keys if flag is set
         const eligibleNotes = whiteKeysOnly ? progression.filter(n => n.type === 'white') : progression;
         
         const randomIndex = Math.floor(Math.random() * eligibleNotes.length);
@@ -925,11 +929,9 @@
         setAudioMode('interactive-test');
         clearAllFlashEffects();
         
-        // Save state context for consecutive automatic loop answers
         interactiveLastModeWasWhiteOnly = whiteKeysOnly;
         document.getElementById('inter-go-wrapper-row').classList.add('hidden-btn');
 
-        // Filter choice pool based on selection mode configuration
         const eligibleNotes = whiteKeysOnly ? progression.filter(n => n.type === 'white') : progression;
 
         const randomIndex = Math.floor(Math.random() * eligibleNotes.length);
@@ -972,7 +974,7 @@
             bellPianoMixGainPiano.gain.linearRampToValueAtTime(rightSideGain, currentTime + rampTime);
         } else if (targetFader === 'bell-vocal') {
             document.getElementById('label-bv-left').innerHTML = `Bells ${percentage}%`;
-            document.getElementById('label-bv-right').innerHTML = `Solfege ${100 - percentage}%`;
+            document.getElementById('label-bv-right').innerHTML = `Solfège ${100 - percentage}%`;
             document.getElementById('label-bv-left').className = percentage > 0 ? "highlight" : "";
             document.getElementById('label-bv-right').className = (100 - percentage) > 0 ? "highlight" : "";
             
@@ -980,7 +982,7 @@
             vocalGainNode.gain.linearRampToValueAtTime(rightSideGain, currentTime + rampTime);
         } else if (targetFader === 'piano-vocal') {
             document.getElementById('label-pv-left').innerHTML = `Ravenscroft 275 ${percentage}%`;
-            document.getElementById('label-pv-right').innerHTML = `Solfege ${100 - percentage}%`;
+            document.getElementById('label-pv-right').innerHTML = `Solfège ${100 - percentage}%`;
             document.getElementById('label-pv-left').className = percentage > 0 ? "highlight" : "";
             document.getElementById('label-pv-right').className = (100 - percentage) > 0 ? "highlight" : "";
 
@@ -1113,9 +1115,9 @@
             document.getElementById('label-bp-left').innerHTML = `Bells 50%`;
             document.getElementById('label-bp-right').innerHTML = `Ravenscroft 275 50%`;
             document.getElementById('label-bv-left').innerHTML = `Bells 50%`;
-            document.getElementById('label-bv-right').innerHTML = `Solfege 50%`;
+            document.getElementById('label-bv-right').innerHTML = `Solfège 50%`;
             document.getElementById('label-pv-left').innerHTML = `Ravenscroft 275 50%`;
-            document.getElementById('label-pv-right').innerHTML = `Solfege 50%`;
+            document.getElementById('label-pv-right').innerHTML = `Solfège 50%`;
         }, 600);
     }
     loadAllSounds();
@@ -1242,5 +1244,3 @@
 </script>
 </body>
 </html>
-
-```
