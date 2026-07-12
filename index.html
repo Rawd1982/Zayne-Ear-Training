@@ -1,4 +1,3 @@
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -92,11 +91,12 @@
             margin-top: 2px;
         }
 
-        .single-row-grid {
+        .test-options-grid {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 6px;
             width: 100%;
+            align-items: center;
         }
 
         @media (max-width: 992px) {
@@ -114,33 +114,6 @@
             border-radius: 16px;
             z-index: 10;
             cursor: not-allowed;
-        }
-
-        .mode-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-sub);
-            padding: 8px 4px;
-            font-size: 0.75rem; 
-            font-weight: 700;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            line-height: 1.1;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            background-color: rgba(255, 255, 255, 0.02);
-            height: 42px;
-        }
-
-        .mode-btn.active {
-            background-color: var(--accent);
-            color: var(--text-main);
-            box-shadow: 0 4px 12px rgba(214, 40, 40, 0.3); 
-            border-color: transparent;
         }
 
         .fader-card {
@@ -168,16 +141,7 @@
             border: 1px solid rgba(243, 114, 44, 0.25);
         }
 
-        .test-options-row {
-            display: flex;
-            gap: 6px;
-            width: 100%;
-            align-items: center;
-            height: 38px;
-        }
-
         .test-sub-btn {
-            flex: 2;
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: var(--text-sub);
@@ -187,10 +151,13 @@
             border-radius: 6px;
             cursor: pointer;
             transition: all 0.15s ease;
-            height: 100%;
+            height: 38px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .test-sub-btn.active {
@@ -206,22 +173,25 @@
         }
 
         .test-go-btn {
-            flex: 1.5;
+            grid-column: span 4;
             background: #e65c40;
             border: none;
             color: white;
-            padding: 8px;
-            font-size: 0.85rem;
+            padding: 10px;
+            font-size: 0.9rem;
             font-weight: 900;
             border-radius: 6px;
             cursor: pointer;
             letter-spacing: 1px;
             box-shadow: 0 4px 10px rgba(230, 92, 64, 0.3);
             transition: transform 0.05s, background 0.1s, opacity 0.2s ease;
-            height: 100%;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .test-go-btn:active {
-            transform: scale(0.96);
+            transform: scale(0.98);
             background: #c75b20;
         }
         
@@ -665,12 +635,15 @@
                         <button class="fader-header-btn" id="mode-test-holder" onclick="setAudioMode('test-mode')">
                             <span>🎯 Isolated Test Mode (Instant Light Up)</span>
                         </button>
-                        <div class="test-options-row">
+                        <div class="test-options-grid">
                             <button class="test-sub-btn active" id="test-sub-ravenscroft" onclick="setTestSubMode('ravenscroft')">Piano Only</button>
                             <button class="test-sub-btn" id="test-sub-bells" onclick="setTestSubMode('bells')">Bells Only</button>
                             <button class="test-sub-btn" id="test-sub-pianoseq" onclick="setTestSubMode('pianoseq')">Piano → Solf</button>
                             <button class="test-sub-btn" id="test-sub-bellseq" onclick="setTestSubMode('bellseq')">Bells → Solf</button>
-                            <button class="test-go-btn" id="test-go-trigger" onclick="playRandomTestNote()">GO ⚡</button>
+                            <button class="test-sub-btn" id="test-sub-rhodes" onclick="setTestSubMode('rhodes')">Rhodes</button>
+                            <button class="test-sub-btn" id="test-sub-guitar" onclick="setTestSubMode('guitar')">Guitar</button>
+                            <button class="test-sub-btn" id="test-sub-organ" onclick="setTestSubMode('organ')">Organ</button>
+                            <div style="visibility: hidden;"></div> <button class="test-go-btn" id="test-go-trigger" onclick="playRandomTestNote()">GO ⚡</button>
                         </div>
                     </div>
 
@@ -678,20 +651,15 @@
                         <button class="fader-header-btn" id="mode-interactive-holder" onclick="setAudioMode('interactive-test')">
                             <span>🎹 Interactive Test Mode (Press Key to Answer)</span>
                         </button>
-                        <div class="test-options-row">
-                            <button class="test-sub-btn active" id="inter-sub-ravenscroft" onclick="setInteractiveSubMode('ravenscroft')">Ravenscroft Only</button>
+                        <div class="test-options-grid">
+                            <button class="test-sub-btn active" id="inter-sub-ravenscroft" onclick="setInteractiveSubMode('ravenscroft')">Piano Only</button>
                             <button class="test-sub-btn" id="inter-sub-bells" onclick="setInteractiveSubMode('bells')">Bells Only</button>
-                            <button class="test-go-btn" id="inter-go-trigger" onclick="playInteractiveTestNote()">GO ⚡</button>
+                            <button class="test-sub-btn" id="inter-sub-rhodes" onclick="setInteractiveSubMode('rhodes')">Rhodes</button>
+                            <button class="test-sub-btn" id="inter-sub-guitar" onclick="setInteractiveSubMode('guitar')">Guitar</button>
+                            <button class="test-sub-btn" id="inter-sub-organ" onclick="setInteractiveSubMode('organ')">Organ</button>
+                            <div style="visibility: hidden;"></div> <div style="visibility: hidden;"></div> <div style="visibility: hidden;"></div> <button class="test-go-btn" id="inter-go-trigger" onclick="playInteractiveTestNote()">GO ⚡</button>
                         </div>
                     </div>
-                </div>
-
-                <div class="single-row-grid">
-                    <button class="mode-btn" id="mode-seq-bell-vocal" onclick="setAudioMode('seq-bell-vocal')">Bells → Solfège</button>
-                    <button class="mode-btn" id="mode-seq-piano-vocal" onclick="setAudioMode('seq-piano-vocal')">Piano → Solfège</button>
-                    <button class="mode-btn" id="mode-rhodes" onclick="setAudioMode('rhodes')">Rhodes</button>
-                    <button class="mode-btn" id="mode-guitar" onclick="setAudioMode('guitar')">Guitar</button>
-                    <button class="mode-btn" id="mode-organ" onclick="setAudioMode('organ')">Organ</button>
                 </div>
 
             </div>
@@ -847,7 +815,6 @@
         if (isCurrentlyLocked) return; 
         currentAudioMode = mode;
         
-        document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
         document.querySelectorAll('.fader-header-btn').forEach(btn => btn.classList.remove('active'));
         
         document.getElementById('fader-bell-piano').disabled = true;
@@ -874,8 +841,6 @@
             document.getElementById('mode-test-holder').classList.add('active');
         } else if (mode === 'interactive-test') {
             document.getElementById('mode-interactive-holder').classList.add('active');
-        } else {
-            document.getElementById(`mode-${mode}`).classList.add('active');
         }
     }
 
@@ -887,16 +852,11 @@
         document.getElementById('test-sub-bells').classList.remove('active');
         document.getElementById('test-sub-pianoseq').classList.remove('active');
         document.getElementById('test-sub-bellseq').classList.remove('active');
+        document.getElementById('test-sub-rhodes').classList.remove('active');
+        document.getElementById('test-sub-guitar').classList.remove('active');
+        document.getElementById('test-sub-organ').classList.remove('active');
         
-        if (type === 'ravenscroft') {
-            document.getElementById('test-sub-ravenscroft').classList.add('active');
-        } else if (type === 'bells') {
-            document.getElementById('test-sub-bells').classList.add('active');
-        } else if (type === 'pianoseq') {
-            document.getElementById('test-sub-pianoseq').classList.add('active');
-        } else if (type === 'bellseq') {
-            document.getElementById('test-sub-bellseq').classList.add('active');
-        }
+        document.getElementById(`test-sub-${type}`).classList.add('active');
         
         setAudioMode('test-mode');
     }
@@ -907,12 +867,11 @@
         
         document.getElementById('inter-sub-ravenscroft').classList.remove('active');
         document.getElementById('inter-sub-bells').classList.remove('active');
+        document.getElementById('inter-sub-rhodes').classList.remove('active');
+        document.getElementById('inter-sub-guitar').classList.remove('active');
+        document.getElementById('inter-sub-organ').classList.remove('active');
         
-        if (type === 'ravenscroft') {
-            document.getElementById('inter-sub-ravenscroft').classList.add('active');
-        } else {
-            document.getElementById('inter-sub-bells').classList.add('active');
-        }
+        document.getElementById(`inter-sub-${type}`).classList.add('active');
         
         setAudioMode('interactive-test');
         document.getElementById('inter-go-trigger').classList.remove('hidden-btn');
@@ -950,11 +909,14 @@
 
     function triggerInstrumentAudioOnly(choice, instrumentSrc) {
         if (audioCtx.state === 'suspended') audioCtx.resume();
+        if (Tone.context.state === 'suspended') Tone.start();
         
         if (instrumentSrc === 'ravenscroft') {
             playTargetBuffer(ravenscroftBuffers[choice], generalGainNode);
         } else if (instrumentSrc === 'bells') {
             playTargetBuffer(bellBuffers[choice], generalGainNode);
+        } else if (samplers[instrumentSrc]) {
+            samplers[instrumentSrc].triggerAttackRelease(choice, "1m");
         }
     }
 
@@ -1231,13 +1193,9 @@
             } else if (currentTestSubSelection === 'bellseq') {
                 playTargetBuffer(bellBuffers[choice], generalGainNode);
                 playTargetBuffer(voiceBuffers[choice], generalGainNode, 0.6);
+            } else if (samplers[currentTestSubSelection]) {
+                samplers[currentTestSubSelection].triggerAttackRelease(choice, "1m");
             }
-        } else if (currentAudioMode === 'seq-bell-vocal') {
-            playTargetBuffer(bellBuffers[choice], generalGainNode);
-            playTargetBuffer(voiceBuffers[choice], generalGainNode, 0.6);
-        } else if (currentAudioMode === 'seq-piano-vocal') {
-            playTargetBuffer(ravenscroftBuffers[choice], generalGainNode);
-            playTargetBuffer(voiceBuffers[choice], generalGainNode, 0.6);
         } else if (samplers[currentAudioMode]) {
             samplers[currentAudioMode].triggerAttackRelease(choice, "1m");
         }
