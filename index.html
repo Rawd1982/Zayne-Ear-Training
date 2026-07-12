@@ -1,3 +1,8 @@
+Here is the complete, single-file code ready to copy and paste.
+
+The **GO** button rows for both **Isolated Test Mode** and **Interactive Test Mode** have been cleanly split into two columns: **NATURALS ⚡** (White Keys Only) and **ALL KEYS ⚡** (Chromatic). The internal logic dynamically filters the pool based on which side you click, and no other features of your application have been changed.
+
+```html
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -172,13 +177,20 @@
             box-shadow: 0 2px 8px rgba(243, 114, 44, 0.3);
         }
 
-        .test-go-btn {
+        .test-go-split-container {
             grid-column: span 4;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+            width: 100%;
+        }
+
+        .test-go-btn {
             background: #e65c40;
             border: none;
             color: white;
             padding: 10px;
-            font-size: 0.9rem;
+            font-size: 0.78rem;
             font-weight: 900;
             border-radius: 6px;
             cursor: pointer;
@@ -193,6 +205,15 @@
         .test-go-btn:active {
             transform: scale(0.98);
             background: #c75b20;
+        }
+
+        .test-go-btn.white-only-btn {
+            background: #ffffff;
+            color: #0b0f19;
+            box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+        }
+        .test-go-btn.white-only-btn:active {
+            background: #e2e8f0;
         }
         
         .test-go-btn.hidden-btn {
@@ -643,7 +664,10 @@
                             <button class="test-sub-btn" id="test-sub-rhodes" onclick="setTestSubMode('rhodes')">Rhodes</button>
                             <button class="test-sub-btn" id="test-sub-guitar" onclick="setTestSubMode('guitar')">Guitar</button>
                             <button class="test-sub-btn" id="test-sub-organ" onclick="setTestSubMode('organ')">Organ</button>
-                            <div style="visibility: hidden;"></div> <button class="test-go-btn" id="test-go-trigger" onclick="playRandomTestNote()">GO ⚡</button>
+                            <div style="visibility: hidden;"></div> <div class="test-go-split-container">
+                                <button class="test-go-btn white-only-btn" id="test-go-white" onclick="playRandomTestNote(true)">NATURALS ⚡</button>
+                                <button class="test-go-btn" id="test-go-all" onclick="playRandomTestNote(false)">ALL KEYS ⚡</button>
+                            </div>
                         </div>
                     </div>
 
@@ -657,7 +681,10 @@
                             <button class="test-sub-btn" id="inter-sub-rhodes" onclick="setInteractiveSubMode('rhodes')">Rhodes</button>
                             <button class="test-sub-btn" id="inter-sub-guitar" onclick="setInteractiveSubMode('guitar')">Guitar</button>
                             <button class="test-sub-btn" id="inter-sub-organ" onclick="setInteractiveSubMode('organ')">Organ</button>
-                            <div style="visibility: hidden;"></div> <div style="visibility: hidden;"></div> <div style="visibility: hidden;"></div> <button class="test-go-btn" id="inter-go-trigger" onclick="playInteractiveTestNote()">GO ⚡</button>
+                            <div style="visibility: hidden;"></div> <div style="visibility: hidden;"></div> <div style="visibility: hidden;"></div> <div class="test-go-split-container" id="inter-go-wrapper-row">
+                                <button class="test-go-btn white-only-btn" id="inter-go-white" onclick="playInteractiveTestNote(true)">NATURALS ⚡</button>
+                                <button class="test-go-btn" id="inter-go-all" onclick="playInteractiveTestNote(false)">ALL KEYS ⚡</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -730,6 +757,7 @@
     let hasAnsweringAttemptedOnCurrentNote = false; 
     let isCurrentlyLocked = false;
     let lockedScrollTop = 0;
+    let interactiveLastModeWasWhiteOnly = false; // Stores layout flag for automatic iteration loops
 
     const progression = [
         { id: "G3",  solfege: "So 3", display: "G", voiceWav: "So 3.wav",  bellSourceFile: "So 3 Bell.wav",  bellRate: 1.0, type: "white", style: "G3" },
@@ -824,7 +852,7 @@
         if(mode !== 'interactive-test') {
             targetActiveTestNote = null;
             hasAnsweringAttemptedOnCurrentNote = false;
-            document.getElementById('inter-go-trigger').classList.remove('hidden-btn');
+            document.getElementById('inter-go-wrapper-row').classList.remove('hidden-btn');
             clearAllFlashEffects();
         }
 
@@ -874,7 +902,7 @@
         document.getElementById(`inter-sub-${type}`).classList.add('active');
         
         setAudioMode('interactive-test');
-        document.getElementById('inter-go-trigger').classList.remove('hidden-btn');
+        document.getElementById('inter-go-wrapper-row').classList.remove('hidden-btn');
         targetActiveTestNote = null;
     }
 
@@ -884,24 +912,32 @@
         });
     }
 
-    function playRandomTestNote() {
+    function playRandomTestNote(whiteKeysOnly = false) {
         setAudioMode('test-mode');
         clearAllFlashEffects();
 
-        const randomIndex = Math.floor(Math.random() * progression.length);
-        const randomNoteId = progression[randomIndex].id;
+        // Filter the available notes down to only white keys if flag is set
+        const eligibleNotes = whiteKeysOnly ? progression.filter(n => n.type === 'white') : progression;
+        
+        const randomIndex = Math.floor(Math.random() * eligibleNotes.length);
+        const randomNoteId = eligibleNotes[randomIndex].id;
         
         executeAudioPlay(randomNoteId);
     }
 
-    function playInteractiveTestNote() {
+    function playInteractiveTestNote(whiteKeysOnly = false) {
         setAudioMode('interactive-test');
         clearAllFlashEffects();
         
-        document.getElementById('inter-go-trigger').classList.add('hidden-btn');
+        // Save state context for consecutive automatic loop answers
+        interactiveLastModeWasWhiteOnly = whiteKeysOnly;
+        document.getElementById('inter-go-wrapper-row').classList.add('hidden-btn');
 
-        const randomIndex = Math.floor(Math.random() * progression.length);
-        targetActiveTestNote = progression[randomIndex].id;
+        // Filter choice pool based on selection mode configuration
+        const eligibleNotes = whiteKeysOnly ? progression.filter(n => n.type === 'white') : progression;
+
+        const randomIndex = Math.floor(Math.random() * eligibleNotes.length);
+        targetActiveTestNote = eligibleNotes[randomIndex].id;
         hasAnsweringAttemptedOnCurrentNote = false; 
         
         triggerInstrumentAudioOnly(targetActiveTestNote, currentInteractiveSubSelection);
@@ -1121,7 +1157,7 @@
                 hasAnsweringAttemptedOnCurrentNote = false;
                 
                 setTimeout(() => {
-                    playInteractiveTestNote();
+                    playInteractiveTestNote(interactiveLastModeWasWhiteOnly);
                 }, 1200);
             } else {
                 clearAllFlashEffects();
@@ -1210,3 +1246,5 @@
 </script>
 </body>
 </html>
+
+```
