@@ -1,3 +1,4 @@
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -217,14 +218,17 @@
             pointer-events: none;
         }
 
-        /* Enclosed box styling for the word GO */
+        /* Colored in box styling for the word GO */
         .go-box {
-            border: 2px solid currentColor;
-            padding: 1px 5px;
+            background-color: #f9cd13;
+            color: #0b0f19;
+            border: 2px solid #f9cd13;
+            padding: 1px 6px;
             border-radius: 4px;
             font-weight: 900;
             display: inline-block;
             line-height: 1;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
         }
 
         .fader-header-btn {
@@ -663,8 +667,8 @@
                             <span>🎯 Practice Mode (Instant Light Up)</span>
                         </button>
                         <div class="test-options-grid">
-                            <button class="test-sub-btn active" id="test-sub-ravenscroft" onclick="setTestSubMode('ravenscroft')">Piano Only</button>
-                            <button class="test-sub-btn" id="test-sub-bells" onclick="setTestSubMode('bells')">Bells Only</button>
+                            <button class="test-sub-btn active" id="test-sub-ravenscroft" onclick="setTestSubMode('ravenscroft')">Piano</button>
+                            <button class="test-sub-btn" id="test-sub-bells" onclick="setTestSubMode('bells')">Bells</button>
                             <button class="test-sub-btn" id="test-sub-pianoseq" onclick="setTestSubMode('pianoseq')">Piano → Solfège</button>
                             <button class="test-sub-btn" id="test-sub-bellseq" onclick="setTestSubMode('bellseq')">Bell → Solfège</button>
                             <button class="test-sub-btn" id="test-sub-rhodes" onclick="setTestSubMode('rhodes')">Rhodes</button>
@@ -684,8 +688,8 @@
                             <span>🎹 Test Mode (Press Key to Answer)</span>
                         </button>
                         <div class="test-options-grid">
-                            <button class="test-sub-btn active" id="inter-sub-ravenscroft" onclick="setInteractiveSubMode('ravenscroft')">Piano Only</button>
-                            <button class="test-sub-btn" id="inter-sub-bells" onclick="setInteractiveSubMode('bells')">Bells Only</button>
+                            <button class="test-sub-btn active" id="inter-sub-ravenscroft" onclick="setInteractiveSubMode('ravenscroft')">Piano</button>
+                            <button class="test-sub-btn" id="inter-sub-bells" onclick="setInteractiveSubMode('bells')">Bells</button>
                             <button class="test-sub-btn" id="inter-sub-rhodes" onclick="setInteractiveSubMode('rhodes')">Rhodes</button>
                             <button class="test-sub-btn" id="inter-sub-guitar" onclick="setInteractiveSubMode('guitar')">Guitar</button>
                             <button class="test-sub-btn" id="inter-sub-organ" onclick="setInteractiveSubMode('organ')">Organ</button>
@@ -798,7 +802,7 @@
         { id: "E5",  solfege: "Mi 5", display: "E", voiceWav: "Mi 5.wav",  bellSourceFile: "Mi 5 Bell.wav",  bellRate: 1.0, type: "white", style: "E5" },
         { id: "F5",  solfege: "Fa 5", display: "F", voiceWav: "Fa 5.wav",  bellSourceFile: "Fa 5 Bell.wav",  bellRate: 1.0, type: "white", style: "F5" },
         { id: "Gb5", solfege: "Fi 5", display: { sharp: "F#", flat: "Gb" }, voiceWav: "Fi 5.wav",  bellSourceFile: "Fi 5 Bell.wav",  bellRate: 1.0, type: "black", style: "Gb5" },
-        { id: "G5",  solfege: "So 5", display: "G", voiceWav: "So 5.wav",  bellSourceFile: "So 5 Bell.wav",  bellRate: 1.0, type: "white", style: "G5" }
+        { id: "G5",  solfege: "So 5", display: "G", voiceWav: "So 5.wav",  bellSourceFile: "G5 Bell.wav",     bellRate: 1.0, type: "white", style: "G5" }
     ];
     
     let voiceBuffers = {}; 
