@@ -1,4 +1,3 @@
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -197,6 +196,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            gap: 5px;
         }
         .test-go-btn:active {
             transform: scale(0.98);
@@ -215,6 +215,16 @@
         .test-go-btn.hidden-btn {
             opacity: 0;
             pointer-events: none;
+        }
+
+        /* Enclosed box styling for the word GO */
+        .go-box {
+            border: 2px solid currentColor;
+            padding: 1px 5px;
+            border-radius: 4px;
+            font-weight: 900;
+            display: inline-block;
+            line-height: 1;
         }
 
         .fader-header-btn {
@@ -663,8 +673,8 @@
                             <div style="visibility: hidden;"></div> 
                             
                             <div class="test-go-split-container">
-                                <button class="test-go-btn white-only-btn" id="test-go-white" onclick="playRandomTestNote(true)">NATURALS GO ⚡</button>
-                                <button class="test-go-btn" id="test-go-all" onclick="playRandomTestNote(false)">ALL KEYS GO ⚡</button>
+                                <button class="test-go-btn white-only-btn" id="test-go-white" onclick="playRandomTestNote(true)">WHITE KEYS <span class="go-box">GO</span> ⚡</button>
+                                <button class="test-go-btn" id="test-go-all" onclick="playRandomTestNote(false)">ALL KEYS <span class="go-box">GO</span> ⚡</button>
                             </div>
                         </div>
                     </div>
@@ -684,8 +694,8 @@
                             <div style="visibility: hidden;"></div> 
                             
                             <div class="test-go-split-container" id="inter-go-wrapper-row">
-                                <button class="test-go-btn white-only-btn" id="inter-go-white" onclick="playInteractiveTestNote(true)">NATURALS GO ⚡</button>
-                                <button class="test-go-btn" id="inter-go-all" onclick="playInteractiveTestNote(false)">ALL KEYS GO ⚡</button>
+                                <button class="test-go-btn white-only-btn" id="inter-go-white" onclick="playInteractiveTestNote(true)">WHITE KEYS <span class="go-box">GO</span> ⚡</button>
+                                <button class="test-go-btn" id="inter-go-all" onclick="playInteractiveTestNote(false)">ALL KEYS <span class="go-box">GO</span> ⚡</button>
                             </div>
                         </div>
                     </div>
