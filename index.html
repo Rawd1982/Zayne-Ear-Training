@@ -1,4 +1,4 @@
-<html  lang="en">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -676,8 +676,8 @@
                             <div class="test-go-split-container">
                                 <button class="test-go-btn white-only-btn" id="test-go-white" onclick="playRandomTestNote(true)">WHITE KEYS <span class="go-box">GO</span> ⚡</button>
                                 <button class="test-go-btn" id="test-go-all" onclick="playRandomTestNote(false)">ALL KEYS <span class="go-box">GO</span> ⚡</button>
-                                <button class="test-go-btn" id="test-go-dyad" style="background:#0d9488; box-shadow: 0 4px 10px rgba(13, 148, 136, 0.3);" onclick="playRandomPolyphonic(2)">DYAD (2 NOTES) <span class="go-box">GO</span> ⚡</button>
-                                <button class="test-go-btn" id="test-go-chord" style="background:#6a4c93; box-shadow: 0 4px 10px rgba(106, 76, 147, 0.3);" onclick="playRandomPolyphonic(3)">CHORD (3 NOTES) <span class="go-box">GO</span> ⚡</button>
+                                <button class="test-go-btn" style="background: #3b82f6;" onclick="playRandomPolyphonicNote(2, false)">DYAD (2 NOTES) <span class="go-box">GO</span> ⚡</button>
+                                <button class="test-go-btn" style="background: #8b5cf6;" onclick="playRandomPolyphonicNote(3, false)">CHORD (3 NOTES) <span class="go-box">GO</span> ⚡</button>
                             </div>
                         </div>
                     </div>
@@ -699,6 +699,8 @@
                             <div class="test-go-split-container" id="inter-go-wrapper-row">
                                 <button class="test-go-btn white-only-btn" id="inter-go-white" onclick="playInteractiveTestNote(true)">WHITE KEYS <span class="go-box">GO</span> ⚡</button>
                                 <button class="test-go-btn" id="inter-go-all" onclick="playInteractiveTestNote(false)">ALL KEYS <span class="go-box">GO</span> ⚡</button>
+                                <button class="test-go-btn" style="background: #3b82f6;" onclick="playInteractivePolyphonicNote(2, false)">DYAD (2 NOTES) <span class="go-box">GO</span> ⚡</button>
+                                <button class="test-go-btn" style="background: #8b5cf6;" onclick="playInteractivePolyphonicNote(3, false)">CHORD (3 NOTES) <span class="go-box">GO</span> ⚡</button>
                             </div>
                         </div>
                     </div>
@@ -769,6 +771,8 @@
     let currentTestSubSelection = 'ravenscroft'; 
     let currentInteractiveSubSelection = 'ravenscroft';
     let targetActiveTestNote = null; 
+    let targetActiveTestNotes = [];
+    let remainingInteractiveTargets = [];
     let hasAnsweringAttemptedOnCurrentNote = false; 
     let isCurrentlyLocked = false;
     let lockedScrollTop = 0;
@@ -866,6 +870,8 @@
         
         if(mode !== 'interactive-test') {
             targetActiveTestNote = null;
+            targetActiveTestNotes = [];
+            remainingInteractiveTargets = [];
             hasAnsweringAttemptedOnCurrentNote = false;
             document.getElementById('inter-go-wrapper-row').classList.remove('hidden-btn');
             clearAllFlashEffects();
@@ -919,6 +925,8 @@
         setAudioMode('interactive-test');
         document.getElementById('inter-go-wrapper-row').classList.remove('hidden-btn');
         targetActiveTestNote = null;
+        targetActiveTestNotes = [];
+        remainingInteractiveTargets = [];
     }
 
     function clearAllFlashEffects() {
@@ -939,14 +947,15 @@
         executeAudioPlay(randomNoteId);
     }
 
-    function playRandomPolyphonic(count) {
+    function playRandomPolyphonicNote(count = 2, whiteKeysOnly = false) {
         setAudioMode('test-mode');
         clearAllFlashEffects();
 
-        const shuffled = [...progression].sort(() => 0.5 - Math.random());
-        const selected = shuffled.slice(0, count);
+        const eligibleNotes = whiteKeysOnly ? progression.filter(n => n.type === 'white') : progression;
+        const shuffled = [...eligibleNotes].sort(() => 0.5 - Math.random());
+        const chosen = shuffled.slice(0, count);
 
-        selected.forEach(note => {
+        chosen.forEach(note => {
             executeAudioPlay(note.id);
         });
     }
@@ -962,9 +971,32 @@
 
         const randomIndex = Math.floor(Math.random() * eligibleNotes.length);
         targetActiveTestNote = eligibleNotes[randomIndex].id;
+        targetActiveTestNotes = [targetActiveTestNote];
+        remainingInteractiveTargets = [...targetActiveTestNotes];
         hasAnsweringAttemptedOnCurrentNote = false; 
         
         triggerInstrumentAudioOnly(targetActiveTestNote, currentInteractiveSubSelection);
+    }
+
+    function playInteractivePolyphonicNote(count = 2, whiteKeysOnly = false) {
+        setAudioMode('interactive-test');
+        clearAllFlashEffects();
+
+        interactiveLastModeWasWhiteOnly = whiteKeysOnly;
+        document.getElementById('inter-go-wrapper-row').classList.add('hidden-btn');
+
+        const eligibleNotes = whiteKeysOnly ? progression.filter(n => n.type === 'white') : progression;
+        const shuffled = [...eligibleNotes].sort(() => 0.5 - Math.random());
+        const chosen = shuffled.slice(0, count);
+
+        targetActiveTestNotes = chosen.map(n => n.id);
+        targetActiveTestNote = null;
+        remainingInteractiveTargets = [...targetActiveTestNotes];
+        hasAnsweringAttemptedOnCurrentNote = false;
+
+        targetActiveTestNotes.forEach(noteId => {
+            triggerInstrumentAudioOnly(noteId, currentInteractiveSubSelection);
+        });
     }
 
     function triggerInstrumentAudioOnly(choice, instrumentSrc) {
@@ -1162,40 +1194,44 @@
         
         if (currentAudioMode !== 'test-mode' && currentAudioMode !== 'interactive-test') {
             setTimeout(() => btn.classList.remove('playing'), 1200);
-        } else {
-            setTimeout(() => btn.classList.remove('playing'), 1200);
         }
     }
 
     function handleInput(choice) {
-        if (currentAudioMode === 'interactive-test' && targetActiveTestNote !== null) {
+        if (currentAudioMode === 'interactive-test' && remainingInteractiveTargets.length > 0) {
             const chosenBtn = document.getElementById(`btn-${choice}`);
-            const correctBtn = document.getElementById(`btn-${targetActiveTestNote}`);
+            const isMatch = remainingInteractiveTargets.includes(choice);
             
-            if (choice === targetActiveTestNote) {
-                clearAllFlashEffects();
+            if (isMatch) {
                 if (chosenBtn) chosenBtn.classList.add('success-flash');
                 triggerInstrumentAudioOnly(choice, currentInteractiveSubSelection);
                 
-                targetActiveTestNote = null;
-                hasAnsweringAttemptedOnCurrentNote = false;
+                remainingInteractiveTargets = remainingInteractiveTargets.filter(id => id !== choice);
                 
-                setTimeout(() => {
-                    playInteractiveTestNote(interactiveLastModeWasWhiteOnly);
-                }, 1200);
+                if (remainingInteractiveTargets.length === 0) {
+                    targetActiveTestNote = null;
+                    targetActiveTestNotes = [];
+                    hasAnsweringAttemptedOnCurrentNote = false;
+                    
+                    setTimeout(() => {
+                        playInteractiveTestNote(interactiveLastModeWasWhiteOnly);
+                    }, 1200);
+                }
             } else {
                 clearAllFlashEffects();
                 if (chosenBtn) chosenBtn.classList.add('error-flash');
                 
-                if (correctBtn) {
-                    const badge = correctBtn.querySelector('.color-badge');
-                    let colorMatch = window.getComputedStyle(badge).backgroundImage.match(/rgb\([^)]+\)/g);
-                    let targetColor = colorMatch ? (colorMatch[1] || colorMatch[0]) : "rgba(255, 255, 255, 1)";
-                    correctBtn.style.setProperty('--light-color', targetColor);
-                    correctBtn.classList.add('playing');
-                }
-                
-                triggerInstrumentAudioOnly(targetActiveTestNote, currentInteractiveSubSelection);
+                targetActiveTestNotes.forEach(correctId => {
+                    const correctBtn = document.getElementById(`btn-${correctId}`);
+                    if (correctBtn) {
+                        const badge = correctBtn.querySelector('.color-badge');
+                        let colorMatch = window.getComputedStyle(badge).backgroundImage.match(/rgb\([^)]+\)/g);
+                        let targetColor = colorMatch ? (colorMatch[1] || colorMatch[0]) : "rgba(255, 255, 255, 1)";
+                        correctBtn.style.setProperty('--light-color', targetColor);
+                        correctBtn.classList.add('playing');
+                    }
+                    triggerInstrumentAudioOnly(correctId, currentInteractiveSubSelection);
+                });
                 hasAnsweringAttemptedOnCurrentNote = true;
             }
             return;
