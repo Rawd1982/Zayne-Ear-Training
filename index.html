@@ -173,31 +173,26 @@
             box-shadow: 0 2px 6px rgba(243, 114, 44, 0.3);
         }
 
-        .test-go-split-container {
-            grid-column: span 4;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 4px;
-            width: 100%;
-        }
-
         .test-go-btn {
             background: #e65c40;
-            border: none;
+            border: 1px solid transparent;
             color: white;
-            padding: 4px;
-            font-size: 0.65rem;
+            padding: 4px 2px;
+            font-size: 0.62rem;
             font-weight: 900;
             border-radius: 4px;
             cursor: pointer;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.2px;
             box-shadow: 0 2px 6px rgba(230, 92, 64, 0.3);
             transition: transform 0.05s, background 0.1s, opacity 0.2s ease;
             height: 26px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 3px;
+            gap: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .test-go-btn:active {
             transform: scale(0.98);
@@ -213,8 +208,9 @@
             background: #e2e8f0;
         }
         
-        .test-go-btn.hidden-btn {
-            opacity: 0;
+        .test-card.interactive .test-go-btn.hidden-btn,
+        .hidden-btn {
+            visibility: hidden;
             pointer-events: none;
         }
 
@@ -222,9 +218,9 @@
             background-color: #f9cd13;
             color: #0b0f19;
             border: 1px solid #f9cd13;
-            padding: 1px 4px;
+            padding: 1px 3px;
             border-radius: 3px;
-            font-size: 0.6rem;
+            font-size: 0.55rem;
             font-weight: 900;
             display: inline-block;
             line-height: 1;
@@ -679,14 +675,9 @@
                             <button class="test-sub-btn" id="test-sub-minor" onclick="playPracticeChordType('minor')">Minor Chord</button>
                             <button class="test-sub-btn" id="test-sub-diminished" onclick="playPracticeChordType('diminished')">Diminished</button>
                             <button class="test-sub-btn" id="test-sub-augmented" onclick="playPracticeChordType('augmented')">Augmented</button>
+                            <button class="test-go-btn white-only-btn" id="test-go-white" onclick="playRandomTestNote(true)">WHITE <span class="go-box">GO</span> ⚡</button>
+                            <button class="test-go-btn" id="test-go-all" onclick="playRandomTestNote(false)">ALL <span class="go-box">GO</span> ⚡</button>
                             <div style="visibility: hidden;"></div>
-                            <div style="visibility: hidden;"></div>
-                            <div style="visibility: hidden;"></div>
-                            
-                            <div class="test-go-split-container">
-                                <button class="test-go-btn white-only-btn" id="test-go-white" onclick="playRandomTestNote(true)">WHITE KEYS <span class="go-box">GO</span> ⚡</button>
-                                <button class="test-go-btn" id="test-go-all" onclick="playRandomTestNote(false)">ALL KEYS <span class="go-box">GO</span> ⚡</button>
-                            </div>
                         </div>
                     </div>
 
@@ -702,12 +693,8 @@
                             <button class="test-sub-btn" id="inter-sub-organ" onclick="setInteractiveSubMode('organ')">Organ</button>
                             <button class="test-sub-btn" id="inter-sub-dyad" onclick="playInteractiveDyadTest()">Dyad Test</button>
                             <button class="test-sub-btn" id="inter-sub-chord3" onclick="playInteractive3NoteTest()">3-Note Test</button>
-                            <div style="visibility: hidden;"></div>
-                            
-                            <div class="test-go-split-container" id="inter-go-wrapper-row">
-                                <button class="test-go-btn white-only-btn" id="inter-go-white" onclick="playInteractiveTestNote(true)">WHITE KEYS <span class="go-box">GO</span> ⚡</button>
-                                <button class="test-go-btn" id="inter-go-all" onclick="playInteractiveTestNote(false)">ALL KEYS <span class="go-box">GO</span> ⚡</button>
-                            </div>
+                            <button class="test-go-btn white-only-btn" id="inter-go-white" onclick="playInteractiveTestNote(true)">WHITE <span class="go-box">GO</span> ⚡</button>
+                            <button class="test-go-btn" id="inter-go-all" onclick="playInteractiveTestNote(false)">ALL <span class="go-box">GO</span> ⚡</button>
                         </div>
                     </div>
                 </div>
@@ -879,7 +866,8 @@
             targetActiveTestNotes = [];
             userInteractiveSelectedNotes = [];
             hasAnsweringAttemptedOnCurrentNote = false;
-            document.getElementById('inter-go-wrapper-row').classList.remove('hidden-btn');
+            document.getElementById('inter-go-white').classList.remove('hidden-btn');
+            document.getElementById('inter-go-all').classList.remove('hidden-btn');
             clearAllFlashEffects();
         }
 
@@ -929,7 +917,8 @@
         if (activeBtn) activeBtn.classList.add('active');
         
         setAudioMode('interactive-test');
-        document.getElementById('inter-go-wrapper-row').classList.remove('hidden-btn');
+        document.getElementById('inter-go-white').classList.remove('hidden-btn');
+        document.getElementById('inter-go-all').classList.remove('hidden-btn');
         targetActiveTestNote = null;
         targetActiveTestNotes = [];
         userInteractiveSelectedNotes = [];
@@ -992,7 +981,8 @@
     function playInteractiveDyadTest() {
         setInteractiveSubMode('dyad');
         clearAllFlashEffects();
-        document.getElementById('inter-go-wrapper-row').classList.add('hidden-btn');
+        document.getElementById('inter-go-white').classList.add('hidden-btn');
+        document.getElementById('inter-go-all').classList.add('hidden-btn');
 
         targetActiveTestNotes = getRandomNotesWithinOctave(2);
         userInteractiveSelectedNotes = [];
@@ -1005,7 +995,8 @@
     function playInteractive3NoteTest() {
         setInteractiveSubMode('chord3');
         clearAllFlashEffects();
-        document.getElementById('inter-go-wrapper-row').classList.add('hidden-btn');
+        document.getElementById('inter-go-white').classList.add('hidden-btn');
+        document.getElementById('inter-go-all').classList.add('hidden-btn');
 
         targetActiveTestNotes = getRandomNotesWithinOctave(3);
         userInteractiveSelectedNotes = [];
@@ -1032,7 +1023,8 @@
         clearAllFlashEffects();
         
         interactiveLastModeWasWhiteOnly = whiteKeysOnly;
-        document.getElementById('inter-go-wrapper-row').classList.add('hidden-btn');
+        document.getElementById('inter-go-white').classList.add('hidden-btn');
+        document.getElementById('inter-go-all').classList.add('hidden-btn');
 
         const eligibleNotes = whiteKeysOnly ? progression.filter(n => n.type === 'white') : progression;
 
