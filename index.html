@@ -676,6 +676,8 @@
                             <div class="test-go-split-container">
                                 <button class="test-go-btn white-only-btn" id="test-go-white" onclick="playRandomTestNote(true)">WHITE KEYS <span class="go-box">GO</span> ⚡</button>
                                 <button class="test-go-btn" id="test-go-all" onclick="playRandomTestNote(false)">ALL KEYS <span class="go-box">GO</span> ⚡</button>
+                                <button class="test-go-btn" id="test-go-dyad" style="background:#0d9488; box-shadow: 0 4px 10px rgba(13, 148, 136, 0.3);" onclick="playRandomPolyphonic(2)">DYAD (2 NOTES) <span class="go-box">GO</span> ⚡</button>
+                                <button class="test-go-btn" id="test-go-chord" style="background:#6a4c93; box-shadow: 0 4px 10px rgba(106, 76, 147, 0.3);" onclick="playRandomPolyphonic(3)">CHORD (3 NOTES) <span class="go-box">GO</span> ⚡</button>
                             </div>
                         </div>
                     </div>
@@ -937,6 +939,18 @@
         executeAudioPlay(randomNoteId);
     }
 
+    function playRandomPolyphonic(count) {
+        setAudioMode('test-mode');
+        clearAllFlashEffects();
+
+        const shuffled = [...progression].sort(() => 0.5 - Math.random());
+        const selected = shuffled.slice(0, count);
+
+        selected.forEach(note => {
+            executeAudioPlay(note.id);
+        });
+    }
+
     function playInteractiveTestNote(whiteKeysOnly = false) {
         setAudioMode('interactive-test');
         clearAllFlashEffects();
@@ -1135,8 +1149,6 @@
     loadAllSounds();
 
     function triggerLightEffect(choice) {
-        clearAllFlashEffects();
-
         const btn = document.getElementById(`btn-${choice}`);
         if (!btn) return;
         const badge = btn.querySelector('.color-badge');
@@ -1149,6 +1161,8 @@
         btn.classList.add('playing');
         
         if (currentAudioMode !== 'test-mode' && currentAudioMode !== 'interactive-test') {
+            setTimeout(() => btn.classList.remove('playing'), 1200);
+        } else {
             setTimeout(() => btn.classList.remove('playing'), 1200);
         }
     }
