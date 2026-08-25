@@ -120,20 +120,20 @@
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 12px;
-            padding: 10px 14px;
+            padding: 8px 10px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 4px;
         }
 
         .test-card {
             background: rgba(13, 148, 136, 0.04);
             border: 1px solid rgba(13, 148, 136, 0.2);
             border-radius: 12px;
-            padding: 12px 14px;
+            padding: 8px 10px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
         }
 
         .test-card.interactive {
@@ -145,13 +145,13 @@
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: var(--text-sub);
-            padding: 8px 4px;
-            font-size: 0.72rem;
+            padding: 4px 2px;
+            font-size: 0.62rem;
             font-weight: 700;
-            border-radius: 6px;
+            border-radius: 5px;
             cursor: pointer;
             transition: all 0.15s ease;
-            height: 38px;
+            height: 26px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -184,19 +184,19 @@
             background: #e65c40;
             border: none;
             color: white;
-            padding: 10px;
-            font-size: 0.78rem;
+            padding: 6px;
+            font-size: 0.68rem;
             font-weight: 900;
-            border-radius: 6px;
+            border-radius: 5px;
             cursor: pointer;
-            letter-spacing: 1px;
-            box-shadow: 0 4px 10px rgba(230, 92, 64, 0.3);
+            letter-spacing: 0.5px;
+            box-shadow: 0 3px 8px rgba(230, 92, 64, 0.3);
             transition: transform 0.05s, background 0.1s, opacity 0.2s ease;
-            height: 38px;
+            height: 28px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 5px;
+            gap: 4px;
         }
         .test-go-btn:active {
             transform: scale(0.98);
@@ -206,7 +206,7 @@
         .test-go-btn.white-only-btn {
             background: #ffffff;
             color: #0b0f19;
-            box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+            box-shadow: 0 3px 8px rgba(255, 255, 255, 0.1);
         }
         .test-go-btn.white-only-btn:active {
             background: #e2e8f0;
@@ -220,13 +220,13 @@
         .go-box {
             background-color: #f9cd13;
             color: #0b0f19;
-            border: 2px solid #f9cd13;
-            padding: 1px 6px;
-            border-radius: 4px;
+            border: 1px solid #f9cd13;
+            padding: 1px 4px;
+            border-radius: 3px;
             font-weight: 900;
             display: inline-block;
             line-height: 1;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.15);
         }
 
         .fader-header-btn {
@@ -234,7 +234,7 @@
             border: none;
             color: var(--text-sub);
             font-weight: 700;
-            font-size: 0.85rem;
+            font-size: 0.72rem;
             text-align: left;
             padding: 0;
             cursor: pointer;
@@ -254,7 +254,7 @@
         .fader-metrics {
             display: flex;
             justify-content: space-between;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-family: monospace;
             color: #64748b;
             letter-spacing: 0.5px;
@@ -268,24 +268,24 @@
             -webkit-appearance: none;
             appearance: none;
             width: 100%;
-            height: 6px;
+            height: 4px;
             background: #334155;
-            border-radius: 3px;
+            border-radius: 2px;
             outline: none;
-            margin: 4px 0;
+            margin: 2px 0;
         }
         .blend-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 16px;
-            height: 16px;
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
             background: #0d9488;
             cursor: pointer;
         }
         .blend-slider::-moz-range-thumb {
-            width: 16px;
-            height: 16px;
+            width: 12px;
+            height: 12px;
             border: none;
             border-radius: 50%;
             background: #0d9488;
@@ -671,17 +671,19 @@
                             <button class="test-sub-btn" id="test-sub-rhodes" onclick="setTestSubMode('rhodes')">Rhodes</button>
                             <button class="test-sub-btn" id="test-sub-guitar" onclick="setTestSubMode('guitar')">Guitar</button>
                             <button class="test-sub-btn" id="test-sub-organ" onclick="setTestSubMode('organ')">Organ</button>
-                            <div style="visibility: hidden;"></div> 
+                            <button class="test-sub-btn" id="test-sub-dyad" onclick="setTestSubMode('dyad')">Dyad</button>
+                            <button class="test-sub-btn" id="test-sub-chord" onclick="setTestSubMode('chord')">Chord</button>
+                            <button class="test-sub-btn" id="test-sub-major" onclick="setTestSubMode('major')">Major</button>
+                            <button class="test-sub-btn" id="test-sub-minor" onclick="setTestSubMode('minor')">Minor</button>
+                            <button class="test-sub-btn" id="test-sub-diminished" onclick="setTestSubMode('diminished')">Diminished</button>
+                            <button class="test-sub-btn" id="test-sub-augmented" onclick="setTestSubMode('augmented')">Augmented</button>
+                            <div style="visibility: hidden;"></div>
+                            <div style="visibility: hidden;"></div>
+                            <div style="visibility: hidden;"></div>
                             
                             <div class="test-go-split-container">
                                 <button class="test-go-btn white-only-btn" id="test-go-white" onclick="playRandomTestNote(true)">WHITE KEYS <span class="go-box">GO</span> ⚡</button>
                                 <button class="test-go-btn" id="test-go-all" onclick="playRandomTestNote(false)">ALL KEYS <span class="go-box">GO</span> ⚡</button>
-                                <button class="test-go-btn" style="background:#0d9488;" onclick="playDyadOrChord(2, false)">DYAD (2 NOTES) ⚡</button>
-                                <button class="test-go-btn" style="background:#0d9488;" onclick="playDyadOrChord(3, false)">CHORD (3 NOTES) ⚡</button>
-                                <button class="test-go-btn" style="background:#6a4c93;" onclick="playSpecificChordType('Major', false)">MAJOR CHORD ⚡</button>
-                                <button class="test-go-btn" style="background:#6a4c93;" onclick="playSpecificChordType('Minor', false)">MINOR CHORD ⚡</button>
-                                <button class="test-go-btn" style="background:#6a4c93;" onclick="playSpecificChordType('Diminished', false)">DIMINISHED CHORD ⚡</button>
-                                <button class="test-go-btn" style="background:#6a4c93;" onclick="playSpecificChordType('Augmented', false)">AUGMENTED CHORD ⚡</button>
                             </div>
                         </div>
                     </div>
@@ -696,19 +698,13 @@
                             <button class="test-sub-btn" id="inter-sub-rhodes" onclick="setInteractiveSubMode('rhodes')">Rhodes</button>
                             <button class="test-sub-btn" id="inter-sub-guitar" onclick="setInteractiveSubMode('guitar')">Guitar</button>
                             <button class="test-sub-btn" id="inter-sub-organ" onclick="setInteractiveSubMode('organ')">Organ</button>
-                            <div style="visibility: hidden;"></div> 
-                            <div style="visibility: hidden;"></div> 
+                            <button class="test-sub-btn" id="inter-sub-dyad" onclick="setInteractiveSubMode('dyad')">Dyad</button>
+                            <button class="test-sub-btn" id="inter-sub-chord" onclick="setInteractiveSubMode('chord')">Chord</button>
                             <div style="visibility: hidden;"></div> 
                             
                             <div class="test-go-split-container" id="inter-go-wrapper-row">
                                 <button class="test-go-btn white-only-btn" id="inter-go-white" onclick="playInteractiveTestNote(true)">WHITE KEYS <span class="go-box">GO</span> ⚡</button>
                                 <button class="test-go-btn" id="inter-go-all" onclick="playInteractiveTestNote(false)">ALL KEYS <span class="go-box">GO</span> ⚡</button>
-                                <button class="test-go-btn" style="background:#f3722c;" onclick="playDyadOrChord(2, true)">DYAD (2 NOTES) ⚡</button>
-                                <button class="test-go-btn" style="background:#f3722c;" onclick="playDyadOrChord(3, true)">CHORD (3 NOTES) ⚡</button>
-                                <button class="test-go-btn" style="background:#8367a6;" onclick="playSpecificChordType('Major', true)">MAJOR CHORD ⚡</button>
-                                <button class="test-go-btn" style="background:#8367a6;" onclick="playSpecificChordType('Minor', true)">MINOR CHORD ⚡</button>
-                                <button class="test-go-btn" style="background:#8367a6;" onclick="playSpecificChordType('Diminished', true)">DIMINISHED CHORD ⚡</button>
-                                <button class="test-go-btn" style="background:#8367a6;" onclick="playSpecificChordType('Augmented', true)">AUGMENTED CHORD ⚡</button>
                             </div>
                         </div>
                     </div>
@@ -779,8 +775,8 @@
     let currentTestSubSelection = 'ravenscroft'; 
     let currentInteractiveSubSelection = 'ravenscroft';
     let targetActiveTestNote = null; 
-    let targetActiveTestSet = [];
-    let activeTestSetAttempted = [];
+    let targetActiveTestNotes = [];
+    let targetInteractiveAnswered = new Set();
     let hasAnsweringAttemptedOnCurrentNote = false; 
     let isCurrentlyLocked = false;
     let lockedScrollTop = 0;
@@ -878,8 +874,8 @@
         
         if(mode !== 'interactive-test') {
             targetActiveTestNote = null;
-            targetActiveTestSet = [];
-            activeTestSetAttempted = [];
+            targetActiveTestNotes = [];
+            targetInteractiveAnswered.clear();
             hasAnsweringAttemptedOnCurrentNote = false;
             document.getElementById('inter-go-wrapper-row').classList.remove('hidden-btn');
             clearAllFlashEffects();
@@ -905,15 +901,14 @@
         if (isCurrentlyLocked) return;
         currentTestSubSelection = type;
         
-        document.getElementById('test-sub-ravenscroft').classList.remove('active');
-        document.getElementById('test-sub-bells').classList.remove('active');
-        document.getElementById('test-sub-pianoseq').classList.remove('active');
-        document.getElementById('test-sub-bellseq').classList.remove('active');
-        document.getElementById('test-sub-rhodes').classList.remove('active');
-        document.getElementById('test-sub-guitar').classList.remove('active');
-        document.getElementById('test-sub-organ').classList.remove('active');
+        const testBtns = ['ravenscroft', 'bells', 'pianoseq', 'bellseq', 'rhodes', 'guitar', 'organ', 'dyad', 'chord', 'major', 'minor', 'diminished', 'augmented'];
+        testBtns.forEach(b => {
+            const el = document.getElementById(`test-sub-${b}`);
+            if (el) el.classList.remove('active');
+        });
         
-        document.getElementById(`test-sub-${type}`).classList.add('active');
+        const targetBtn = document.getElementById(`test-sub-${type}`);
+        if (targetBtn) targetBtn.classList.add('active');
         
         setAudioMode('test-mode');
     }
@@ -922,19 +917,20 @@
         if (isCurrentlyLocked) return;
         currentInteractiveSubSelection = type;
         
-        document.getElementById('inter-sub-ravenscroft').classList.remove('active');
-        document.getElementById('inter-sub-bells').classList.remove('active');
-        document.getElementById('inter-sub-rhodes').classList.remove('active');
-        document.getElementById('inter-sub-guitar').classList.remove('active');
-        document.getElementById('inter-sub-organ').classList.remove('active');
+        const interBtns = ['ravenscroft', 'bells', 'rhodes', 'guitar', 'organ', 'dyad', 'chord'];
+        interBtns.forEach(b => {
+            const el = document.getElementById(`inter-sub-${b}`);
+            if (el) el.classList.remove('active');
+        });
         
-        document.getElementById(`inter-sub-${type}`).classList.add('active');
+        const targetBtn = document.getElementById(`inter-sub-${type}`);
+        if (targetBtn) targetBtn.classList.add('active');
         
         setAudioMode('interactive-test');
         document.getElementById('inter-go-wrapper-row').classList.remove('hidden-btn');
         targetActiveTestNote = null;
-        targetActiveTestSet = [];
-        activeTestSetAttempted = [];
+        targetActiveTestNotes = [];
+        targetInteractiveAnswered.clear();
     }
 
     function clearAllFlashEffects() {
@@ -943,74 +939,92 @@
         });
     }
 
-    function getRandomNotesWithinOctave(count) {
-        const maxRange = progression.length - 12; 
-        const rootIndex = Math.floor(Math.random() * maxRange);
-        let selected = [progression[rootIndex].id];
-        
-        while (selected.length < count) {
-            const offset = Math.floor(Math.random() * 12) + 1;
-            const nextNote = progression[rootIndex + offset].id;
-            if (!selected.includes(nextNote)) {
-                selected.push(nextNote);
+    function generateRandomNotesForType(subSelection, whiteKeysOnly = false) {
+        const eligible = whiteKeysOnly ? progression.filter(n => n.type === 'white') : progression;
+        let selectedNotes = [];
+
+        if (subSelection === 'dyad') {
+            let rootIdx = Math.floor(Math.random() * (progression.length - 12));
+            let maxIdx = Math.min(progression.length - 1, rootIdx + 12);
+            let eligibleIndices = [];
+            for (let i = rootIdx + 1; i <= maxIdx; i++) {
+                if (!whiteKeysOnly || progression[i].type === 'white') {
+                    eligibleIndices.push(i);
+                }
             }
-        }
-        return selected;
-    }
-
-    function playDyadOrChord(count, isTestMode = false) {
-        clearAllFlashEffects();
-        const chosenNotes = getRandomNotesWithinOctave(count);
-        
-        if (!isTestMode) {
-            setAudioMode('test-mode');
-            chosenNotes.forEach(noteId => executeAudioPlay(noteId));
+            if (whiteKeysOnly && progression[rootIdx].type !== 'white') {
+                let whiteIndices = eligible.map(n => progression.indexOf(n));
+                rootIdx = whiteIndices[Math.floor(Math.random() * (whiteIndices.length - 1))];
+                eligibleIndices = whiteIndices.filter(i => i > rootIdx && i <= rootIdx + 12);
+            }
+            if (eligibleIndices.length === 0) {
+                rootIdx = 5;
+                eligibleIndices = [10];
+            }
+            let secondIdx = eligibleIndices[Math.floor(Math.random() * eligibleIndices.length)];
+            selectedNotes = [progression[rootIdx].id, progression[secondIdx].id];
+        } else if (subSelection === 'chord') {
+            let rootIdx = Math.floor(Math.random() * (progression.length - 12));
+            let maxIdx = Math.min(progression.length - 1, rootIdx + 12);
+            let eligibleIndices = [];
+            for (let i = rootIdx + 1; i <= maxIdx; i++) {
+                if (!whiteKeysOnly || progression[i].type === 'white') {
+                    eligibleIndices.push(i);
+                }
+            }
+            if (whiteKeysOnly && progression[rootIdx].type !== 'white') {
+                let whiteIndices = eligible.map(n => progression.indexOf(n));
+                rootIdx = whiteIndices[Math.floor(Math.random() * (whiteIndices.length - 2))];
+                eligibleIndices = whiteIndices.filter(i => i > rootIdx && i <= rootIdx + 12);
+            }
+            if (eligibleIndices.length < 2) {
+                rootIdx = 5; 
+                eligibleIndices = [9, 12];
+            }
+            let idx2 = eligibleIndices[Math.floor(Math.random() * (eligibleIndices.length - 1))];
+            let remaining = eligibleIndices.filter(i => i > idx2);
+            if (remaining.length === 0) remaining = eligibleIndices.filter(i => i !== idx2);
+            let idx3 = remaining[Math.floor(Math.random() * remaining.length)];
+            selectedNotes = [progression[rootIdx].id, progression[idx2].id, progression[idx3].id];
+        } else if (['major', 'minor', 'diminished', 'augmented'].includes(subSelection)) {
+            let intervals = {
+                'major': [0, 4, 7],
+                'minor': [0, 3, 7],
+                'diminished': [0, 3, 6],
+                'augmented': [0, 4, 8]
+            }[subSelection];
+            
+            let possibleRoots = [];
+            for (let i = 0; i < progression.length; i++) {
+                if (i + intervals[2] < progression.length) {
+                    if (!whiteKeysOnly || (progression[i].type === 'white' && progression[i + intervals[1]].type === 'white' && progression[i + intervals[2]].type === 'white')) {
+                        possibleRoots.push(i);
+                    }
+                }
+            }
+            if (possibleRoots.length === 0) {
+                for (let i = 0; i < progression.length; i++) {
+                    if (i + intervals[2] < progression.length) possibleRoots.push(i);
+                }
+            }
+            let rootIdx = possibleRoots[Math.floor(Math.random() * possibleRoots.length)];
+            selectedNotes = [progression[rootIdx].id, progression[rootIdx + intervals[1]].id, progression[rootIdx + intervals[2]].id];
         } else {
-            setAudioMode('interactive-test');
-            targetActiveTestSet = chosenNotes;
-            targetActiveTestNote = null;
-            activeTestSetAttempted = [];
-            hasAnsweringAttemptedOnCurrentNote = false;
-            chosenNotes.forEach(noteId => triggerInstrumentAudioOnly(noteId, currentInteractiveSubSelection));
+            const randomIndex = Math.floor(Math.random() * eligible.length);
+            selectedNotes = [eligible[randomIndex].id];
         }
-    }
-
-    function playSpecificChordType(quality, isTestMode = false) {
-        clearAllFlashEffects();
-        const intervals = {
-            'Major': [0, 4, 7],
-            'Minor': [0, 3, 7],
-            'Diminished': [0, 3, 6],
-            'Augmented': [0, 4, 8]
-        }[quality];
-
-        const maxRootIndex = progression.length - 1 - intervals[intervals.length - 1];
-        const rootIndex = Math.floor(Math.random() * (maxRootIndex + 1));
-        const chordNotes = intervals.map(semitones => progression[rootIndex + semitones].id);
-
-        if (!isTestMode) {
-            setAudioMode('test-mode');
-            chordNotes.forEach(noteId => executeAudioPlay(noteId));
-        } else {
-            setAudioMode('interactive-test');
-            targetActiveTestSet = chordNotes;
-            targetActiveTestNote = null;
-            activeTestSetAttempted = [];
-            hasAnsweringAttemptedOnCurrentNote = false;
-            chordNotes.forEach(noteId => triggerInstrumentAudioOnly(noteId, currentInteractiveSubSelection));
-        }
+        return selectedNotes;
     }
 
     function playRandomTestNote(whiteKeysOnly = false) {
         setAudioMode('test-mode');
         clearAllFlashEffects();
 
-        const eligibleNotes = whiteKeysOnly ? progression.filter(n => n.type === 'white') : progression;
+        const selectedNotes = generateRandomNotesForType(currentTestSubSelection, whiteKeysOnly);
         
-        const randomIndex = Math.floor(Math.random() * eligibleNotes.length);
-        const randomNoteId = eligibleNotes[randomIndex].id;
-        
-        executeAudioPlay(randomNoteId);
+        selectedNotes.forEach(noteId => {
+            executeAudioPlay(noteId);
+        });
     }
 
     function playInteractiveTestNote(whiteKeysOnly = false) {
@@ -1020,28 +1034,30 @@
         interactiveLastModeWasWhiteOnly = whiteKeysOnly;
         document.getElementById('inter-go-wrapper-row').classList.add('hidden-btn');
 
-        const eligibleNotes = whiteKeysOnly ? progression.filter(n => n.type === 'white') : progression;
-
-        const randomIndex = Math.floor(Math.random() * eligibleNotes.length);
-        targetActiveTestNote = eligibleNotes[randomIndex].id;
-        targetActiveTestSet = [];
-        activeTestSetAttempted = [];
+        const selectedNotes = generateRandomNotesForType(currentInteractiveSubSelection, whiteKeysOnly);
+        targetActiveTestNotes = selectedNotes;
+        targetActiveTestNote = selectedNotes[0];
+        targetInteractiveAnswered.clear();
         hasAnsweringAttemptedOnCurrentNote = false; 
         
-        triggerInstrumentAudioOnly(targetActiveTestNote, currentInteractiveSubSelection);
+        triggerInstrumentAudioOnly(targetActiveTestNotes, currentInteractiveSubSelection);
     }
 
     function triggerInstrumentAudioOnly(choice, instrumentSrc) {
         if (audioCtx.state === 'suspended') audioCtx.resume();
         if (Tone.context.state === 'suspended') Tone.start();
         
-        if (instrumentSrc === 'ravenscroft') {
-            playTargetBuffer(ravenscroftBuffers[choice], generalGainNode);
-        } else if (instrumentSrc === 'bells') {
-            playTargetBuffer(bellBuffers[choice], generalGainNode);
-        } else if (samplers[instrumentSrc]) {
-            samplers[instrumentSrc].triggerAttackRelease(choice, "1m");
-        }
+        const choices = Array.isArray(choice) ? choice : [choice];
+
+        choices.forEach(c => {
+            if (instrumentSrc === 'ravenscroft' || instrumentSrc === 'dyad' || instrumentSrc === 'chord') {
+                playTargetBuffer(ravenscroftBuffers[c], generalGainNode);
+            } else if (instrumentSrc === 'bells') {
+                playTargetBuffer(bellBuffers[c], generalGainNode);
+            } else if (samplers[instrumentSrc]) {
+                samplers[instrumentSrc].triggerAttackRelease(c, "1m");
+            }
+        });
     }
 
     function updateBlendValues(targetFader, val) {
@@ -1213,6 +1229,10 @@
     loadAllSounds();
 
     function triggerLightEffect(choice) {
+        if (currentAudioMode !== 'test-mode' && currentAudioMode !== 'interactive-test') {
+            clearAllFlashEffects();
+        }
+
         const btn = document.getElementById(`btn-${choice}`);
         if (!btn) return;
         const badge = btn.querySelector('.color-badge');
@@ -1230,27 +1250,29 @@
     }
 
     function handleInput(choice) {
-        if (currentAudioMode === 'interactive-test' && targetActiveTestSet.length > 0) {
+        if (currentAudioMode === 'interactive-test' && targetActiveTestNotes.length > 0) {
             const chosenBtn = document.getElementById(`btn-${choice}`);
-            if (targetActiveTestSet.includes(choice)) {
-                if (!activeTestSetAttempted.includes(choice)) {
-                    activeTestSetAttempted.push(choice);
-                    if (chosenBtn) chosenBtn.classList.add('success-flash');
-                    triggerInstrumentAudioOnly(choice, currentInteractiveSubSelection);
-                }
-                
-                if (activeTestSetAttempted.length === targetActiveTestSet.length) {
+            
+            if (targetActiveTestNotes.includes(choice)) {
+                targetInteractiveAnswered.add(choice);
+                if (chosenBtn) chosenBtn.classList.add('success-flash');
+                triggerInstrumentAudioOnly(choice, currentInteractiveSubSelection);
+
+                if (targetInteractiveAnswered.size === targetActiveTestNotes.length) {
+                    targetActiveTestNotes = [];
+                    targetInteractiveAnswered.clear();
+                    hasAnsweringAttemptedOnCurrentNote = false;
+                    
                     setTimeout(() => {
-                        clearAllFlashEffects();
-                        targetActiveTestSet = [];
-                        activeTestSetAttempted = [];
+                        playInteractiveTestNote(interactiveLastModeWasWhiteOnly);
                     }, 1200);
                 }
             } else {
                 clearAllFlashEffects();
                 if (chosenBtn) chosenBtn.classList.add('error-flash');
-                targetActiveTestSet.forEach(noteId => {
-                    const correctBtn = document.getElementById(`btn-${noteId}`);
+                
+                targetActiveTestNotes.forEach(targetNote => {
+                    const correctBtn = document.getElementById(`btn-${targetNote}`);
                     if (correctBtn) {
                         const badge = correctBtn.querySelector('.color-badge');
                         let colorMatch = window.getComputedStyle(badge).backgroundImage.match(/rgb\([^)]+\)/g);
@@ -1258,40 +1280,9 @@
                         correctBtn.style.setProperty('--light-color', targetColor);
                         correctBtn.classList.add('playing');
                     }
-                    triggerInstrumentAudioOnly(noteId, currentInteractiveSubSelection);
                 });
-            }
-            return;
-        }
-
-        if (currentAudioMode === 'interactive-test' && targetActiveTestNote !== null) {
-            const chosenBtn = document.getElementById(`btn-${choice}`);
-            const correctBtn = document.getElementById(`btn-${targetActiveTestNote}`);
-            
-            if (choice === targetActiveTestNote) {
-                clearAllFlashEffects();
-                if (chosenBtn) chosenBtn.classList.add('success-flash');
-                triggerInstrumentAudioOnly(choice, currentInteractiveSubSelection);
                 
-                targetActiveTestNote = null;
-                hasAnsweringAttemptedOnCurrentNote = false;
-                
-                setTimeout(() => {
-                    playInteractiveTestNote(interactiveLastModeWasWhiteOnly);
-                }, 1200);
-            } else {
-                clearAllFlashEffects();
-                if (chosenBtn) chosenBtn.classList.add('error-flash');
-                
-                if (correctBtn) {
-                    const badge = correctBtn.querySelector('.color-badge');
-                    let colorMatch = window.getComputedStyle(badge).backgroundImage.match(/rgb\([^)]+\)/g);
-                    let targetColor = colorMatch ? (colorMatch[1] || colorMatch[0]) : "rgba(255, 255, 255, 1)";
-                    correctBtn.style.setProperty('--light-color', targetColor);
-                    correctBtn.classList.add('playing');
-                }
-                
-                triggerInstrumentAudioOnly(targetActiveTestNote, currentInteractiveSubSelection);
+                triggerInstrumentAudioOnly(targetActiveTestNotes, currentInteractiveSubSelection);
                 hasAnsweringAttemptedOnCurrentNote = true;
             }
             return;
@@ -1339,7 +1330,7 @@
                 playTargetBuffer(voiceBuffers[choice], vocalGainNode);
             }
         } else if (currentAudioMode === 'test-mode') {
-            if (currentTestSubSelection === 'ravenscroft') {
+            if (currentTestSubSelection === 'ravenscroft' || ['dyad', 'chord', 'major', 'minor', 'diminished', 'augmented'].includes(currentTestSubSelection)) {
                 playTargetBuffer(ravenscroftBuffers[choice], generalGainNode);
             } else if (currentTestSubSelection === 'bells') {
                 playTargetBuffer(bellBuffers[choice], generalGainNode);
