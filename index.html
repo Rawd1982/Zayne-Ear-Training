@@ -159,6 +159,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            width: 100%;
         }
 
         .test-sub-btn.active {
@@ -174,6 +175,9 @@
         }
 
         .test-go-btn {
+            grid-column: span 1 !important;
+            width: 100% !important;
+            height: 26px !important;
             background: #e65c40;
             border: 1px solid transparent;
             color: white;
@@ -185,7 +189,6 @@
             letter-spacing: 0.2px;
             box-shadow: 0 2px 6px rgba(230, 92, 64, 0.3);
             transition: transform 0.05s, background 0.1s, opacity 0.2s ease;
-            height: 26px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -677,7 +680,6 @@
                             <button class="test-sub-btn" id="test-sub-augmented" onclick="playPracticeChordType('augmented')">Augmented</button>
                             <button class="test-go-btn white-only-btn" id="test-go-white" onclick="playRandomTestNote(true)">WHITE <span class="go-box">GO</span> ⚡</button>
                             <button class="test-go-btn" id="test-go-all" onclick="playRandomTestNote(false)">ALL <span class="go-box">GO</span> ⚡</button>
-                            <div style="visibility: hidden;"></div>
                         </div>
                     </div>
 
