@@ -1,4 +1,5 @@
-<html  lang="en">
+
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -27,16 +28,16 @@
         body {
             display: flex;
             justify-content: center;
-            padding: 20px;
+            padding: 15px;
         }
 
         .container { width: 100%; max-width: 1200px; display: flex; flex-direction: column; align-items: center; }
 
         h1 { 
-            font-size: 2.8rem; 
+            font-size: 2.2rem; 
             font-weight: 900; 
             text-align: center; 
-            margin: 10px 0 5px 0; 
+            margin: 5px 0 2px 0; 
             width: 100%; 
             letter-spacing: 2px; 
         }
@@ -45,12 +46,12 @@
         h1 span.w-yellow { color: #f9cd13; }
         h1 span.w-teal   { color: #0d9488; }
 
-        .header-line { width: 80%; height: 2px; background: #0d9488; margin-bottom: 25px; opacity: 0.5; }
+        .header-line { width: 80%; height: 2px; background: #0d9488; margin-bottom: 15px; opacity: 0.5; }
 
         .game-panel {
             background-color: var(--panel-bg);
-            padding: 25px;
-            border-radius: 30px;
+            padding: 15px;
+            border-radius: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -62,16 +63,16 @@
             position: relative;
             max-width: 1100px;
             width: 100%;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
 
         .controls-panel {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 8px;
             background-color: var(--keyboard-bg);
-            padding: 16px;
-            border-radius: 16px;
+            padding: 10px;
+            border-radius: 14px;
             border: 2px solid #1e293b;
             width: 100%;
         }
@@ -79,14 +80,14 @@
         .fader-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
+            gap: 6px;
             width: 100%;
         }
 
         .test-mode-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
+            gap: 8px;
             width: 100%;
             margin-top: 2px;
         }
@@ -94,7 +95,7 @@
         .test-options-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 6px;
+            gap: 4px;
             width: 100%;
             align-items: center;
         }
@@ -111,7 +112,7 @@
             top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(15, 23, 42, 0.6);
             backdrop-filter: blur(1px);
-            border-radius: 16px;
+            border-radius: 14px;
             z-index: 10;
             cursor: not-allowed;
         }
@@ -119,8 +120,8 @@
         .fader-card {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 8px 10px;
+            border-radius: 8px;
+            padding: 6px 10px;
             display: flex;
             flex-direction: column;
             gap: 4px;
@@ -129,7 +130,7 @@
         .test-card {
             background: rgba(13, 148, 136, 0.04);
             border: 1px solid rgba(13, 148, 136, 0.2);
-            border-radius: 12px;
+            border-radius: 10px;
             padding: 8px 10px;
             display: flex;
             flex-direction: column;
@@ -148,7 +149,7 @@
             padding: 4px 2px;
             font-size: 0.62rem;
             font-weight: 700;
-            border-radius: 5px;
+            border-radius: 4px;
             cursor: pointer;
             transition: all 0.15s ease;
             height: 26px;
@@ -164,19 +165,19 @@
             background: #0d9488;
             color: white;
             border-color: transparent;
-            box-shadow: 0 2px 8px rgba(13, 148, 136, 0.3);
+            box-shadow: 0 2px 6px rgba(13, 148, 136, 0.3);
         }
 
         .test-card.interactive .test-sub-btn.active {
             background: #f3722c;
-            box-shadow: 0 2px 8px rgba(243, 114, 44, 0.3);
+            box-shadow: 0 2px 6px rgba(243, 114, 44, 0.3);
         }
 
         .test-go-split-container {
             grid-column: span 4;
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 6px;
+            gap: 4px;
             width: 100%;
         }
 
@@ -184,19 +185,19 @@
             background: #e65c40;
             border: none;
             color: white;
-            padding: 6px;
-            font-size: 0.68rem;
+            padding: 4px;
+            font-size: 0.65rem;
             font-weight: 900;
-            border-radius: 5px;
+            border-radius: 4px;
             cursor: pointer;
             letter-spacing: 0.5px;
-            box-shadow: 0 3px 8px rgba(230, 92, 64, 0.3);
+            box-shadow: 0 2px 6px rgba(230, 92, 64, 0.3);
             transition: transform 0.05s, background 0.1s, opacity 0.2s ease;
-            height: 28px;
+            height: 26px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 4px;
+            gap: 3px;
         }
         .test-go-btn:active {
             transform: scale(0.98);
@@ -206,7 +207,7 @@
         .test-go-btn.white-only-btn {
             background: #ffffff;
             color: #0b0f19;
-            box-shadow: 0 3px 8px rgba(255, 255, 255, 0.1);
+            box-shadow: 0 2px 6px rgba(255, 255, 255, 0.1);
         }
         .test-go-btn.white-only-btn:active {
             background: #e2e8f0;
@@ -223,10 +224,11 @@
             border: 1px solid #f9cd13;
             padding: 1px 4px;
             border-radius: 3px;
+            font-size: 0.6rem;
             font-weight: 900;
             display: inline-block;
             line-height: 1;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.15);
         }
 
         .fader-header-btn {
@@ -234,7 +236,7 @@
             border: none;
             color: var(--text-sub);
             font-weight: 700;
-            font-size: 0.72rem;
+            font-size: 0.75rem;
             text-align: left;
             padding: 0;
             cursor: pointer;
@@ -254,7 +256,7 @@
         .fader-metrics {
             display: flex;
             justify-content: space-between;
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             font-family: monospace;
             color: #64748b;
             letter-spacing: 0.5px;
@@ -303,8 +305,8 @@
             justify-content: center;
             width: 100%;
             max-width: 400px;
-            height: 50px;
-            margin-bottom: 15px;
+            height: 40px;
+            margin-bottom: 10px;
             transition: opacity 0.4s ease-out, transform 0.4s ease-out, margin 0.4s ease-out, height 0.4s ease-out;
             opacity: 1;
             overflow: hidden;
@@ -320,24 +322,24 @@
 
         .progress-container {
             width: 100%;
-            height: 6px;
+            height: 4px;
             background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
+            border-radius: 2px;
             overflow: hidden;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .progress-bar {
             width: 0%;
             height: 100%;
             background-color: #d62828; 
-            border-radius: 3px;
+            border-radius: 2px;
             transition: width 0.1s linear, background-color 0.3s ease;
         }
 
         #msg { 
             text-align: center; 
-            font-size: 0.95rem; 
+            font-size: 0.8rem; 
             font-weight: 900;
             letter-spacing: 1px;
             transition: color 0.3s ease;
@@ -347,7 +349,7 @@
         .slide-lock-container {
             width: 100%;
             max-width: 400px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -360,11 +362,11 @@
         }
 
         .slide-label {
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             font-weight: 900;
             letter-spacing: 1.5px;
             text-transform: uppercase;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
             transition: color 0.3s ease;
             user-select: none;
         }
@@ -375,7 +377,7 @@
         .slider-track-wrapper {
             position: relative;
             width: 100%;
-            height: 6px;
+            height: 5px;
             background-color: rgba(255, 255, 255, 0.1);
             border-radius: 3px;
             display: flex;
@@ -390,7 +392,7 @@
             -webkit-appearance: none;
             appearance: none;
             width: 100%;
-            height: 30px; 
+            height: 24px; 
             background: transparent;
             outline: none;
             position: absolute;
@@ -403,9 +405,9 @@
         .lock-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 36px;
-            height: 20px;
-            border-radius: 10px;
+            width: 28px;
+            height: 16px;
+            border-radius: 8px;
             background: #ffffff;
             box-shadow: 0 2px 5px rgba(0,0,0,0.4);
             cursor: grab;
@@ -413,10 +415,10 @@
         .lock-slider::-webkit-slider-thumb:active { background: #e2e8f0; cursor: grabbing; }
 
         .lock-slider::-moz-range-thumb {
-            width: 36px;
-            height: 20px;
+            width: 28px;
+            height: 16px;
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
             background: #ffffff;
             box-shadow: 0 2px 5px rgba(0,0,0,0.4);
             cursor: grab;
@@ -425,8 +427,8 @@
 
         .keyboard-wrapper {
             background-color: var(--keyboard-bg);
-            padding: 30px 20px;
-            border-radius: 20px;
+            padding: 20px 15px;
+            border-radius: 16px;
             width: 100%;
             max-width: 1100px; 
             overflow-x: auto;
@@ -453,9 +455,9 @@
             }
         }
 
-        .keyboard-wrapper::-webkit-scrollbar { height: 10px; }
-        .keyboard-wrapper::-webkit-scrollbar-track { background: #0b0f19; border-radius: 10px; }
-        .keyboard-wrapper::-webkit-scrollbar-thumb { background: #d62828; border-radius: 10px; }
+        .keyboard-wrapper::-webkit-scrollbar { height: 8px; }
+        .keyboard-wrapper::-webkit-scrollbar-track { background: #0b0f19; border-radius: 8px; }
+        .keyboard-wrapper::-webkit-scrollbar-thumb { background: #d62828; border-radius: 8px; }
         .keyboard-wrapper.locked::-webkit-scrollbar { display: none; height: 0; }
 
         .piano-grid {
@@ -671,12 +673,12 @@
                             <button class="test-sub-btn" id="test-sub-rhodes" onclick="setTestSubMode('rhodes')">Rhodes</button>
                             <button class="test-sub-btn" id="test-sub-guitar" onclick="setTestSubMode('guitar')">Guitar</button>
                             <button class="test-sub-btn" id="test-sub-organ" onclick="setTestSubMode('organ')">Organ</button>
-                            <button class="test-sub-btn" id="test-sub-dyad" onclick="setTestSubMode('dyad')">Dyad</button>
-                            <button class="test-sub-btn" id="test-sub-chord" onclick="setTestSubMode('chord')">Chord</button>
-                            <button class="test-sub-btn" id="test-sub-major" onclick="setTestSubMode('major')">Major</button>
-                            <button class="test-sub-btn" id="test-sub-minor" onclick="setTestSubMode('minor')">Minor</button>
-                            <button class="test-sub-btn" id="test-sub-diminished" onclick="setTestSubMode('diminished')">Diminished</button>
-                            <button class="test-sub-btn" id="test-sub-augmented" onclick="setTestSubMode('augmented')">Augmented</button>
+                            <button class="test-sub-btn" id="test-sub-dyad" onclick="playPracticeDyad()">Dyad (2 Notes)</button>
+                            <button class="test-sub-btn" id="test-sub-chord3" onclick="playPractice3NoteChord()">3-Note Chord</button>
+                            <button class="test-sub-btn" id="test-sub-major" onclick="playPracticeChordType('major')">Major Chord</button>
+                            <button class="test-sub-btn" id="test-sub-minor" onclick="playPracticeChordType('minor')">Minor Chord</button>
+                            <button class="test-sub-btn" id="test-sub-diminished" onclick="playPracticeChordType('diminished')">Diminished</button>
+                            <button class="test-sub-btn" id="test-sub-augmented" onclick="playPracticeChordType('augmented')">Augmented</button>
                             <div style="visibility: hidden;"></div>
                             <div style="visibility: hidden;"></div>
                             <div style="visibility: hidden;"></div>
@@ -698,9 +700,9 @@
                             <button class="test-sub-btn" id="inter-sub-rhodes" onclick="setInteractiveSubMode('rhodes')">Rhodes</button>
                             <button class="test-sub-btn" id="inter-sub-guitar" onclick="setInteractiveSubMode('guitar')">Guitar</button>
                             <button class="test-sub-btn" id="inter-sub-organ" onclick="setInteractiveSubMode('organ')">Organ</button>
-                            <button class="test-sub-btn" id="inter-sub-dyad" onclick="setInteractiveSubMode('dyad')">Dyad</button>
-                            <button class="test-sub-btn" id="inter-sub-chord" onclick="setInteractiveSubMode('chord')">Chord</button>
-                            <div style="visibility: hidden;"></div> 
+                            <button class="test-sub-btn" id="inter-sub-dyad" onclick="playInteractiveDyadTest()">Dyad Test</button>
+                            <button class="test-sub-btn" id="inter-sub-chord3" onclick="playInteractive3NoteTest()">3-Note Test</button>
+                            <div style="visibility: hidden;"></div>
                             
                             <div class="test-go-split-container" id="inter-go-wrapper-row">
                                 <button class="test-go-btn white-only-btn" id="inter-go-white" onclick="playInteractiveTestNote(true)">WHITE KEYS <span class="go-box">GO</span> ⚡</button>
@@ -776,7 +778,7 @@
     let currentInteractiveSubSelection = 'ravenscroft';
     let targetActiveTestNote = null; 
     let targetActiveTestNotes = [];
-    let targetInteractiveAnswered = new Set();
+    let userInteractiveSelectedNotes = [];
     let hasAnsweringAttemptedOnCurrentNote = false; 
     let isCurrentlyLocked = false;
     let lockedScrollTop = 0;
@@ -875,7 +877,7 @@
         if(mode !== 'interactive-test') {
             targetActiveTestNote = null;
             targetActiveTestNotes = [];
-            targetInteractiveAnswered.clear();
+            userInteractiveSelectedNotes = [];
             hasAnsweringAttemptedOnCurrentNote = false;
             document.getElementById('inter-go-wrapper-row').classList.remove('hidden-btn');
             clearAllFlashEffects();
@@ -901,14 +903,14 @@
         if (isCurrentlyLocked) return;
         currentTestSubSelection = type;
         
-        const testBtns = ['ravenscroft', 'bells', 'pianoseq', 'bellseq', 'rhodes', 'guitar', 'organ', 'dyad', 'chord', 'major', 'minor', 'diminished', 'augmented'];
-        testBtns.forEach(b => {
-            const el = document.getElementById(`test-sub-${b}`);
-            if (el) el.classList.remove('active');
+        const subBtns = ['ravenscroft', 'bells', 'pianoseq', 'bellseq', 'rhodes', 'guitar', 'organ', 'dyad', 'chord3', 'major', 'minor', 'diminished', 'augmented'];
+        subBtns.forEach(b => {
+            const btnEl = document.getElementById(`test-sub-${b}`);
+            if (btnEl) btnEl.classList.remove('active');
         });
         
-        const targetBtn = document.getElementById(`test-sub-${type}`);
-        if (targetBtn) targetBtn.classList.add('active');
+        const activeBtn = document.getElementById(`test-sub-${type}`);
+        if (activeBtn) activeBtn.classList.add('active');
         
         setAudioMode('test-mode');
     }
@@ -917,20 +919,20 @@
         if (isCurrentlyLocked) return;
         currentInteractiveSubSelection = type;
         
-        const interBtns = ['ravenscroft', 'bells', 'rhodes', 'guitar', 'organ', 'dyad', 'chord'];
+        const interBtns = ['ravenscroft', 'bells', 'rhodes', 'guitar', 'organ', 'dyad', 'chord3'];
         interBtns.forEach(b => {
-            const el = document.getElementById(`inter-sub-${b}`);
-            if (el) el.classList.remove('active');
+            const btnEl = document.getElementById(`inter-sub-${b}`);
+            if (btnEl) btnEl.classList.remove('active');
         });
         
-        const targetBtn = document.getElementById(`inter-sub-${type}`);
-        if (targetBtn) targetBtn.classList.add('active');
+        const activeBtn = document.getElementById(`inter-sub-${type}`);
+        if (activeBtn) activeBtn.classList.add('active');
         
         setAudioMode('interactive-test');
         document.getElementById('inter-go-wrapper-row').classList.remove('hidden-btn');
         targetActiveTestNote = null;
         targetActiveTestNotes = [];
-        targetInteractiveAnswered.clear();
+        userInteractiveSelectedNotes = [];
     }
 
     function clearAllFlashEffects() {
@@ -939,92 +941,90 @@
         });
     }
 
-    function generateRandomNotesForType(subSelection, whiteKeysOnly = false) {
-        const eligible = whiteKeysOnly ? progression.filter(n => n.type === 'white') : progression;
-        let selectedNotes = [];
-
-        if (subSelection === 'dyad') {
-            let rootIdx = Math.floor(Math.random() * (progression.length - 12));
-            let maxIdx = Math.min(progression.length - 1, rootIdx + 12);
-            let eligibleIndices = [];
-            for (let i = rootIdx + 1; i <= maxIdx; i++) {
-                if (!whiteKeysOnly || progression[i].type === 'white') {
-                    eligibleIndices.push(i);
-                }
+    function getRandomNotesWithinOctave(count) {
+        let maxInterval = 12; // Octave distance
+        let startIndex = Math.floor(Math.random() * (progression.length - maxInterval));
+        let selectedIndices = [startIndex];
+        
+        while (selectedIndices.length < count) {
+            let offset = Math.floor(Math.random() * maxInterval) + 1;
+            let targetIdx = startIndex + offset;
+            if (targetIdx < progression.length && !selectedIndices.includes(targetIdx)) {
+                selectedIndices.push(targetIdx);
             }
-            if (whiteKeysOnly && progression[rootIdx].type !== 'white') {
-                let whiteIndices = eligible.map(n => progression.indexOf(n));
-                rootIdx = whiteIndices[Math.floor(Math.random() * (whiteIndices.length - 1))];
-                eligibleIndices = whiteIndices.filter(i => i > rootIdx && i <= rootIdx + 12);
-            }
-            if (eligibleIndices.length === 0) {
-                rootIdx = 5;
-                eligibleIndices = [10];
-            }
-            let secondIdx = eligibleIndices[Math.floor(Math.random() * eligibleIndices.length)];
-            selectedNotes = [progression[rootIdx].id, progression[secondIdx].id];
-        } else if (subSelection === 'chord') {
-            let rootIdx = Math.floor(Math.random() * (progression.length - 12));
-            let maxIdx = Math.min(progression.length - 1, rootIdx + 12);
-            let eligibleIndices = [];
-            for (let i = rootIdx + 1; i <= maxIdx; i++) {
-                if (!whiteKeysOnly || progression[i].type === 'white') {
-                    eligibleIndices.push(i);
-                }
-            }
-            if (whiteKeysOnly && progression[rootIdx].type !== 'white') {
-                let whiteIndices = eligible.map(n => progression.indexOf(n));
-                rootIdx = whiteIndices[Math.floor(Math.random() * (whiteIndices.length - 2))];
-                eligibleIndices = whiteIndices.filter(i => i > rootIdx && i <= rootIdx + 12);
-            }
-            if (eligibleIndices.length < 2) {
-                rootIdx = 5; 
-                eligibleIndices = [9, 12];
-            }
-            let idx2 = eligibleIndices[Math.floor(Math.random() * (eligibleIndices.length - 1))];
-            let remaining = eligibleIndices.filter(i => i > idx2);
-            if (remaining.length === 0) remaining = eligibleIndices.filter(i => i !== idx2);
-            let idx3 = remaining[Math.floor(Math.random() * remaining.length)];
-            selectedNotes = [progression[rootIdx].id, progression[idx2].id, progression[idx3].id];
-        } else if (['major', 'minor', 'diminished', 'augmented'].includes(subSelection)) {
-            let intervals = {
-                'major': [0, 4, 7],
-                'minor': [0, 3, 7],
-                'diminished': [0, 3, 6],
-                'augmented': [0, 4, 8]
-            }[subSelection];
-            
-            let possibleRoots = [];
-            for (let i = 0; i < progression.length; i++) {
-                if (i + intervals[2] < progression.length) {
-                    if (!whiteKeysOnly || (progression[i].type === 'white' && progression[i + intervals[1]].type === 'white' && progression[i + intervals[2]].type === 'white')) {
-                        possibleRoots.push(i);
-                    }
-                }
-            }
-            if (possibleRoots.length === 0) {
-                for (let i = 0; i < progression.length; i++) {
-                    if (i + intervals[2] < progression.length) possibleRoots.push(i);
-                }
-            }
-            let rootIdx = possibleRoots[Math.floor(Math.random() * possibleRoots.length)];
-            selectedNotes = [progression[rootIdx].id, progression[rootIdx + intervals[1]].id, progression[rootIdx + intervals[2]].id];
-        } else {
-            const randomIndex = Math.floor(Math.random() * eligible.length);
-            selectedNotes = [eligible[randomIndex].id];
         }
-        return selectedNotes;
+        return selectedIndices.sort((a, b) => a - b).map(idx => progression[idx].id);
+    }
+
+    function playPracticeDyad() {
+        setTestSubMode('dyad');
+        clearAllFlashEffects();
+        let dyadNotes = getRandomNotesWithinOctave(2);
+        dyadNotes.forEach(noteId => executeAudioPlay(noteId));
+    }
+
+    function playPractice3NoteChord() {
+        setTestSubMode('chord3');
+        clearAllFlashEffects();
+        let chordNotes = getRandomNotesWithinOctave(3);
+        chordNotes.forEach(noteId => executeAudioPlay(noteId));
+    }
+
+    function playPracticeChordType(type) {
+        setTestSubMode(type);
+        clearAllFlashEffects();
+        
+        const intervals = {
+            'major': [0, 4, 7],
+            'minor': [0, 3, 7],
+            'diminished': [0, 3, 6],
+            'augmented': [0, 4, 8]
+        };
+        
+        let chordIntervals = intervals[type];
+        let maxOffset = chordIntervals[chordIntervals.length - 1];
+        let rootIndex = Math.floor(Math.random() * (progression.length - maxOffset));
+        
+        let chordNotes = chordIntervals.map(i => progression[rootIndex + i].id);
+        chordNotes.forEach(noteId => executeAudioPlay(noteId));
+    }
+
+    function playInteractiveDyadTest() {
+        setInteractiveSubMode('dyad');
+        clearAllFlashEffects();
+        document.getElementById('inter-go-wrapper-row').classList.add('hidden-btn');
+
+        targetActiveTestNotes = getRandomNotesWithinOctave(2);
+        userInteractiveSelectedNotes = [];
+        hasAnsweringAttemptedOnCurrentNote = false;
+        
+        let soundSource = ['rhodes', 'guitar', 'organ', 'bells'].includes(currentInteractiveSubSelection) ? currentInteractiveSubSelection : 'ravenscroft';
+        targetActiveTestNotes.forEach(n => triggerInstrumentAudioOnly(n, soundSource));
+    }
+
+    function playInteractive3NoteTest() {
+        setInteractiveSubMode('chord3');
+        clearAllFlashEffects();
+        document.getElementById('inter-go-wrapper-row').classList.add('hidden-btn');
+
+        targetActiveTestNotes = getRandomNotesWithinOctave(3);
+        userInteractiveSelectedNotes = [];
+        hasAnsweringAttemptedOnCurrentNote = false;
+        
+        let soundSource = ['rhodes', 'guitar', 'organ', 'bells'].includes(currentInteractiveSubSelection) ? currentInteractiveSubSelection : 'ravenscroft';
+        targetActiveTestNotes.forEach(n => triggerInstrumentAudioOnly(n, soundSource));
     }
 
     function playRandomTestNote(whiteKeysOnly = false) {
         setAudioMode('test-mode');
         clearAllFlashEffects();
 
-        const selectedNotes = generateRandomNotesForType(currentTestSubSelection, whiteKeysOnly);
+        const eligibleNotes = whiteKeysOnly ? progression.filter(n => n.type === 'white') : progression;
         
-        selectedNotes.forEach(noteId => {
-            executeAudioPlay(noteId);
-        });
+        const randomIndex = Math.floor(Math.random() * eligibleNotes.length);
+        const randomNoteId = eligibleNotes[randomIndex].id;
+        
+        executeAudioPlay(randomNoteId);
     }
 
     function playInteractiveTestNote(whiteKeysOnly = false) {
@@ -1034,30 +1034,28 @@
         interactiveLastModeWasWhiteOnly = whiteKeysOnly;
         document.getElementById('inter-go-wrapper-row').classList.add('hidden-btn');
 
-        const selectedNotes = generateRandomNotesForType(currentInteractiveSubSelection, whiteKeysOnly);
-        targetActiveTestNotes = selectedNotes;
-        targetActiveTestNote = selectedNotes[0];
-        targetInteractiveAnswered.clear();
+        const eligibleNotes = whiteKeysOnly ? progression.filter(n => n.type === 'white') : progression;
+
+        const randomIndex = Math.floor(Math.random() * eligibleNotes.length);
+        targetActiveTestNote = eligibleNotes[randomIndex].id;
+        targetActiveTestNotes = [targetActiveTestNote];
+        userInteractiveSelectedNotes = [];
         hasAnsweringAttemptedOnCurrentNote = false; 
         
-        triggerInstrumentAudioOnly(targetActiveTestNotes, currentInteractiveSubSelection);
+        triggerInstrumentAudioOnly(targetActiveTestNote, currentInteractiveSubSelection);
     }
 
     function triggerInstrumentAudioOnly(choice, instrumentSrc) {
         if (audioCtx.state === 'suspended') audioCtx.resume();
         if (Tone.context.state === 'suspended') Tone.start();
         
-        const choices = Array.isArray(choice) ? choice : [choice];
-
-        choices.forEach(c => {
-            if (instrumentSrc === 'ravenscroft' || instrumentSrc === 'dyad' || instrumentSrc === 'chord') {
-                playTargetBuffer(ravenscroftBuffers[c], generalGainNode);
-            } else if (instrumentSrc === 'bells') {
-                playTargetBuffer(bellBuffers[c], generalGainNode);
-            } else if (samplers[instrumentSrc]) {
-                samplers[instrumentSrc].triggerAttackRelease(c, "1m");
-            }
-        });
+        if (instrumentSrc === 'ravenscroft') {
+            playTargetBuffer(ravenscroftBuffers[choice], generalGainNode);
+        } else if (instrumentSrc === 'bells') {
+            playTargetBuffer(bellBuffers[choice], generalGainNode);
+        } else if (samplers[instrumentSrc]) {
+            samplers[instrumentSrc].triggerAttackRelease(choice, "1m");
+        }
     }
 
     function updateBlendValues(targetFader, val) {
@@ -1229,10 +1227,6 @@
     loadAllSounds();
 
     function triggerLightEffect(choice) {
-        if (currentAudioMode !== 'test-mode' && currentAudioMode !== 'interactive-test') {
-            clearAllFlashEffects();
-        }
-
         const btn = document.getElementById(`btn-${choice}`);
         if (!btn) return;
         const badge = btn.querySelector('.color-badge');
@@ -1253,26 +1247,28 @@
         if (currentAudioMode === 'interactive-test' && targetActiveTestNotes.length > 0) {
             const chosenBtn = document.getElementById(`btn-${choice}`);
             
-            if (targetActiveTestNotes.includes(choice)) {
-                targetInteractiveAnswered.add(choice);
-                if (chosenBtn) chosenBtn.classList.add('success-flash');
-                triggerInstrumentAudioOnly(choice, currentInteractiveSubSelection);
+            if (!userInteractiveSelectedNotes.includes(choice)) {
+                userInteractiveSelectedNotes.push(choice);
+            }
 
-                if (targetInteractiveAnswered.size === targetActiveTestNotes.length) {
-                    targetActiveTestNotes = [];
-                    targetInteractiveAnswered.clear();
-                    hasAnsweringAttemptedOnCurrentNote = false;
-                    
+            if (targetActiveTestNotes.includes(choice)) {
+                if (chosenBtn) chosenBtn.classList.add('success-flash');
+                let soundSource = ['rhodes', 'guitar', 'organ', 'bells'].includes(currentInteractiveSubSelection) ? currentInteractiveSubSelection : 'ravenscroft';
+                triggerInstrumentAudioOnly(choice, soundSource);
+                
+                let allMatched = targetActiveTestNotes.every(n => userInteractiveSelectedNotes.includes(n));
+                if (allMatched) {
                     setTimeout(() => {
-                        playInteractiveTestNote(interactiveLastModeWasWhiteOnly);
+                        clearAllFlashEffects();
+                        if (targetActiveTestNotes.length === 2) playInteractiveDyadTest();
+                        else if (targetActiveTestNotes.length === 3) playInteractive3NoteTest();
+                        else playInteractiveTestNote(interactiveLastModeWasWhiteOnly);
                     }, 1200);
                 }
             } else {
-                clearAllFlashEffects();
                 if (chosenBtn) chosenBtn.classList.add('error-flash');
-                
-                targetActiveTestNotes.forEach(targetNote => {
-                    const correctBtn = document.getElementById(`btn-${targetNote}`);
+                targetActiveTestNotes.forEach(n => {
+                    const correctBtn = document.getElementById(`btn-${n}`);
                     if (correctBtn) {
                         const badge = correctBtn.querySelector('.color-badge');
                         let colorMatch = window.getComputedStyle(badge).backgroundImage.match(/rgb\([^)]+\)/g);
@@ -1280,10 +1276,9 @@
                         correctBtn.style.setProperty('--light-color', targetColor);
                         correctBtn.classList.add('playing');
                     }
+                    let soundSource = ['rhodes', 'guitar', 'organ', 'bells'].includes(currentInteractiveSubSelection) ? currentInteractiveSubSelection : 'ravenscroft';
+                    triggerInstrumentAudioOnly(n, soundSource);
                 });
-                
-                triggerInstrumentAudioOnly(targetActiveTestNotes, currentInteractiveSubSelection);
-                hasAnsweringAttemptedOnCurrentNote = true;
             }
             return;
         }
@@ -1330,7 +1325,7 @@
                 playTargetBuffer(voiceBuffers[choice], vocalGainNode);
             }
         } else if (currentAudioMode === 'test-mode') {
-            if (currentTestSubSelection === 'ravenscroft' || ['dyad', 'chord', 'major', 'minor', 'diminished', 'augmented'].includes(currentTestSubSelection)) {
+            if (currentTestSubSelection === 'ravenscroft' || ['dyad', 'chord3', 'major', 'minor', 'diminished', 'augmented'].includes(currentTestSubSelection)) {
                 playTargetBuffer(ravenscroftBuffers[choice], generalGainNode);
             } else if (currentTestSubSelection === 'bells') {
                 playTargetBuffer(bellBuffers[choice], generalGainNode);
