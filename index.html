@@ -1,5 +1,6 @@
 
-<html  lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -677,8 +678,8 @@
                             <div class="test-go-split-container">
                                 <button class="test-go-btn white-only-btn" id="test-go-white" onclick="playRandomTestNote(true)">WHITE KEYS <span class="go-box">GO</span> ⚡</button>
                                 <button class="test-go-btn" id="test-go-all" onclick="playRandomTestNote(false)">ALL KEYS <span class="go-box">GO</span> ⚡</button>
-                                <button class="test-go-btn" id="test-go-dyad" style="background:#277da1" onclick="playRandomPolyphonicNotes(2, false)">DYAD (2 NOTES) <span class="go-box">GO</span> ⚡</button>
-                                <button class="test-go-btn" id="test-go-chord" style="background:#6a4c93" onclick="playRandomPolyphonicNotes(3, false)">CHORD (3 NOTES) <span class="go-box">GO</span> ⚡</button>
+                                <button class="test-go-btn white-only-btn" id="test-go-dyad" onclick="playMultiNotes(2, true)">DYAD (2 NOTES) <span class="go-box">GO</span> ⚡</button>
+                                <button class="test-go-btn" id="test-go-chord" onclick="playMultiNotes(3, true)">CHORD (3 NOTES) <span class="go-box">GO</span> ⚡</button>
                             </div>
                         </div>
                     </div>
@@ -700,8 +701,8 @@
                             <div class="test-go-split-container" id="inter-go-wrapper-row">
                                 <button class="test-go-btn white-only-btn" id="inter-go-white" onclick="playInteractiveTestNote(true)">WHITE KEYS <span class="go-box">GO</span> ⚡</button>
                                 <button class="test-go-btn" id="inter-go-all" onclick="playInteractiveTestNote(false)">ALL KEYS <span class="go-box">GO</span> ⚡</button>
-                                <button class="test-go-btn" id="inter-go-dyad" style="background:#277da1" onclick="playInteractivePolyphonicNotes(2)">DYAD (2 NOTES) <span class="go-box">GO</span> ⚡</button>
-                                <button class="test-go-btn" id="inter-go-chord" style="background:#6a4c93" onclick="playInteractivePolyphonicNotes(3)">CHORD (3 NOTES) <span class="go-box">GO</span> ⚡</button>
+                                <button class="test-go-btn white-only-btn" id="inter-go-dyad" onclick="playMultiNotes(2, false)">DYAD (2 NOTES) <span class="go-box">GO</span> ⚡</button>
+                                <button class="test-go-btn" id="inter-go-chord" onclick="playMultiNotes(3, false)">CHORD (3 NOTES) <span class="go-box">GO</span> ⚡</button>
                             </div>
                         </div>
                     </div>
@@ -772,8 +773,8 @@
     let currentTestSubSelection = 'ravenscroft'; 
     let currentInteractiveSubSelection = 'ravenscroft';
     let targetActiveTestNote = null; 
-    let targetActiveTestNotes = [];
-    let userSelectedTestNotes = [];
+    let targetActiveTestNotes = []; 
+    let currentInteractiveCorrectNotes = [];
     let hasAnsweringAttemptedOnCurrentNote = false; 
     let isCurrentlyLocked = false;
     let lockedScrollTop = 0;
@@ -872,7 +873,7 @@
         if(mode !== 'interactive-test') {
             targetActiveTestNote = null;
             targetActiveTestNotes = [];
-            userSelectedTestNotes = [];
+            currentInteractiveCorrectNotes = [];
             hasAnsweringAttemptedOnCurrentNote = false;
             document.getElementById('inter-go-wrapper-row').classList.remove('hidden-btn');
             clearAllFlashEffects();
@@ -927,7 +928,7 @@
         document.getElementById('inter-go-wrapper-row').classList.remove('hidden-btn');
         targetActiveTestNote = null;
         targetActiveTestNotes = [];
-        userSelectedTestNotes = [];
+        currentInteractiveCorrectNotes = [];
     }
 
     function clearAllFlashEffects() {
@@ -936,41 +937,49 @@
         });
     }
 
-    function getOctaveSpanNotes(count) {
-        const lowestIndex = Math.floor(Math.random() * (progression.length - 12));
-        const maxIndex = Math.min(lowestIndex + 12, progression.length - 1);
-        const availableIndexes = [];
-        for (let i = lowestIndex; i <= maxIndex; i++) availableIndexes.push(i);
+    function getRandomNotesWithinOctave(count) {
+        const maxRange = 12; // Octave distance maximum span
+        const lowestIndex = Math.floor(Math.random() * (progression.length - maxRange));
+        const highestIndex = lowestIndex + maxRange;
         
-        const selected = [];
-        while (selected.length < count && availableIndexes.length > 0) {
-            const randIdx = Math.floor(Math.random() * availableIndexes.length);
-            selected.push(progression[availableIndexes[randIdx]].id);
-            availableIndexes.splice(randIdx, 1);
+        const availableIndices = [];
+        for (let i = lowestIndex; i <= highestIndex; i++) {
+            availableIndices.push(i);
         }
-        return selected;
+        
+        // Shuffle and take requested count
+        const selectedNotes = [];
+        while (selectedNotes.length < count && availableIndices.length > 0) {
+            const randPos = Math.floor(Math.random() * availableIndices.length);
+            const indexChoice = availableIndices.splice(randPos, 1)[0];
+            selectedNotes.push(progression[indexChoice].id);
+        }
+        return selectedNotes;
     }
 
-    function playRandomPolyphonicNotes(count, whiteKeysOnly = false) {
-        setAudioMode('test-mode');
+    function playMultiNotes(count, isPracticeMode) {
+        const mode = isPracticeMode ? 'test-mode' : 'interactive-test';
+        setAudioMode(mode);
         clearAllFlashEffects();
 
-        const selectedNotes = getOctaveSpanNotes(count);
-        selectedNotes.forEach(noteId => executeAudioPlay(noteId));
-    }
+        const selectedNotes = getRandomNotesWithinOctave(count);
 
-    function playInteractivePolyphonicNotes(count) {
-        setAudioMode('interactive-test');
-        clearAllFlashEffects();
-        
-        document.getElementById('inter-go-wrapper-row').classList.add('hidden-btn');
+        if (isPracticeMode) {
+            selectedNotes.forEach(noteId => {
+                triggerLightEffect(noteId);
+                executeAudioPlay(noteId);
+            });
+        } else {
+            document.getElementById('inter-go-wrapper-row').classList.add('hidden-btn');
+            targetActiveTestNotes = [...selectedNotes];
+            targetActiveTestNote = null;
+            currentInteractiveCorrectNotes = [];
+            hasAnsweringAttemptedOnCurrentNote = false;
 
-        targetActiveTestNotes = getOctaveSpanNotes(count);
-        targetActiveTestNote = null;
-        userSelectedTestNotes = [];
-        hasAnsweringAttemptedOnCurrentNote = false; 
-        
-        targetActiveTestNotes.forEach(noteId => triggerInstrumentAudioOnly(noteId, currentInteractiveSubSelection));
+            selectedNotes.forEach(noteId => {
+                triggerInstrumentAudioOnly(noteId, currentInteractiveSubSelection);
+            });
+        }
     }
 
     function playRandomTestNote(whiteKeysOnly = false) {
@@ -997,7 +1006,7 @@
         const randomIndex = Math.floor(Math.random() * eligibleNotes.length);
         targetActiveTestNote = eligibleNotes[randomIndex].id;
         targetActiveTestNotes = [];
-        userSelectedTestNotes = [];
+        currentInteractiveCorrectNotes = [];
         hasAnsweringAttemptedOnCurrentNote = false; 
         
         triggerInstrumentAudioOnly(targetActiveTestNote, currentInteractiveSubSelection);
@@ -1185,8 +1194,6 @@
     loadAllSounds();
 
     function triggerLightEffect(choice) {
-        clearAllFlashEffects();
-
         const btn = document.getElementById(`btn-${choice}`);
         if (!btn) return;
         const badge = btn.querySelector('.color-badge');
@@ -1204,53 +1211,12 @@
     }
 
     function handleInput(choice) {
-        if (currentAudioMode === 'interactive-test') {
-            if (targetActiveTestNotes.length > 0) {
-                const chosenBtn = document.getElementById(`btn-${choice}`);
-                triggerInstrumentAudioOnly(choice, currentInteractiveSubSelection);
-
-                if (!userSelectedTestNotes.includes(choice)) {
-                    userSelectedTestNotes.push(choice);
-                }
-
-                if (targetActiveTestNotes.includes(choice)) {
-                    if (chosenBtn) chosenBtn.classList.add('success-flash');
-                } else {
-                    if (chosenBtn) chosenBtn.classList.add('error-flash');
-                }
-
-                if (userSelectedTestNotes.length === targetActiveTestNotes.length) {
-                    const isCorrect = targetActiveTestNotes.every(note => userSelectedTestNotes.includes(note));
-                    if (isCorrect) {
-                        const count = targetActiveTestNotes.length;
-                        targetActiveTestNotes = [];
-                        userSelectedTestNotes = [];
-                        setTimeout(() => playInteractivePolyphonicNotes(count), 1200);
-                    } else {
-                        targetActiveTestNotes.forEach(correctNote => {
-                            const cBtn = document.getElementById(`btn-${correctNote}`);
-                            if (cBtn) {
-                                const badge = cBtn.querySelector('.color-badge');
-                                let colorMatch = window.getComputedStyle(badge).backgroundImage.match(/rgb\([^)]+\)/g);
-                                let targetColor = colorMatch ? (colorMatch[1] || colorMatch[0]) : "rgba(255, 255, 255, 1)";
-                                cBtn.style.setProperty('--light-color', targetColor);
-                                cBtn.classList.add('playing');
-                            }
-                        });
-                        const currentTargetNotes = [...targetActiveTestNotes];
-                        userSelectedTestNotes = [];
-                        setTimeout(() => {
-                            currentTargetNotes.forEach(n => triggerInstrumentAudioOnly(n, currentInteractiveSubSelection));
-                        }, 600);
-                    }
-                }
-                return;
-            }
-
+        if (currentAudioMode === 'interactive-test' && (targetActiveTestNote !== null || targetActiveTestNotes.length > 0)) {
+            const chosenBtn = document.getElementById(`btn-${choice}`);
+            
+            // Single target note handling
             if (targetActiveTestNote !== null) {
-                const chosenBtn = document.getElementById(`btn-${choice}`);
                 const correctBtn = document.getElementById(`btn-${targetActiveTestNote}`);
-                
                 if (choice === targetActiveTestNote) {
                     clearAllFlashEffects();
                     if (chosenBtn) chosenBtn.classList.add('success-flash');
@@ -1276,6 +1242,41 @@
                     
                     triggerInstrumentAudioOnly(targetActiveTestNote, currentInteractiveSubSelection);
                     hasAnsweringAttemptedOnCurrentNote = true;
+                }
+                return;
+            }
+
+            // Multi-note dyad/chord handling
+            if (targetActiveTestNotes.length > 0) {
+                if (targetActiveTestNotes.includes(choice)) {
+                    if (!currentInteractiveCorrectNotes.includes(choice)) {
+                        currentInteractiveCorrectNotes.push(choice);
+                        if (chosenBtn) chosenBtn.classList.add('success-flash');
+                        triggerInstrumentAudioOnly(choice, currentInteractiveSubSelection);
+                    }
+                    
+                    // All notes in set correctly pressed
+                    if (currentInteractiveCorrectNotes.length === targetActiveTestNotes.length) {
+                        const chordCount = targetActiveTestNotes.length;
+                        targetActiveTestNotes = [];
+                        currentInteractiveCorrectNotes = [];
+                        setTimeout(() => {
+                            playMultiNotes(chordCount, false);
+                        }, 1200);
+                    }
+                } else {
+                    if (chosenBtn) chosenBtn.classList.add('error-flash');
+                    targetActiveTestNotes.forEach(nId => {
+                        const cBtn = document.getElementById(`btn-${nId}`);
+                        if (cBtn) {
+                            const badge = cBtn.querySelector('.color-badge');
+                            let colorMatch = window.getComputedStyle(badge).backgroundImage.match(/rgb\([^)]+\)/g);
+                            let targetColor = colorMatch ? (colorMatch[1] || colorMatch[0]) : "rgba(255, 255, 255, 1)";
+                            cBtn.style.setProperty('--light-color', targetColor);
+                            cBtn.classList.add('playing');
+                        }
+                        triggerInstrumentAudioOnly(nId, currentInteractiveSubSelection);
+                    });
                 }
                 return;
             }
