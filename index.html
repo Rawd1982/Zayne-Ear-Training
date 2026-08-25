@@ -1015,12 +1015,31 @@
         });
     }
 
+    /* Updated to generate random variable interval gaps within up to 1 octave range */
     function getRandomNotesWithinOctave(count, whiteOnly = false) {
         let pool = whiteOnly ? progression.filter(n => n.type === 'white') : progression;
-        let startIndex = Math.floor(Math.random() * (pool.length - 8));
         let selected = [];
-        for (let i = 0; i < count; i++) {
-            selected.push(pool[startIndex + (i * 2)].id);
+        
+        let maxSpan = 12; // Octave span
+        let rootIndex = Math.floor(Math.random() * (pool.length - maxSpan));
+        selected.push(pool[rootIndex].id);
+
+        if (count === 2) {
+            // Random interval step between 1 (m2/step) and 12 (Octave)
+            let interval = Math.floor(Math.random() * 12) + 1;
+            let secondIndex = Math.min(rootIndex + interval, pool.length - 1);
+            selected.push(pool[secondIndex].id);
+        } else if (count === 3) {
+            // Random first interval gap (1 to 6 steps)
+            let gap1 = Math.floor(Math.random() * 6) + 1;
+            // Random second interval gap (1 to 6 steps)
+            let gap2 = Math.floor(Math.random() * 6) + 1;
+            
+            let secondIndex = Math.min(rootIndex + gap1, pool.length - 2);
+            let thirdIndex = Math.min(secondIndex + gap2, pool.length - 1);
+            
+            selected.push(pool[secondIndex].id);
+            selected.push(pool[thirdIndex].id);
         }
         return selected;
     }
@@ -1251,6 +1270,7 @@
         }
     }
 
+    /* Handler updated to play selected sound in Practice Mode via manual key strikes */
     function handleInput(choice) {
         if (currentAudioMode === 'interactive-test' && targetActiveTestNotes.length > 0) {
             const chosenBtn = document.getElementById(`btn-${choice}`);
@@ -1284,6 +1304,11 @@
                     triggerInstrumentAudioOnly(n, activeInteractiveSound);
                 });
             }
+            return;
+        }
+
+        if (currentAudioMode === 'test-mode') {
+            playPracticeSound(choice, activePracticeSound);
             return;
         }
 
