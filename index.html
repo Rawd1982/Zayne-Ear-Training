@@ -142,7 +142,7 @@
             background: #e65c40;
             border: 1px solid transparent;
             color: white;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-weight: 900;
             border-radius: 4px;
             cursor: pointer;
@@ -152,30 +152,31 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 2px;
+            gap: 4px;
         }
 
         .trigger-repeat-btn {
-            flex: 1.2;
+            flex: 1;
             height: 32px;
-            background: #0d9488;
+            background: #3b82f6;
             border: 1px solid transparent;
             color: white;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 900;
             border-radius: 4px;
             cursor: pointer;
             letter-spacing: 0.5px;
-            box-shadow: 0 2px 8px rgba(13, 148, 136, 0.4);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
             transition: transform 0.05s, background 0.1s;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 2px;
+            gap: 4px;
         }
 
         .trigger-go-btn:active, .trigger-repeat-btn:active {
             transform: scale(0.97);
+            filter: brightness(0.9);
         }
 
         @media (max-width: 992px) {
@@ -694,7 +695,7 @@
                             <button class="test-sub-btn" id="test-sub-rhodes" onclick="setTestSubMode('rhodes')">Rhodes</button>
                             <button class="test-sub-btn" id="test-sub-guitar" onclick="setTestSubMode('guitar')">Guitar</button>
                             <button class="test-sub-btn" id="test-sub-organ" onclick="setTestSubMode('organ')">Organ</button>
-                            <button class="test-sub-btn" id="test-sub-single" onclick="setTestSubMode('single')">Single Note</button>
+                            <button class="test-sub-btn active" id="test-sub-single" onclick="setTestSubMode('single')">Single Note</button>
                             <button class="test-sub-btn" id="test-sub-dyad" onclick="setTestSubMode('dyad')">Dyad (2 Notes)</button>
                             <button class="test-sub-btn" id="test-sub-chord3" onclick="setTestSubMode('chord3')">3-Note Chord</button>
                             <button class="test-sub-btn" id="test-sub-major" onclick="setTestSubMode('major')">Major Chord</button>
@@ -705,7 +706,7 @@
                         <div class="go-action-bar">
                             <button class="key-select-btn" id="practice-key-white" onclick="setPracticeKeyMode(true)">WHITE KEYS</button>
                             <button class="key-select-btn active" id="practice-key-all" onclick="setPracticeKeyMode(false)">ALL KEYS</button>
-                            <button class="trigger-repeat-btn" onclick="repeatLastSound()">REPEAT 🔁</button>
+                            <button class="trigger-repeat-btn" onclick="repeatPracticeSound()">REPEAT 🔁</button>
                             <button class="trigger-go-btn" onclick="triggerPracticeGo()">GO ⚡</button>
                         </div>
                     </div>
@@ -720,14 +721,18 @@
                             <button class="test-sub-btn" id="inter-sub-rhodes" onclick="setInteractiveSubMode('rhodes')">Rhodes</button>
                             <button class="test-sub-btn" id="inter-sub-guitar" onclick="setInteractiveSubMode('guitar')">Guitar</button>
                             <button class="test-sub-btn" id="inter-sub-organ" onclick="setInteractiveSubMode('organ')">Organ</button>
-                            <button class="test-sub-btn" id="inter-sub-single" onclick="setInteractiveSubMode('single')">Single Note</button>
+                            <button class="test-sub-btn active" id="inter-sub-single" onclick="setInteractiveSubMode('single')">Single Note</button>
                             <button class="test-sub-btn" id="inter-sub-dyad" onclick="setInteractiveSubMode('dyad')">Dyad Test</button>
                             <button class="test-sub-btn" id="inter-sub-chord3" onclick="setInteractiveSubMode('chord3')">3-Note Test</button>
+                            <button class="test-sub-btn" id="inter-sub-major" onclick="setInteractiveSubMode('major')">Major Chord</button>
+                            <button class="test-sub-btn" id="inter-sub-minor" onclick="setInteractiveSubMode('minor')">Minor Chord</button>
+                            <button class="test-sub-btn" id="inter-sub-diminished" onclick="setInteractiveSubMode('diminished')">Diminished</button>
+                            <button class="test-sub-btn" id="inter-sub-augmented" onclick="setInteractiveSubMode('augmented')">Augmented</button>
                         </div>
                         <div class="go-action-bar">
                             <button class="key-select-btn" id="inter-key-white" onclick="setInteractiveKeyMode(true)">WHITE KEYS</button>
                             <button class="key-select-btn active" id="inter-key-all" onclick="setInteractiveKeyMode(false)">ALL KEYS</button>
-                            <button class="trigger-repeat-btn" onclick="repeatLastSound()">REPEAT 🔁</button>
+                            <button class="trigger-repeat-btn" onclick="repeatInteractiveSound()">REPEAT 🔁</button>
                             <button class="trigger-go-btn" onclick="triggerInteractiveGo()">GO ⚡</button>
                         </div>
                     </div>
@@ -798,6 +803,7 @@
     let activePracticeSound = 'ravenscroft';
     let activePracticeType = 'single';
     let practiceWhiteKeysOnly = false;
+    let lastPracticeNotesPlayed = [];
 
     let activeInteractiveSound = 'ravenscroft';
     let activeInteractiveType = 'single';
@@ -806,7 +812,6 @@
     let targetActiveTestNote = null; 
     let targetActiveTestNotes = [];
     let userInteractiveSelectedNotes = [];
-    let lastPracticeNotes = [];
     let isCurrentlyLocked = false;
     let lockedScrollTop = 0;
 
@@ -961,36 +966,33 @@
         clearAllFlashEffects();
 
         let eligibleNotes = practiceWhiteKeysOnly ? progression.filter(n => n.type === 'white') : progression;
+        lastPracticeNotesPlayed = [];
 
         if (activePracticeType === 'single') {
             let selectedNote = eligibleNotes[Math.floor(Math.random() * eligibleNotes.length)].id;
-            lastPracticeNotes = [selectedNote];
-            playPracticeSound(selectedNote, activePracticeSound);
+            lastPracticeNotesPlayed = [selectedNote];
         } else if (activePracticeType === 'dyad') {
-            lastPracticeNotes = getRandomNotesWithinOctave(2, practiceWhiteKeysOnly);
-            lastPracticeNotes.forEach(n => playPracticeSound(n, activePracticeSound));
+            lastPracticeNotesPlayed = getRandomNotesWithinOctave(2, practiceWhiteKeysOnly);
         } else if (activePracticeType === 'chord3') {
-            lastPracticeNotes = getRandomNotesWithinOctave(3, practiceWhiteKeysOnly);
-            lastPracticeNotes.forEach(n => playPracticeSound(n, activePracticeSound));
+            lastPracticeNotesPlayed = getRandomNotesWithinOctave(3, practiceWhiteKeysOnly);
         } else if (['major', 'minor', 'diminished', 'augmented'].includes(activePracticeType)) {
-            lastPracticeNotes = getChordNotes(activePracticeType, practiceWhiteKeysOnly);
-            lastPracticeNotes.forEach(n => playPracticeSound(n, activePracticeSound));
+            lastPracticeNotesPlayed = getChordNotes(activePracticeType, practiceWhiteKeysOnly);
         }
+
+        lastPracticeNotesPlayed.forEach(n => playPracticeSound(n, activePracticeSound));
     }
 
-    function repeatLastSound() {
-        if (currentAudioMode === 'interactive-test' && targetActiveTestNotes.length > 0) {
-            targetActiveTestNotes.forEach(n => triggerInstrumentAudioOnly(n, activeInteractiveSound));
-        } else if (currentAudioMode === 'test-mode' && lastPracticeNotes.length > 0) {
-            lastPracticeNotes.forEach(n => playPracticeSound(n, activePracticeSound));
-        }
+    function repeatPracticeSound() {
+        if (lastPracticeNotesPlayed.length === 0) return;
+        clearAllFlashEffects();
+        lastPracticeNotesPlayed.forEach(n => playPracticeSound(n, activePracticeSound));
     }
 
     function setInteractiveSubMode(type) {
         if (isCurrentlyLocked) return;
         
         const sounds = ['ravenscroft', 'bells', 'rhodes', 'guitar', 'organ'];
-        const types = ['single', 'dyad', 'chord3'];
+        const types = ['single', 'dyad', 'chord3', 'major', 'minor', 'diminished', 'augmented'];
 
         if (sounds.includes(type)) {
             activeInteractiveSound = type;
@@ -1006,7 +1008,7 @@
                 const el = document.getElementById(`inter-sub-${t}`);
                 if (el) el.classList.remove('active');
             });
-            const typeEl = document.getElementById(`inter-sub-${t}`);
+            const typeEl = document.getElementById(`inter-sub-${type}`);
             if (typeEl) typeEl.classList.add('active');
         }
 
@@ -1033,9 +1035,23 @@
             targetActiveTestNotes = getRandomNotesWithinOctave(2, interactiveWhiteKeysOnly);
         } else if (activeInteractiveType === 'chord3') {
             targetActiveTestNotes = getRandomNotesWithinOctave(3, interactiveWhiteKeysOnly);
+        } else if (['major', 'minor', 'diminished', 'augmented'].includes(activeInteractiveType)) {
+            targetActiveTestNotes = getChordNotes(activeInteractiveType, interactiveWhiteKeysOnly);
         }
 
-        targetActiveTestNotes.forEach(n => triggerInstrumentAudioOnly(n, activeInteractiveSound));
+        targetActiveTestNotes.forEach(n => {
+            triggerLightEffect(n);
+            triggerInstrumentAudioOnly(n, activeInteractiveSound);
+        });
+    }
+
+    function repeatInteractiveSound() {
+        if (targetActiveTestNotes.length === 0) return;
+        clearAllFlashEffects();
+        targetActiveTestNotes.forEach(n => {
+            triggerLightEffect(n);
+            triggerInstrumentAudioOnly(n, activeInteractiveSound);
+        });
     }
 
     function clearAllFlashEffects() {
@@ -1046,22 +1062,23 @@
 
     function getRandomNotesWithinOctave(count, whiteOnly = false) {
         let pool = whiteOnly ? progression.filter(n => n.type === 'white') : progression;
-        let selectedIndices = [];
-        
         let rootIdx = Math.floor(Math.random() * (pool.length - 12));
-        selectedIndices.push(rootIdx);
+        let selected = [pool[rootIdx].id];
         
-        if (count === 2) {
-            let interval = Math.floor(Math.random() * 12) + 1;
-            selectedIndices.push(rootIdx + interval);
-        } else if (count === 3) {
-            let interval1 = Math.floor(Math.random() * 6) + 1;
-            let interval2 = Math.floor(Math.random() * 6) + 1;
-            selectedIndices.push(rootIdx + interval1);
-            selectedIndices.push(rootIdx + interval1 + interval2);
+        let availableSubPool = [];
+        for (let i = rootIdx + 1; i <= rootIdx + 12 && i < pool.length; i++) {
+            availableSubPool.push(pool[i].id);
         }
-        
-        return selectedIndices.map(idx => pool[Math.min(idx, pool.length - 1)].id);
+
+        while (selected.length < count && availableSubPool.length > 0) {
+            let randomIndex = Math.floor(Math.random() * availableSubPool.length);
+            let chosen = availableSubPool.splice(randomIndex, 1)[0];
+            selected.push(chosen);
+        }
+
+        return selected.sort((a, b) => {
+            return progression.findIndex(n => n.id === a) - progression.findIndex(n => n.id === b);
+        });
     }
 
     function getChordNotes(type, whiteOnly = false) {
@@ -1312,14 +1329,7 @@
             } else {
                 if (chosenBtn) chosenBtn.classList.add('error-flash');
                 targetActiveTestNotes.forEach(n => {
-                    const correctBtn = document.getElementById(`btn-${n}`);
-                    if (correctBtn) {
-                        const badge = correctBtn.querySelector('.color-badge');
-                        let colorMatch = window.getComputedStyle(badge).backgroundImage.match(/rgb\([^)]+\)/g);
-                        let targetColor = colorMatch ? (colorMatch[1] || colorMatch[0]) : "rgba(255, 255, 255, 1)";
-                        correctBtn.style.setProperty('--light-color', targetColor);
-                        correctBtn.classList.add('playing');
-                    }
+                    triggerLightEffect(n);
                     triggerInstrumentAudioOnly(n, activeInteractiveSound);
                 });
             }
@@ -1328,7 +1338,6 @@
 
         if (currentAudioMode === 'test-mode') {
             playPracticeSound(choice, activePracticeSound);
-            lastPracticeNotes = [choice];
             return;
         }
 
