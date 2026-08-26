@@ -100,7 +100,6 @@
             align-items: center;
         }
 
-        /* Action Bar for GO Trigger */
         .go-action-bar {
             display: flex;
             gap: 6px;
@@ -143,7 +142,7 @@
             background: #e65c40;
             border: 1px solid transparent;
             color: white;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 900;
             border-radius: 4px;
             cursor: pointer;
@@ -153,12 +152,30 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 4px;
+            gap: 2px;
         }
 
-        .trigger-go-btn:active {
+        .trigger-repeat-btn {
+            flex: 1.2;
+            height: 32px;
+            background: #0d9488;
+            border: 1px solid transparent;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 900;
+            border-radius: 4px;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(13, 148, 136, 0.4);
+            transition: transform 0.05s, background 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+        }
+
+        .trigger-go-btn:active, .trigger-repeat-btn:active {
             transform: scale(0.97);
-            background: #c75b20;
         }
 
         @media (max-width: 992px) {
@@ -688,6 +705,7 @@
                         <div class="go-action-bar">
                             <button class="key-select-btn" id="practice-key-white" onclick="setPracticeKeyMode(true)">WHITE KEYS</button>
                             <button class="key-select-btn active" id="practice-key-all" onclick="setPracticeKeyMode(false)">ALL KEYS</button>
+                            <button class="trigger-repeat-btn" onclick="repeatLastSound()">REPEAT 🔁</button>
                             <button class="trigger-go-btn" onclick="triggerPracticeGo()">GO ⚡</button>
                         </div>
                     </div>
@@ -709,6 +727,7 @@
                         <div class="go-action-bar">
                             <button class="key-select-btn" id="inter-key-white" onclick="setInteractiveKeyMode(true)">WHITE KEYS</button>
                             <button class="key-select-btn active" id="inter-key-all" onclick="setInteractiveKeyMode(false)">ALL KEYS</button>
+                            <button class="trigger-repeat-btn" onclick="repeatLastSound()">REPEAT 🔁</button>
                             <button class="trigger-go-btn" onclick="triggerInteractiveGo()">GO ⚡</button>
                         </div>
                     </div>
@@ -787,6 +806,7 @@
     let targetActiveTestNote = null; 
     let targetActiveTestNotes = [];
     let userInteractiveSelectedNotes = [];
+    let lastPracticeNotes = [];
     let isCurrentlyLocked = false;
     let lockedScrollTop = 0;
 
@@ -944,16 +964,25 @@
 
         if (activePracticeType === 'single') {
             let selectedNote = eligibleNotes[Math.floor(Math.random() * eligibleNotes.length)].id;
+            lastPracticeNotes = [selectedNote];
             playPracticeSound(selectedNote, activePracticeSound);
         } else if (activePracticeType === 'dyad') {
-            let notes = getRandomNotesWithinOctave(2, practiceWhiteKeysOnly);
-            notes.forEach(n => playPracticeSound(n, activePracticeSound));
+            lastPracticeNotes = getRandomNotesWithinOctave(2, practiceWhiteKeysOnly);
+            lastPracticeNotes.forEach(n => playPracticeSound(n, activePracticeSound));
         } else if (activePracticeType === 'chord3') {
-            let notes = getRandomNotesWithinOctave(3, practiceWhiteKeysOnly);
-            notes.forEach(n => playPracticeSound(n, activePracticeSound));
+            lastPracticeNotes = getRandomNotesWithinOctave(3, practiceWhiteKeysOnly);
+            lastPracticeNotes.forEach(n => playPracticeSound(n, activePracticeSound));
         } else if (['major', 'minor', 'diminished', 'augmented'].includes(activePracticeType)) {
-            let notes = getChordNotes(activePracticeType, practiceWhiteKeysOnly);
-            notes.forEach(n => playPracticeSound(n, activePracticeSound));
+            lastPracticeNotes = getChordNotes(activePracticeType, practiceWhiteKeysOnly);
+            lastPracticeNotes.forEach(n => playPracticeSound(n, activePracticeSound));
+        }
+    }
+
+    function repeatLastSound() {
+        if (currentAudioMode === 'interactive-test' && targetActiveTestNotes.length > 0) {
+            targetActiveTestNotes.forEach(n => triggerInstrumentAudioOnly(n, activeInteractiveSound));
+        } else if (currentAudioMode === 'test-mode' && lastPracticeNotes.length > 0) {
+            lastPracticeNotes.forEach(n => playPracticeSound(n, activePracticeSound));
         }
     }
 
@@ -1015,33 +1044,24 @@
         });
     }
 
-    /* Updated to generate random variable interval gaps within up to 1 octave range */
     function getRandomNotesWithinOctave(count, whiteOnly = false) {
         let pool = whiteOnly ? progression.filter(n => n.type === 'white') : progression;
-        let selected = [];
+        let selectedIndices = [];
         
-        let maxSpan = 12; // Octave span
-        let rootIndex = Math.floor(Math.random() * (pool.length - maxSpan));
-        selected.push(pool[rootIndex].id);
-
+        let rootIdx = Math.floor(Math.random() * (pool.length - 12));
+        selectedIndices.push(rootIdx);
+        
         if (count === 2) {
-            // Random interval step between 1 (m2/step) and 12 (Octave)
             let interval = Math.floor(Math.random() * 12) + 1;
-            let secondIndex = Math.min(rootIndex + interval, pool.length - 1);
-            selected.push(pool[secondIndex].id);
+            selectedIndices.push(rootIdx + interval);
         } else if (count === 3) {
-            // Random first interval gap (1 to 6 steps)
-            let gap1 = Math.floor(Math.random() * 6) + 1;
-            // Random second interval gap (1 to 6 steps)
-            let gap2 = Math.floor(Math.random() * 6) + 1;
-            
-            let secondIndex = Math.min(rootIndex + gap1, pool.length - 2);
-            let thirdIndex = Math.min(secondIndex + gap2, pool.length - 1);
-            
-            selected.push(pool[secondIndex].id);
-            selected.push(pool[thirdIndex].id);
+            let interval1 = Math.floor(Math.random() * 6) + 1;
+            let interval2 = Math.floor(Math.random() * 6) + 1;
+            selectedIndices.push(rootIdx + interval1);
+            selectedIndices.push(rootIdx + interval1 + interval2);
         }
-        return selected;
+        
+        return selectedIndices.map(idx => pool[Math.min(idx, pool.length - 1)].id);
     }
 
     function getChordNotes(type, whiteOnly = false) {
@@ -1270,7 +1290,6 @@
         }
     }
 
-    /* Handler updated to play selected sound in Practice Mode via manual key strikes */
     function handleInput(choice) {
         if (currentAudioMode === 'interactive-test' && targetActiveTestNotes.length > 0) {
             const chosenBtn = document.getElementById(`btn-${choice}`);
@@ -1309,6 +1328,7 @@
 
         if (currentAudioMode === 'test-mode') {
             playPracticeSound(choice, activePracticeSound);
+            lastPracticeNotes = [choice];
             return;
         }
 
