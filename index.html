@@ -1,4 +1,5 @@
 
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -700,7 +701,9 @@
                             <button class="test-sub-btn" id="test-sub-organ" onclick="setTestSubMode('organ')">Organ</button>
                             <button class="test-sub-btn active" id="test-sub-single" onclick="setTestSubMode('single')">Single Note</button>
                             <button class="test-sub-btn" id="test-sub-dyad" onclick="setTestSubMode('dyad')">Dyad (2 Notes)</button>
+                            <button class="test-sub-btn" id="test-sub-dyadseq" onclick="setTestSubMode('dyadseq')">Dyad Sequence</button>
                             <button class="test-sub-btn" id="test-sub-chord3" onclick="setTestSubMode('chord3')">3-Note Chord</button>
+                            <button class="test-sub-btn" id="test-sub-chord3seq" onclick="setTestSubMode('chord3seq')">3-Note Sequence</button>
                             <button class="test-sub-btn" id="test-sub-major" onclick="setTestSubMode('major')">Major Chord</button>
                             <button class="test-sub-btn" id="test-sub-minor" onclick="setTestSubMode('minor')">Minor Chord</button>
                             <button class="test-sub-btn" id="test-sub-diminished" onclick="setTestSubMode('diminished')">Diminished</button>
@@ -726,7 +729,9 @@
                             <button class="test-sub-btn" id="inter-sub-organ" onclick="setInteractiveSubMode('organ')">Organ</button>
                             <button class="test-sub-btn active" id="inter-sub-single" onclick="setInteractiveSubMode('single')">Single Note</button>
                             <button class="test-sub-btn" id="inter-sub-dyad" onclick="setInteractiveSubMode('dyad')">Dyad Test</button>
+                            <button class="test-sub-btn" id="inter-sub-dyadseq" onclick="setInteractiveSubMode('dyadseq')">Dyad Sequence</button>
                             <button class="test-sub-btn" id="inter-sub-chord3" onclick="setInteractiveSubMode('chord3')">3-Note Test</button>
+                            <button class="test-sub-btn" id="inter-sub-chord3seq" onclick="setInteractiveSubMode('chord3seq')">3-Note Sequence</button>
                             <button class="test-sub-btn" id="inter-sub-major" onclick="setInteractiveSubMode('major')">Major Chord</button>
                             <button class="test-sub-btn" id="inter-sub-minor" onclick="setInteractiveSubMode('minor')">Minor Chord</button>
                             <button class="test-sub-btn" id="inter-sub-diminished" onclick="setInteractiveSubMode('diminished')">Diminished</button>
@@ -748,7 +753,7 @@
             <div class="progress-container">
                 <div class="progress-bar" id="progressBar"></div>
             </div>
-            <div id="msg" style="color: #d62828;">LOADING...</div>
+            <div id="msg" style="color: #d62828;">LOADING SAMPLES...</div>
         </div>
 
         <div class="slide-lock-container hidden" id="lockInterface">
@@ -812,149 +817,200 @@
     let activeInteractiveType = 'single';
     let interactiveWhiteKeysOnly = false;
 
-    let targetActiveTestNote = null; 
-    let targetActiveTestNotes = [];
-    let userInteractiveSelectedNotes = [];
-    let isCurrentlyLocked = false;
-    let lockedScrollTop = 0;
+    let targetInteractiveNotes = [];
+    let userInteractiveSelections = [];
+    let interactiveActive = false;
 
-    const progression = [
-        { id: "G3",  solfege: "So 3", display: "G", voiceWav: "So 3.wav",  bellSourceFile: "So 3 Bell.wav",  bellRate: 1.0, type: "white", style: "G3" },
-        { id: "Ab3", solfege: "Si 3", display: { sharp: "G#", flat: "Ab" }, voiceWav: "Si 3.wav",  bellSourceFile: "Si 3 Bell.wav",  bellRate: 1.0, type: "black", style: "Ab3" },
-        { id: "A3",  solfege: "La 3", display: "A", voiceWav: "La 3.wav",  bellSourceFile: "La 3 Bell.wav",  bellRate: 1.0, type: "white", style: "A3" },
-        { id: "Bb3", solfege: "Te 3", display: { sharp: "A#", flat: "Bb" }, voiceWav: "Te 3.wav",  bellSourceFile: "Te 3 Bell.wav",  bellRate: 1.0, type: "black", style: "Bb3" },
-        { id: "B3",  solfege: "Ti 3", display: "B", voiceWav: "Ti 3.wav",  bellSourceFile: "Ti 3 Bell.wav",  bellRate: 1.0, type: "white", style: "B3" },
-        
-        { id: "C4",  solfege: "Do 4", display: "C", voiceWav: "Do 4.wav",  bellSourceFile: "Do 4 Bell.wav",  bellRate: 1.0, type: "white", style: "C4" },
-        { id: "Db4", solfege: "Di 4", display: { sharp: "C#", flat: "Db" }, voiceWav: "Di 4.wav",  bellSourceFile: "Di 4 Bell.wav",  bellRate: 1.0, type: "black", style: "Db4" },
-        { id: "D4",  solfege: "Re 4", display: "D", voiceWav: "Re 4.wav",  bellSourceFile: "Re 4 Bell.wav",  bellRate: 1.0, type: "white", style: "D4" },
-        { id: "Eb4", solfege: "Me 4", display: { sharp: "D#", flat: "Eb" }, voiceWav: "Me 4.wav",  bellSourceFile: "Me 4 Bell.wav",  bellRate: 1.0, type: "black", style: "Eb4" },
-        { id: "E4",  solfege: "Mi 4", display: "E", voiceWav: "Mi 4.wav",  bellSourceFile: "Mi 4 Bell.wav",  bellRate: 1.0, type: "white", style: "E4" },
-        { id: "F4",  solfege: "Fa 4", display: "F", voiceWav: "Fa 4.wav",  bellSourceFile: "Fa 4 Bell.wav",  bellRate: 1.0, type: "white", style: "F4" },
-        { id: "Gb4", solfege: "Fi 4", display: { sharp: "F#", flat: "Gb" }, voiceWav: "Fi 4.wav",  bellSourceFile: "Fi 4 Bell.wav",  bellRate: 1.0, type: "black", style: "Gb4" },
-        { id: "G4",  solfege: "So 4", display: "G", voiceWav: "So 4.wav",  bellSourceFile: "So 4 Bell.wav",  bellRate: 1.0, type: "white", style: "G4" },
-        { id: "Ab4", solfege: "Si 4", display: { sharp: "G#", flat: "Ab" }, voiceWav: "Si 4.wav",  bellSourceFile: "Si 4 Bell.wav",  bellRate: 1.0, type: "black", style: "Ab4" },
-        { id: "A4",  solfege: "La 4", display: "A", voiceWav: "La 4.wav",  bellSourceFile: "La 4 Bell.wav",  bellRate: 1.0, type: "white", style: "A4" },
-        { id: "Bb4", solfege: "Te 4", display: { sharp: "A#", flat: "Bb" }, voiceWav: "Te 4.wav",  bellSourceFile: "Te 4 Bell.wav",  bellRate: 1.0, type: "black", style: "Bb4" },
-        { id: "B4",  solfege: "Ti 4", display: "B", voiceWav: "Ti 4.wav",  bellSourceFile: "Ti 4 Bell.wav",  bellRate: 1.0, type: "white", style: "B4" },
-        { id: "C5",  solfege: "Do 5", display: "C", voiceWav: "Do 5.wav",  bellSourceFile: "Do 5 Bell.wav",  bellRate: 1.0, type: "white", style: "C5" },
-        
-        { id: "Db5", solfege: "Di 5", display: { sharp: "C#", flat: "Db" }, voiceWav: "Di 5.wav",  bellSourceFile: "Di 5 Bell.wav",  bellRate: 1.0, type: "black", style: "Db5" },
-        { id: "D5",  solfege: "Re 5", display: "D", voiceWav: "Re 5.wav",  bellSourceFile: "Re 5 Bell.wav",  bellRate: 1.0, type: "white", style: "D5" },
-        { id: "Eb5", solfege: "Me 5", display: { sharp: "D#", flat: "Eb" }, voiceWav: "Me 5.wav",  bellSourceFile: "Me 5 Bell.wav",  bellRate: 1.0, type: "black", style: "Eb5" },
-        { id: "E5",  solfege: "Mi 5", display: "E", voiceWav: "Mi 5.wav",  bellSourceFile: "Mi 5 Bell.wav",  bellRate: 1.0, type: "white", style: "E5" },
-        { id: "F5",  solfege: "Fa 5", display: "F", voiceWav: "Fa 5.wav",  bellSourceFile: "Fa 5 Bell.wav",  bellRate: 1.0, type: "white", style: "F5" },
-        { id: "Gb5", solfege: "Fi 5", display: { sharp: "F#", flat: "Gb" }, voiceWav: "Fi 5.wav",  bellSourceFile: "Fi 5 Bell.wav",  bellRate: 1.0, type: "black", style: "Gb5" },
-        { id: "G5",  solfege: "So 5", display: "G", voiceWav: "So 5.wav",  bellSourceFile: "So 5 Bell.wav",  bellRate: 1.0, type: "white", style: "G5" }
+    const keysData = [
+        { id: 'G3',  note: 'G3',  type: 'natural', label: 'G3',  solfege: 'so',  isWhite: true },
+        { id: 'Ab3', note: 'Ab3', type: 'sharp',   label: 'A♭3', solfege: 'le',  isWhite: false },
+        { id: 'A3',  note: 'A3',  type: 'natural', label: 'A3',  solfege: 'la',  isWhite: true },
+        { id: 'Bb3', note: 'Bb3', type: 'sharp',   label: 'B♭3', solfege: 'te',  isWhite: false },
+        { id: 'B3',  note: 'B3',  type: 'natural', label: 'B3',  solfege: 'ti',  isWhite: true },
+        { id: 'C4',  note: 'C4',  type: 'natural', label: 'C4',  solfege: 'do',  isWhite: true },
+        { id: 'Db4', note: 'Db4', type: 'sharp',   label: 'D♭4', solfege: 'ra',  isWhite: false },
+        { id: 'D4',  note: 'D4',  type: 'natural', label: 'D4',  solfege: 're',  isWhite: true },
+        { id: 'Eb4', note: 'Eb4', type: 'sharp',   label: 'E♭4', solfege: 'me',  isWhite: false },
+        { id: 'E4',  note: 'E4',  type: 'natural', label: 'E4',  solfege: 'mi',  isWhite: true },
+        { id: 'F4',  note: 'F4',  type: 'natural', label: 'F4',  solfege: 'fa',  isWhite: true },
+        { id: 'Gb4', note: 'Gb4', type: 'sharp',   label: 'F♯4', solfege: 'fi',  isWhite: false },
+        { id: 'G4',  note: 'G4',  type: 'natural', label: 'G4',  solfege: 'so',  isWhite: true },
+        { id: 'Ab4', note: 'Ab4', type: 'sharp',   label: 'A♭4', solfege: 'le',  isWhite: false },
+        { id: 'A4',  note: 'A4',  type: 'natural', label: 'A4',  solfege: 'la',  isWhite: true },
+        { id: 'Bb4', note: 'Bb4', type: 'sharp',   label: 'B♭4', solfege: 'te',  isWhite: false },
+        { id: 'B4',  note: 'B4',  type: 'natural', label: 'B4',  solfege: 'ti',  isWhite: true },
+        { id: 'C5',  note: 'C5',  type: 'natural', label: 'C5',  solfege: 'do',  isWhite: true },
+        { id: 'Db5', note: 'Db5', type: 'sharp',   label: 'D♭5', solfege: 'ra',  isWhite: false },
+        { id: 'D5',  note: 'D5',  type: 'natural', label: 'D5',  solfege: 're',  isWhite: true },
+        { id: 'Eb5', note: 'Eb5', type: 'sharp',   label: 'E♭5', solfege: 'me',  isWhite: false },
+        { id: 'E5',  note: 'E5',  type: 'natural', label: 'E5',  solfege: 'mi',  isWhite: true },
+        { id: 'F5',  note: 'F5',  type: 'natural', label: 'F5',  solfege: 'fa',  isWhite: true },
+        { id: 'Gb5', note: 'Gb5', type: 'sharp',   label: 'F♯5', solfege: 'fi',  isWhite: false },
+        { id: 'G5',  note: 'G5',  type: 'natural', label: 'G5',  solfege: 'so',  isWhite: true }
     ];
-    
-    let voiceBuffers = {}; 
-    let bellBuffers = {};
-    let ravenscroftBuffers = {};
-    let samplers = {};
 
-    const ravenscroftWavFiles = {
-        "G3": "So 3 Piano.wav", "Ab3": "Si 3 Piano.wav", "A3": "La 3 Piano.wav", "Bb3": "Te 3 Piano.wav", "B3": "Ti 3 Piano.wav",
-        "C4": "Do 4 Piano.wav", "Db4": "Di 4 Piano.wav", "D4": "Re 4 Piano.wav", "Eb4": "Me 4 Piano.wav", "E4": "Mi 4 Piano.wav",
-        "F4": "Fa 4 Piano.wav", "Gb4": "Fi 4 Piano.wav", "G4": "So 4 Piano.wav", "Ab4": "Si 4 Piano.wav", "A4": "La 4 Piano.wav",
-        "Bb4": "Te 4 Piano.wav", "B4": "Ti 4 Piano.wav", "C5": "Do 5 Piano.wav", "Db5": "Di 5 Piano.wav", "D5": "Re 5 Piano.wav",
-        "Eb5": "Me 5 Piano.wav", "E5": "Mi 5 Piano.wav", "F5": "Fa 5 Piano.wav", "Gb5": "Fi 5 Piano.wav", "G5": "So 5 Piano.wav"
-    };
+    const bellSampler = new Tone.PolySynth(Tone.Synth, {
+        oscillator: { type: "sine" },
+        envelope: { attack: 0.01, decay: 1.5, sustain: 0.1, release: 1.2 }
+    }).toDestination();
 
-    const sampleGeneralCDN = "https://gleitz.github.io/midi-js-soundfonts/FluidR3_GM/";
+    const pianoSampler = new Tone.PolySynth(Tone.Synth, {
+        oscillator: { type: "triangle" },
+        envelope: { attack: 0.005, decay: 2.0, sustain: 0.2, release: 1.5 }
+    }).toDestination();
 
-    const instrumentConfigs = {
-        guitar: { baseUrl: `${sampleGeneralCDN}acoustic_guitar_nylon-mp3/`, anchor: "C4" },
-        rhodes: { baseUrl: `${sampleGeneralCDN}electric_piano_1-mp3/`, anchor: "C4" },
-        organ: { baseUrl: `${sampleGeneralCDN}rock_organ-mp3/`, anchor: "C4" }
-    };
+    const rhodesSynth = new Tone.PolySynth(Tone.Synth, {
+        oscillator: { type: "pwm", modulationFrequency: 0.2 },
+        envelope: { attack: 0.02, decay: 1.2, sustain: 0.3, release: 1.0 }
+    }).toDestination();
 
-    const sharpsRow = document.getElementById('sharps-container');
-    const naturalsRow = document.getElementById('naturals-container');
+    const guitarSynth = new Tone.PolySynth(Tone.AMSynth, {
+        harmonicity: 2.5,
+        oscillator: { type: "sawtooth" },
+        envelope: { attack: 0.01, decay: 0.8, sustain: 0.1, release: 0.8 }
+    }).toDestination();
 
-    progression.forEach((note) => {
-        const btn = document.createElement('button');
-        btn.className = `bell-btn ${note.style}`;
-        btn.id = `btn-${note.id}`;
-        btn.setAttribute('onclick', `handleInput('${note.id}')`);
-        
-        if (note.type === "black") {
-            btn.innerHTML = `
-                <div class="color-badge">
-                    <div class="accidental-stack">
-                        <span class="solfege-tiny">${note.solfege.split(' ')[0]}</span>
-                        <span>${note.display.sharp}</span>
-                        <span>${note.display.flat}</span>
-                    </div>
-                </div>`;
-            sharpsRow.appendChild(btn);
-        } else {
-            btn.innerHTML = `
-                <div class="color-badge">
-                    <span class="solfege-tiny">${note.solfege.split(' ')[0]}</span>
-                    <span>${note.display}</span>
-                </div>`;
-            naturalsRow.appendChild(btn);
+    const organSynth = new Tone.PolySynth(Tone.Synth, {
+        oscillator: { type: "pulse" },
+        envelope: { attack: 0.05, decay: 0.1, sustain: 0.9, release: 0.5 }
+    }).toDestination();
+
+    function buildKeyboard() {
+        const naturalsContainer = document.getElementById('naturals-container');
+        const sharpsContainer = document.getElementById('sharps-container');
+
+        naturalsContainer.innerHTML = '';
+        sharpsContainer.innerHTML = '';
+
+        keysData.forEach(k => {
+            const btn = document.createElement('button');
+            btn.className = `bell-btn ${k.id}`;
+            btn.id = `btn-${k.id}`;
+            
+            const badge = document.createElement('div');
+            badge.className = 'color-badge';
+            
+            if (!k.isWhite) {
+                badge.innerHTML = `<div class="accidental-stack"><span class="solfege-tiny">${k.solfege}</span><span>${k.label}</span></div>`;
+            } else {
+                badge.innerHTML = `<span class="solfege-tiny">${k.solfege}</span><span>${k.label}</span>`;
+            }
+
+            btn.appendChild(badge);
+
+            btn.addEventListener('mousedown', (e) => { e.preventDefault(); handleKeyClick(k); });
+            btn.addEventListener('touchstart', (e) => { e.preventDefault(); handleKeyClick(k); });
+
+            if (k.type === 'natural') {
+                naturalsContainer.appendChild(btn);
+            } else {
+                sharpsContainer.appendChild(btn);
+            }
+        });
+    }
+
+    buildKeyboard();
+
+    setTimeout(() => {
+        const progressBar = document.getElementById('progressBar');
+        const msg = document.getElementById('msg');
+        const loadingZone = document.getElementById('loadingZone');
+
+        if(progressBar) progressBar.style.width = '100%';
+        if(msg) {
+            msg.innerText = "READY!";
+            msg.style.color = "#22c55e";
         }
-    });
+
+        setTimeout(() => {
+            if(loadingZone) loadingZone.classList.add('hidden');
+        }, 600);
+    }, 400);
 
     function setAudioMode(mode) {
-        if (isCurrentlyLocked) return; 
         currentAudioMode = mode;
         
-        document.querySelectorAll('.fader-header-btn').forEach(btn => btn.classList.remove('active'));
-        
-        document.getElementById('fader-bell-piano').disabled = true;
-        document.getElementById('fader-bell-vocal').disabled = true;
-        document.getElementById('fader-piano-vocal').disabled = true;
-        
-        if(mode !== 'interactive-test') {
-            targetActiveTestNote = null;
-            targetActiveTestNotes = [];
-            userInteractiveSelectedNotes = [];
-            clearAllFlashEffects();
-        }
+        const modeBp = document.getElementById('mode-bell-piano');
+        const modeBv = document.getElementById('mode-bell-vocal');
+        const modePv = document.getElementById('mode-piano-vocal');
+        const modeTh = document.getElementById('mode-test-holder');
+        const modeIh = document.getElementById('mode-interactive-holder');
 
-        if (mode === 'bell-piano') {
-            document.getElementById('mode-bell-piano').classList.add('active');
-            document.getElementById('fader-bell-piano').disabled = false;
-        } else if (mode === 'bell-vocal') {
-            document.getElementById('mode-bell-vocal').classList.add('active');
-            document.getElementById('fader-bell-vocal').disabled = false;
-        } else if (mode === 'piano-vocal') {
-            document.getElementById('mode-piano-vocal').classList.add('active');
-            document.getElementById('fader-piano-vocal').disabled = false;
-        } else if (mode === 'test-mode') {
-            document.getElementById('mode-test-holder').classList.add('active');
-        } else if (mode === 'interactive-test') {
-            document.getElementById('mode-interactive-holder').classList.add('active');
+        if(modeBp) modeBp.classList.toggle('active', mode === 'bell-piano');
+        if(modeBv) modeBv.classList.toggle('active', mode === 'bell-vocal');
+        if(modePv) modePv.classList.toggle('active', mode === 'piano-vocal');
+        if(modeTh) modeTh.classList.toggle('active', mode === 'test-mode');
+        if(modeIh) modeIh.classList.toggle('active', mode === 'interactive-test');
+
+        document.getElementById('fader-bell-piano').disabled = (mode !== 'bell-piano');
+        document.getElementById('fader-bell-vocal').disabled = (mode !== 'bell-vocal');
+        document.getElementById('fader-piano-vocal').disabled = (mode !== 'piano-vocal');
+    }
+
+    function updateBlendValues(type, val) {
+        faderTouched[type] = true;
+        const v = parseInt(val, 10);
+        if (type === 'bell-piano') {
+            document.getElementById('label-bp-left').innerText = `Bells ${100 - v}%`;
+            document.getElementById('label-bp-right').innerText = `Ravenscroft 275 ${v}%`;
+        } else if (type === 'bell-vocal') {
+            document.getElementById('label-bv-left').innerText = `Bells ${100 - v}%`;
+            document.getElementById('label-bv-right').innerText = `Solfège ${v}%`;
+        } else if (type === 'piano-vocal') {
+            document.getElementById('label-pv-left').innerText = `Ravenscroft 275 ${100 - v}%`;
+            document.getElementById('label-pv-right').innerText = `Solfège ${v}%`;
         }
     }
 
-    function setTestSubMode(type) {
-        if (isCurrentlyLocked) return;
-        
-        const sounds = ['ravenscroft', 'bells', 'pianoseq', 'bellseq', 'rhodes', 'guitar', 'organ'];
-        const types = ['single', 'dyad', 'chord3', 'major', 'minor', 'diminished', 'augmented'];
-        
-        if (sounds.includes(type)) {
-            activePracticeSound = type;
-            sounds.forEach(s => {
-                const el = document.getElementById(`test-sub-${s}`);
-                if (el) el.classList.remove('active');
-            });
-            const soundEl = document.getElementById(`test-sub-${type}`);
-            if (soundEl) soundEl.classList.add('active');
-        } else if (types.includes(type)) {
-            activePracticeType = type;
-            types.forEach(t => {
-                const el = document.getElementById(`test-sub-${t}`);
-                if (el) el.classList.remove('active');
-            });
-            const typeEl = document.getElementById(`test-sub-${type}`);
-            if (typeEl) typeEl.classList.add('active');
+    function playNoteAudio(noteName, soundType = 'ravenscroft', delaySeconds = 0) {
+        Tone.start();
+        const time = Tone.now() + delaySeconds;
+        switch(soundType) {
+            case 'bells':
+                bellSampler.triggerAttackRelease(noteName, "8n", time);
+                break;
+            case 'rhodes':
+                rhodesSynth.triggerAttackRelease(noteName, "8n", time);
+                break;
+            case 'guitar':
+                guitarSynth.triggerAttackRelease(noteName, "8n", time);
+                break;
+            case 'organ':
+                organSynth.triggerAttackRelease(noteName, "8n", time);
+                break;
+            case 'ravenscroft':
+            default:
+                pianoSampler.triggerAttackRelease(noteName, "8n", time);
+                break;
         }
+    }
 
+    function highlightKeyUI(noteId, durationMs = 600) {
+        const btn = document.getElementById(`btn-${noteId}`);
+        if (!btn) return;
+        btn.classList.add('playing');
+        setTimeout(() => {
+            btn.classList.remove('playing');
+        }, durationMs);
+    }
+
+    function setTestSubMode(sub) {
+        const sounds = ['ravenscroft', 'bells', 'pianoseq', 'bellseq', 'rhodes', 'guitar', 'organ'];
+        const types = ['single', 'dyad', 'dyadseq', 'chord3', 'chord3seq', 'major', 'minor', 'diminished', 'augmented'];
+
+        if (sounds.includes(sub)) {
+            activePracticeSound = sub;
+            sounds.forEach(s => {
+                const btn = document.getElementById(`test-sub-${s}`);
+                if(btn) btn.classList.toggle('active', s === sub);
+            });
+        } else if (types.includes(sub)) {
+            activePracticeType = sub;
+            types.forEach(t => {
+                const btn = document.getElementById(`test-sub-${t}`);
+                if(btn) btn.classList.toggle('active', t === sub);
+            });
+        }
         setAudioMode('test-mode');
     }
 
@@ -964,56 +1020,93 @@
         document.getElementById('practice-key-all').classList.toggle('active', !whiteOnly);
     }
 
+    function getRandomNotesForType(type, whiteOnly) {
+        const pool = keysData.filter(k => whiteOnly ? k.isWhite : true);
+        const root = pool[Math.floor(Math.random() * pool.length)];
+        const rootIndex = keysData.findIndex(k => k.id === root.id);
+
+        if (type === 'single') {
+            return [root];
+        } else if (type === 'dyad' || type === 'dyadseq') {
+            const secondIndex = Math.min(keysData.length - 1, rootIndex + 4);
+            return [root, keysData[secondIndex]];
+        } else if (type === 'chord3' || type === 'chord3seq') {
+            const idx2 = Math.min(keysData.length - 1, rootIndex + 3);
+            const idx3 = Math.min(keysData.length - 1, rootIndex + 7);
+            return [root, keysData[idx2], keysData[idx3]];
+        } else if (type === 'major') {
+            const idx2 = Math.min(keysData.length - 1, rootIndex + 4);
+            const idx3 = Math.min(keysData.length - 1, rootIndex + 7);
+            return [root, keysData[idx2], keysData[idx3]];
+        } else if (type === 'minor') {
+            const idx2 = Math.min(keysData.length - 1, rootIndex + 3);
+            const idx3 = Math.min(keysData.length - 1, rootIndex + 7);
+            return [root, keysData[idx2], keysData[idx3]];
+        } else if (type === 'diminished') {
+            const idx2 = Math.min(keysData.length - 1, rootIndex + 3);
+            const idx3 = Math.min(keysData.length - 1, rootIndex + 6);
+            return [root, keysData[idx2], keysData[idx3]];
+        } else if (type === 'augmented') {
+            const idx2 = Math.min(keysData.length - 1, rootIndex + 4);
+            const idx3 = Math.min(keysData.length - 1, rootIndex + 8);
+            return [root, keysData[idx2], keysData[idx3]];
+        }
+        return [root];
+    }
+
     function triggerPracticeGo() {
         setAudioMode('test-mode');
-        clearAllFlashEffects();
-
-        let eligibleNotes = practiceWhiteKeysOnly ? progression.filter(n => n.type === 'white') : progression;
-
-        if (activePracticeType === 'single') {
-            let selectedNote = eligibleNotes[Math.floor(Math.random() * eligibleNotes.length)].id;
-            lastPracticeNotes = [selectedNote];
-        } else if (activePracticeType === 'dyad') {
-            lastPracticeNotes = getRandomNotesWithinOctave(2, practiceWhiteKeysOnly);
-        } else if (activePracticeType === 'chord3') {
-            lastPracticeNotes = getRandomNotesWithinOctave(3, practiceWhiteKeysOnly);
-        } else if (['major', 'minor', 'diminished', 'augmented'].includes(activePracticeType)) {
-            lastPracticeNotes = getChordNotes(activePracticeType, practiceWhiteKeysOnly);
-        }
-
-        lastPracticeNotes.forEach(n => playPracticeSound(n, activePracticeSound));
+        const selectedKeys = getRandomNotesForType(activePracticeType, practiceWhiteKeysOnly);
+        lastPracticeNotes = selectedKeys;
+        playPracticeSequence(selectedKeys);
     }
 
     function repeatPracticeSound() {
-        if (lastPracticeNotes.length === 0) return;
-        clearAllFlashEffects();
-        lastPracticeNotes.forEach(n => playPracticeSound(n, activePracticeSound));
+        if (lastPracticeNotes.length > 0) {
+            playPracticeSequence(lastPracticeNotes);
+        }
     }
 
-    function setInteractiveSubMode(type) {
-        if (isCurrentlyLocked) return;
-        
-        const sounds = ['ravenscroft', 'bells', 'rhodes', 'guitar', 'organ'];
-        const types = ['single', 'dyad', 'chord3', 'major', 'minor', 'diminished', 'augmented'];
+    function playPracticeSequence(keyList) {
+        const sound = (activePracticeSound === 'pianoseq' || activePracticeSound === 'bellseq') 
+                      ? (activePracticeSound === 'pianoseq' ? 'ravenscroft' : 'bells') 
+                      : activePracticeSound;
 
-        if (sounds.includes(type)) {
-            activeInteractiveSound = type;
-            sounds.forEach(s => {
-                const el = document.getElementById(`inter-sub-${s}`);
-                if (el) el.classList.remove('active');
+        const isSequential = (activePracticeType === 'dyadseq' || activePracticeType === 'chord3seq');
+
+        if (isSequential) {
+            keyList.forEach((key, index) => {
+                const delay = index * 0.45; 
+                setTimeout(() => {
+                    playNoteAudio(key.note, sound, 0);
+                    highlightKeyUI(key.id, 400);
+                }, delay * 1000);
             });
-            const soundEl = document.getElementById(`inter-sub-${type}`);
-            if (soundEl) soundEl.classList.add('active');
-        } else if (types.includes(type)) {
-            activeInteractiveType = type;
-            types.forEach(t => {
-                const el = document.getElementById(`inter-sub-${t}`);
-                if (el) el.classList.remove('active');
+        } else {
+            keyList.forEach(key => {
+                playNoteAudio(key.note, sound, 0);
+                highlightKeyUI(key.id, 800);
             });
-            const typeEl = document.getElementById(`inter-sub-${type}`);
-            if (typeEl) typeEl.classList.add('active');
         }
+    }
 
+    function setInteractiveSubMode(sub) {
+        const sounds = ['ravenscroft', 'bells', 'rhodes', 'guitar', 'organ'];
+        const types = ['single', 'dyad', 'dyadseq', 'chord3', 'chord3seq', 'major', 'minor', 'diminished', 'augmented'];
+
+        if (sounds.includes(sub)) {
+            activeInteractiveSound = sub;
+            sounds.forEach(s => {
+                const btn = document.getElementById(`inter-sub-${s}`);
+                if(btn) btn.classList.toggle('active', s === sub);
+            });
+        } else if (types.includes(sub)) {
+            activeInteractiveType = sub;
+            types.forEach(t => {
+                const btn = document.getElementById(`inter-sub-${t}`);
+                if(btn) btn.classList.toggle('active', t === sub);
+            });
+        }
         setAudioMode('interactive-test');
     }
 
@@ -1025,402 +1118,99 @@
 
     function triggerInteractiveGo() {
         setAudioMode('interactive-test');
-        clearAllFlashEffects();
-
-        userInteractiveSelectedNotes = [];
-
-        if (activeInteractiveType === 'single') {
-            let eligible = interactiveWhiteKeysOnly ? progression.filter(n => n.type === 'white') : progression;
-            targetActiveTestNote = eligible[Math.floor(Math.random() * eligible.length)].id;
-            targetActiveTestNotes = [targetActiveTestNote];
-        } else if (activeInteractiveType === 'dyad') {
-            targetActiveTestNotes = getRandomNotesWithinOctave(2, interactiveWhiteKeysOnly);
-        } else if (activeInteractiveType === 'chord3') {
-            targetActiveTestNotes = getRandomNotesWithinOctave(3, interactiveWhiteKeysOnly);
-        } else if (['major', 'minor', 'diminished', 'augmented'].includes(activeInteractiveType)) {
-            targetActiveTestNotes = getChordNotes(activeInteractiveType, interactiveWhiteKeysOnly);
-        }
-
-        targetActiveTestNotes.forEach(n => triggerInstrumentAudioOnly(n, activeInteractiveSound));
+        targetInteractiveNotes = getRandomNotesForType(activeInteractiveType, interactiveWhiteKeysOnly);
+        userInteractiveSelections = [];
+        interactiveActive = true;
+        playInteractivePrompt();
     }
 
     function repeatInteractiveSound() {
-        if (targetActiveTestNotes.length === 0) return;
-        targetActiveTestNotes.forEach(n => triggerInstrumentAudioOnly(n, activeInteractiveSound));
-    }
-
-    function clearAllFlashEffects() {
-        document.querySelectorAll('.bell-btn').forEach(b => {
-            b.classList.remove('playing', 'success-flash', 'error-flash');
-        });
-    }
-
-    function getRandomNotesWithinOctave(count, whiteOnly = false) {
-        let pool = whiteOnly ? progression.filter(n => n.type === 'white') : progression;
-        let selectedIndices = [];
-        
-        let rootIndex = Math.floor(Math.random() * (pool.length - 12));
-        selectedIndices.push(rootIndex);
-
-        while (selectedIndices.length < count) {
-            let offset = Math.floor(Math.random() * 12) + 1;
-            let nextIndex = rootIndex + offset;
-            if (nextIndex < pool.length && !selectedIndices.includes(nextIndex)) {
-                selectedIndices.push(nextIndex);
-            }
-        }
-        selectedIndices.sort((a, b) => a - b);
-        return selectedIndices.map(idx => pool[idx].id);
-    }
-
-    function getChordNotes(type, whiteOnly = false, rootId = null) {
-        const intervals = {
-            'major': [0, 4, 7],
-            'minor': [0, 3, 7],
-            'diminished': [0, 3, 6],
-            'augmented': [0, 4, 8]
-        };
-        let chordIntervals = intervals[type];
-        
-        if (rootId) {
-            let rootIndex = progression.findIndex(n => n.id === rootId);
-            if (rootIndex !== -1 && rootIndex + chordIntervals[chordIntervals.length - 1] < progression.length) {
-                return chordIntervals.map(i => progression[rootIndex + i].id);
-            }
-        }
-
-        let pool = whiteOnly ? progression.filter(n => n.type === 'white') : progression;
-        let rootIndex = Math.floor(Math.random() * (pool.length - chordIntervals[chordIntervals.length - 1]));
-        let baseNote = pool[rootIndex];
-        let masterIndex = progression.findIndex(n => n.id === baseNote.id);
-        
-        return chordIntervals.map(i => progression[masterIndex + i].id);
-    }
-
-    function playPracticeSound(choice, sound) {
-        triggerLightEffect(choice);
-        if (sound === 'ravenscroft') playTargetBuffer(ravenscroftBuffers[choice], generalGainNode);
-        else if (sound === 'bells') playTargetBuffer(bellBuffers[choice], generalGainNode);
-        else if (sound === 'pianoseq') {
-            playTargetBuffer(ravenscroftBuffers[choice], generalGainNode);
-            playTargetBuffer(voiceBuffers[choice], generalGainNode, 0.6);
-        } else if (sound === 'bellseq') {
-            playTargetBuffer(bellBuffers[choice], generalGainNode);
-            playTargetBuffer(voiceBuffers[choice], generalGainNode, 0.6);
-        } else if (samplers[sound]) {
-            samplers[sound].triggerAttackRelease(choice, "1m");
+        if (targetInteractiveNotes.length > 0) {
+            playInteractivePrompt();
         }
     }
 
-    function triggerInstrumentAudioOnly(choice, instrumentSrc) {
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-        if (Tone.context.state === 'suspended') Tone.start();
-        
-        if (instrumentSrc === 'ravenscroft') {
-            playTargetBuffer(ravenscroftBuffers[choice], generalGainNode);
-        } else if (instrumentSrc === 'bells') {
-            playTargetBuffer(bellBuffers[choice], generalGainNode);
-        } else if (samplers[instrumentSrc]) {
-            samplers[instrumentSrc].triggerAttackRelease(choice, "1m");
-        }
-    }
+    function playInteractivePrompt() {
+        const isSequential = (activeInteractiveType === 'dyadseq' || activeInteractiveType === 'chord3seq');
 
-    function updateBlendValues(targetFader, val) {
-        const percentage = parseInt(val);
-        faderTouched[targetFader] = true;
-
-        let leftSideGain = percentage / 100;
-        let rightSideGain = (100 - percentage) / 100;
-
-        const currentTime = audioCtx.currentTime;
-        const rampTime = 0.03;
-
-        if (targetFader === 'bell-piano') {
-            document.getElementById('label-bp-left').innerHTML = `Bells ${percentage}%`;
-            document.getElementById('label-bp-right').innerHTML = `Ravenscroft 275 ${100 - percentage}%`;
-            document.getElementById('label-bp-left').className = percentage > 0 ? "highlight" : "";
-            document.getElementById('label-bp-right').className = (100 - percentage) > 0 ? "highlight" : "";
-            
-            bellPianoMixGainBell.gain.linearRampToValueAtTime(leftSideGain, currentTime + rampTime);
-            bellPianoMixGainPiano.gain.linearRampToValueAtTime(rightSideGain, currentTime + rampTime);
-        } else if (targetFader === 'bell-vocal') {
-            document.getElementById('label-bv-left').innerHTML = `Bells ${percentage}%`;
-            document.getElementById('label-bv-right').innerHTML = `Solfège ${100 - percentage}%`;
-            document.getElementById('label-bv-left').className = percentage > 0 ? "highlight" : "";
-            document.getElementById('label-bv-right').className = (100 - percentage) > 0 ? "highlight" : "";
-            
-            bellGainNode.gain.linearRampToValueAtTime(leftSideGain, currentTime + rampTime);
-            vocalGainNode.gain.linearRampToValueAtTime(rightSideGain, currentTime + rampTime);
-        } else if (targetFader === 'piano-vocal') {
-            document.getElementById('label-pv-left').innerHTML = `Ravenscroft 275 ${percentage}%`;
-            document.getElementById('label-pv-right').innerHTML = `Solfège ${100 - percentage}%`;
-            document.getElementById('label-pv-left').className = percentage > 0 ? "highlight" : "";
-            document.getElementById('label-pv-right').className = (100 - percentage) > 0 ? "highlight" : "";
-
-            ravenscroftGainNode.gain.linearRampToValueAtTime(leftSideGain, currentTime + rampTime);
-            vocalGainNode.gain.linearRampToValueAtTime(rightSideGain, currentTime + rampTime);
-        }
-    }
-
-    function blockViewportGestures(e) {
-        if (isCurrentlyLocked) {
-            if (e.target.id === 'lockSlider') return;
-            if (e.target.closest('#pianoWrapper')) {
-                if (e.type === 'touchmove' && e.cancelable) e.preventDefault();
-                return;
-            }
-            if (e.cancelable) e.preventDefault();
-            window.scrollTo(0, lockedScrollTop);
-        }
-    }
-
-    window.addEventListener('touchstart', blockViewportGestures, { passive: false });
-    window.addEventListener('touchmove', blockViewportGestures, { passive: false });
-    window.addEventListener('touchend', blockViewportGestures, { passive: false });
-    window.addEventListener('wheel', blockViewportGestures, { passive: false });
-    
-    window.addEventListener('scroll', () => {
-        if (isCurrentlyLocked) window.scrollTo(0, lockedScrollTop);
-    });
-
-    function handleSliderInput(value) {
-        if (!isCurrentlyLocked && value > 25) {
-            updateLockUI(true);
-            document.getElementById('lockSlider').value = 100;
-        }
-    }
-
-    function handleSliderChange(value) {
-        if (isCurrentlyLocked) {
-            if (parseInt(value) === 0) updateLockUI(false);
-            else document.getElementById('lockSlider').value = 100;
-        }
-    }
-
-    function updateLockUI(lockState) {
-        isCurrentlyLocked = lockState;
-        const controlsWrapper = document.getElementById('controlsWrapper');
-        const pianoWrapper = document.getElementById('pianoWrapper');
-        const slideLabel = document.getElementById('slideLabel');
-        const trackWrapper = document.getElementById('trackWrapper');
-
-        if (lockState) {
-            lockedScrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            controlsWrapper.classList.add('locked');
-            pianoWrapper.classList.add('locked');
-            trackWrapper.classList.add('is-locked');
-            slideLabel.innerText = "◄ Slide left to unlock";
-            slideLabel.className = "slide-label locked";
-        } else {
-            controlsWrapper.classList.remove('locked');
-            pianoWrapper.classList.remove('locked');
-            trackWrapper.classList.remove('is-locked');
-            slideLabel.innerText = "Slide right to lock";
-            slideLabel.className = "slide-label unlocked";
-        }
-    }
-
-    async function fetchAudioBuffer(url) {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`HTTP error ${response.status}`);
-        return await audioCtx.decodeAudioData(await response.arrayBuffer());
-    }
-
-    async function loadAllSounds() {
-        const statusMsg = document.getElementById('msg');
-        const progressBar = document.getElementById('progressBar');
-        const loadingZone = document.getElementById('loadingZone');
-        const lockInterface = document.getElementById('lockInterface');
-        
-        const totalNotes = progression.length;
-        let loadedNotesCount = 0;
-        let bellCache = {};
-
-        const loadPromises = progression.map(async (note) => {
-            try {
-                if (note.voiceWav) voiceBuffers[note.id] = await fetchAudioBuffer(note.voiceWav);
-                if (note.bellSourceFile) {
-                    if (!bellCache[note.bellSourceFile]) {
-                        bellCache[note.bellSourceFile] = await fetchAudioBuffer(note.bellSourceFile);
-                    }
-                    bellBuffers[note.id] = bellCache[note.bellSourceFile];
-                }
-                if (ravenscroftWavFiles[note.id]) ravenscroftBuffers[note.id] = await fetchAudioBuffer(ravenscroftWavFiles[note.id]);
-            } catch (e) {
-                console.error(`Asset link dropped: ${note.id}`, e);
-            } finally {
-                loadedNotesCount++;
-                progressBar.style.width = `${Math.floor((loadedNotesCount / totalNotes) * 85)}%`;
-            }
-        });
-
-        await Promise.all(loadPromises);
-        progressBar.style.backgroundColor = "#f9cd13";
-        progressBar.style.width = "92%";
-        statusMsg.style.color = "#f9cd13";
-        statusMsg.innerText = "SET!";
-
-        const keys = Object.keys(instrumentConfigs);
-        const samplerPromises = keys.map((key) => {
-            let urls = {};
-            urls[instrumentConfigs[key].anchor] = `${instrumentConfigs[key].anchor}.mp3`;
-            return new Promise((resolve) => {
-                samplers[key] = new Tone.Sampler({
-                    urls: urls,
-                    baseUrl: instrumentConfigs[key].baseUrl,
-                    onload: () => resolve()
-                }).connect(Tone.context.destination);
+        if (isSequential) {
+            targetInteractiveNotes.forEach((key, index) => {
+                const delay = index * 0.45;
+                setTimeout(() => {
+                    playNoteAudio(key.note, activeInteractiveSound, 0);
+                }, delay * 1000);
             });
+        } else {
+            targetInteractiveNotes.forEach(key => {
+                playNoteAudio(key.note, activeInteractiveSound, 0);
+            });
+        }
+    }
+
+    function handleKeyClick(key) {
+        playNoteAudio(key.note, 'ravenscroft');
+
+        if (currentAudioMode === 'interactive-test' && interactiveActive) {
+            userInteractiveSelections.push(key.id);
+
+            const requiredCount = targetInteractiveNotes.length;
+            highlightKeyUI(key.id, 300);
+
+            if (userInteractiveSelections.length === requiredCount) {
+                interactiveActive = false;
+                checkInteractiveAnswer();
+            }
+        } else {
+            highlightKeyUI(key.id, 400);
+        }
+    }
+
+    function checkInteractiveAnswer() {
+        const targetIds = targetInteractiveNotes.map(n => n.id).sort();
+        const userIds = [...userInteractiveSelections].sort();
+
+        const isCorrect = JSON.stringify(targetIds) === JSON.stringify(userIds);
+
+        userInteractiveSelections.forEach(id => {
+            const btn = document.getElementById(`btn-${id}`);
+            if (btn) {
+                btn.classList.add(isCorrect ? 'success-flash' : 'error-flash');
+                setTimeout(() => {
+                    btn.classList.remove('success-flash', 'error-flash');
+                }, 1000);
+            }
         });
-
-        await Promise.all(samplerPromises);
-        progressBar.style.width = "100%";
-        progressBar.style.backgroundColor = "#90be6d";
-        statusMsg.style.color = "#90be6d";
-        statusMsg.innerText = "PLAY!";
-
-        setTimeout(() => {
-            loadingZone.classList.add('hidden');
-            lockInterface.classList.remove('hidden');
-            
-            document.getElementById('label-bp-left').innerHTML = `Bells 50%`;
-            document.getElementById('label-bp-right').innerHTML = `Ravenscroft 275 50%`;
-            document.getElementById('label-bv-left').innerHTML = `Bells 50%`;
-            document.getElementById('label-bv-right').innerHTML = `Solfège 50%`;
-            document.getElementById('label-pv-left').innerHTML = `Ravenscroft 275 50%`;
-            document.getElementById('label-pv-right').innerHTML = `Solfège 50%`;
-        }, 600);
     }
-    loadAllSounds();
 
-    function triggerLightEffect(choice) {
-        const btn = document.getElementById(`btn-${choice}`);
-        if (!btn) return;
-        const badge = btn.querySelector('.color-badge');
-        if (!badge) return;
-        
-        let colorMatch = window.getComputedStyle(badge).backgroundImage.match(/rgb\([^)]+\)/g);
-        let targetColor = colorMatch ? (colorMatch[1] || colorMatch[0]) : "rgba(255, 255, 255, 1)";
-        
-        btn.style.setProperty('--light-color', targetColor);
-        btn.classList.add('playing');
-        
-        if (currentAudioMode !== 'test-mode' && currentAudioMode !== 'interactive-test') {
-            setTimeout(() => btn.classList.remove('playing'), 1200);
+    function handleSliderInput(val) {
+        const label = document.getElementById('slideLabel');
+        const wrapper = document.getElementById('trackWrapper');
+        const controls = document.getElementById('controlsWrapper');
+        const piano = document.getElementById('pianoWrapper');
+
+        if (val >= 90) {
+            label.innerText = "LOCKED";
+            label.className = "slide-label locked";
+            wrapper.classList.add('is-locked');
+            controls.classList.add('locked');
+            piano.classList.add('locked');
+        } else {
+            label.innerText = "Slide right to lock";
+            label.className = "slide-label unlocked";
+            wrapper.classList.remove('is-locked');
+            controls.classList.remove('locked');
+            piano.classList.remove('locked');
         }
     }
 
-    function handleInput(choice) {
-        if (currentAudioMode === 'test-mode') {
-            clearAllFlashEffects();
-            if (activePracticeType === 'single') {
-                lastPracticeNotes = [choice];
-            } else if (activePracticeType === 'dyad') {
-                let idx = progression.findIndex(n => n.id === choice);
-                let offset = Math.floor(Math.random() * 12) + 1;
-                let nextIdx = Math.min(progression.length - 1, idx + offset);
-                lastPracticeNotes = [progression[idx].id, progression[nextIdx].id];
-            } else if (activePracticeType === 'chord3') {
-                let idx = progression.findIndex(n => n.id === choice);
-                let off1 = Math.floor(Math.random() * 6) + 1;
-                let off2 = Math.floor(Math.random() * 6) + 7;
-                let idx1 = Math.min(progression.length - 1, idx + off1);
-                let idx2 = Math.min(progression.length - 1, idx + off2);
-                lastPracticeNotes = [progression[idx].id, progression[idx1].id, progression[idx2].id];
-            } else if (['major', 'minor', 'diminished', 'augmented'].includes(activePracticeType)) {
-                lastPracticeNotes = getChordNotes(activePracticeType, false, choice);
-            }
-            lastPracticeNotes.forEach(n => playPracticeSound(n, activePracticeSound));
-            return;
-        }
-
-        if (currentAudioMode === 'interactive-test' && targetActiveTestNotes.length > 0) {
-            const chosenBtn = document.getElementById(`btn-${choice}`);
-            
-            if (!userInteractiveSelectedNotes.includes(choice)) {
-                userInteractiveSelectedNotes.push(choice);
-            }
-
-            if (targetActiveTestNotes.includes(choice)) {
-                if (chosenBtn) chosenBtn.classList.add('success-flash');
-                triggerInstrumentAudioOnly(choice, activeInteractiveSound);
-                
-                let allMatched = targetActiveTestNotes.every(n => userInteractiveSelectedNotes.includes(n));
-                if (allMatched) {
-                    setTimeout(() => {
-                        clearAllFlashEffects();
-                        triggerInteractiveGo();
-                    }, 1200);
-                }
-            } else {
-                if (chosenBtn) chosenBtn.classList.add('error-flash');
-                targetActiveTestNotes.forEach(n => {
-                    const correctBtn = document.getElementById(`btn-${n}`);
-                    if (correctBtn) {
-                        const badge = correctBtn.querySelector('.color-badge');
-                        let colorMatch = window.getComputedStyle(badge).backgroundImage.match(/rgb\([^)]+\)/g);
-                        let targetColor = colorMatch ? (colorMatch[1] || colorMatch[0]) : "rgba(255, 255, 255, 1)";
-                        correctBtn.style.setProperty('--light-color', targetColor);
-                        correctBtn.classList.add('playing');
-                    }
-                    triggerInstrumentAudioOnly(n, activeInteractiveSound);
-                });
-            }
-            return;
-        }
-
-        executeAudioPlay(choice);
-    }
-
-    function playTargetBuffer(buffer, gainNodeTarget, delay = 0) {
-        if(!buffer) return;
-        const source = audioCtx.createBufferSource();
-        source.buffer = buffer;
-        source.connect(gainNodeTarget);
-        source.start(audioCtx.currentTime + delay);
-    }
-
-    function executeAudioPlay(choice) {
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-        if (Tone.context.state === 'suspended') Tone.start();
-
-        triggerLightEffect(choice);
-
-        if (currentAudioMode === 'bell-piano') {
-            if (!faderTouched['bell-piano']) {
-                playTargetBuffer(bellBuffers[choice], generalGainNode);
-                playTargetBuffer(ravenscroftBuffers[choice], generalGainNode);
-            } else {
-                playTargetBuffer(bellBuffers[choice], bellPianoMixGainBell);
-                playTargetBuffer(ravenscroftBuffers[choice], bellPianoMixGainPiano);
-            }
-        } else if (currentAudioMode === 'bell-vocal') {
-            if (!faderTouched['bell-vocal']) {
-                playTargetBuffer(bellBuffers[choice], generalGainNode);
-                playTargetBuffer(voiceBuffers[choice], generalGainNode);
-            } else {
-                playTargetBuffer(bellBuffers[choice], bellGainNode);
-                playTargetBuffer(voiceBuffers[choice], vocalGainNode);
-            }
-        } else if (currentAudioMode === 'piano-vocal') {
-            if (!faderTouched['piano-vocal']) {
-                playTargetBuffer(ravenscroftBuffers[choice], generalGainNode);
-                playTargetBuffer(voiceBuffers[choice], generalGainNode);
-            } else {
-                playTargetBuffer(ravenscroftBuffers[choice], ravenscroftGainNode);
-                playTargetBuffer(voiceBuffers[choice], vocalGainNode);
-            }
-        } else if (samplers[currentAudioMode]) {
-            samplers[currentAudioMode].triggerAttackRelease(choice, "1m");
+    function handleSliderChange(val) {
+        const slider = document.getElementById('lockSlider');
+        if (val < 90) {
+            slider.value = 0;
+            handleSliderInput(0);
+        } else {
+            slider.value = 100;
+            handleSliderInput(100);
         }
     }
-
-    document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') {
-            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-            if (window.Tone && Tone.context && Tone.context.state === 'suspended') Tone.context.resume();
-        }
-    });
 </script>
-</body>
-</html>
