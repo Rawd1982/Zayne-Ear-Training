@@ -1,3 +1,4 @@
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -27,16 +28,16 @@
         body {
             display: flex;
             justify-content: center;
-            padding: 15px;
+            padding: 12px;
         }
 
         .container { width: 100%; max-width: 1200px; display: flex; flex-direction: column; align-items: center; }
 
         h1 { 
-            font-size: 2.2rem; 
+            font-size: 2rem; 
             font-weight: 900; 
             text-align: center; 
-            margin: 5px 0 2px 0; 
+            margin: 4px 0 2px 0; 
             width: 100%; 
             letter-spacing: 2px; 
         }
@@ -45,24 +46,24 @@
         h1 span.w-yellow { color: #f9cd13; }
         h1 span.w-teal   { color: #0d9488; }
 
-        .header-line { width: 80%; height: 2px; background: #0d9488; margin-bottom: 15px; opacity: 0.5; }
+        .header-line { width: 80%; height: 2px; background: #0d9488; margin-bottom: 10px; opacity: 0.5; }
 
         .game-panel {
             background-color: var(--panel-bg);
-            padding: 15px;
-            border-radius: 20px;
+            padding: 12px;
+            border-radius: 16px;
             display: flex;
             flex-direction: column;
             align-items: center;
             width: 100%;
             position: relative;
+            gap: 12px;
         }
 
         .controls-panel-wrapper {
             position: relative;
             max-width: 1100px;
             width: 100%;
-            margin-bottom: 10px;
         }
 
         .controls-panel {
@@ -71,7 +72,7 @@
             gap: 8px;
             background-color: var(--keyboard-bg);
             padding: 10px;
-            border-radius: 14px;
+            border-radius: 12px;
             border: 2px solid #1e293b;
             width: 100%;
         }
@@ -86,9 +87,36 @@
         .test-mode-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
+            gap: 10px;
             width: 100%;
             margin-top: 2px;
+        }
+
+        .test-options-section {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            width: 100%;
+            margin-top: 4px;
+        }
+
+        .test-options-group {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 5px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .group-label {
+            font-size: 0.55rem;
+            font-weight: 800;
+            color: #64748b;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            padding-left: 2px;
         }
 
         .test-options-grid {
@@ -97,6 +125,14 @@
             gap: 4px;
             width: 100%;
             align-items: center;
+        }
+
+        .test-options-grid.sound-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .test-options-grid.chord-grid {
+            grid-template-columns: repeat(4, 1fr);
         }
 
         .go-action-bar {
@@ -193,7 +229,7 @@
             top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(15, 23, 42, 0.6);
             backdrop-filter: blur(1px);
-            border-radius: 14px;
+            border-radius: 12px;
             z-index: 10;
             cursor: not-allowed;
         }
@@ -212,10 +248,10 @@
             background: rgba(13, 148, 136, 0.04);
             border: 1px solid rgba(13, 148, 136, 0.2);
             border-radius: 10px;
-            padding: 8px 10px;
+            padding: 10px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
         }
 
         .test-card.interactive {
@@ -329,8 +365,8 @@
             justify-content: center;
             width: 100%;
             max-width: 400px;
-            height: 40px;
-            margin-bottom: 10px;
+            height: 35px;
+            margin-bottom: 5px;
             transition: opacity 0.4s ease-out, transform 0.4s ease-out, margin 0.4s ease-out, height 0.4s ease-out;
             opacity: 1;
             overflow: hidden;
@@ -363,7 +399,7 @@
 
         #msg { 
             text-align: center; 
-            font-size: 0.8rem; 
+            font-size: 0.75rem; 
             font-weight: 900;
             letter-spacing: 1px;
             transition: color 0.3s ease;
@@ -372,8 +408,8 @@
 
         .slide-lock-container {
             width: 100%;
-            max-width: 400px;
-            margin-bottom: 15px;
+            max-width: 350px;
+            margin-bottom: 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -386,11 +422,11 @@
         }
 
         .slide-label {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 900;
             letter-spacing: 1.5px;
             text-transform: uppercase;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
             transition: color 0.3s ease;
             user-select: none;
         }
@@ -451,18 +487,18 @@
 
         .keyboard-wrapper {
             background-color: var(--keyboard-bg);
-            padding: 20px 15px;
-            border-radius: 16px;
+            padding: 15px 12px;
+            border-radius: 14px;
             width: 100%;
             max-width: 1100px; 
             overflow-x: auto;
             overflow-y: hidden;
             display: block;
             -webkit-overflow-scrolling: touch; 
-            border: 4px solid #1e293b;
+            border: 3px solid #1e293b;
             box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
             position: relative;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
 
         .keyboard-wrapper.locked {
@@ -480,7 +516,7 @@
             }
         }
 
-        .keyboard-wrapper::-webkit-scrollbar { height: 8px; }
+        .keyboard-wrapper::-webkit-scrollbar { height: 6px; }
         .keyboard-wrapper::-webkit-scrollbar-track { background: #0b0f19; border-radius: 8px; }
         .keyboard-wrapper::-webkit-scrollbar-thumb { background: #d62828; border-radius: 8px; }
         .keyboard-wrapper.locked::-webkit-scrollbar { display: none; height: 0; }
@@ -649,7 +685,6 @@
     <div class="game-panel">
         <div class="controls-panel-wrapper" id="controlsWrapper">
             <div class="controls-panel">
-                
                 <div class="fader-grid">
                     <div class="fader-card" id="card-bell-piano">
                         <button class="fader-header-btn active" id="mode-bell-piano" onclick="setAudioMode('bell-piano')">
@@ -684,7 +719,6 @@
                         <input type="range" min="0" max="100" value="50" class="blend-slider" id="fader-piano-vocal" oninput="updateBlendValues('piano-vocal', this.value)" disabled>
                     </div>
                 </div>
-
             </div>
         </div>
 
@@ -718,27 +752,37 @@
                         <button class="fader-header-btn" id="mode-test-holder" onclick="setAudioMode('test-mode')">
                             <span>🎯 Practice Mode (Instant Light Up)</span>
                         </button>
-                        <div class="test-options-grid">
-                            <button class="test-sub-btn active" id="test-sub-ravenscroft" onclick="setTestSubMode('ravenscroft')">Piano</button>
-                            <button class="test-sub-btn" id="test-sub-bells" onclick="setTestSubMode('bells')">Bells</button>
-                            <button class="test-sub-btn" id="test-sub-pianoseq" onclick="setTestSubMode('pianoseq')">Piano → Solfège</button>
-                            <button class="test-sub-btn" id="test-sub-bellseq" onclick="setTestSubMode('bellseq')">Bell → Solfège</button>
-                            <button class="test-sub-btn" id="test-sub-rhodes" onclick="setTestSubMode('rhodes')">Rhodes</button>
-                            <button class="test-sub-btn" id="test-sub-guitar" onclick="setTestSubMode('guitar')">Guitar</button>
-                            <button class="test-sub-btn" id="test-sub-organ" onclick="setTestSubMode('organ')">Organ</button>
-                            <button class="test-sub-btn active" id="test-sub-single" onclick="setTestSubMode('single')">Single Note</button>
-                            <button class="test-sub-btn" id="test-sub-dyad" onclick="setTestSubMode('dyad')">Dyad (2 Notes)</button>
-                            <button class="test-sub-btn" id="test-sub-dyadseq" onclick="setTestSubMode('dyadseq')">Dyad (Seq)</button>
-                            <button class="test-sub-btn" id="test-sub-chord3" onclick="setTestSubMode('chord3')">3-Note Chord</button>
-                            <button class="test-sub-btn" id="test-sub-chord3seq" onclick="setTestSubMode('chord3seq')">3-Note (Seq)</button>
-                            <button class="test-sub-btn" id="test-sub-major" onclick="setTestSubMode('major')">Major Chord</button>
-                            <button class="test-sub-btn" id="test-sub-majorseq" onclick="setTestSubMode('majorseq')">Major (Seq)</button>
-                            <button class="test-sub-btn" id="test-sub-minor" onclick="setTestSubMode('minor')">Minor Chord</button>
-                            <button class="test-sub-btn" id="test-sub-minorseq" onclick="setTestSubMode('minorseq')">Minor (Seq)</button>
-                            <button class="test-sub-btn" id="test-sub-diminished" onclick="setTestSubMode('diminished')">Diminished</button>
-                            <button class="test-sub-btn" id="test-sub-diminishedseq" onclick="setTestSubMode('diminishedseq')">Diminished (Seq)</button>
-                            <button class="test-sub-btn" id="test-sub-augmented" onclick="setTestSubMode('augmented')">Augmented</button>
-                            <button class="test-sub-btn" id="test-sub-augmentedseq" onclick="setTestSubMode('augmentedseq')">Augmented (Seq)</button>
+                        <div class="test-options-section">
+                            <div class="test-options-group">
+                                <span class="group-label">Sound / Timbre</span>
+                                <div class="test-options-grid sound-grid">
+                                    <button class="test-sub-btn active" id="test-sub-ravenscroft" onclick="setTestSubMode('ravenscroft')">Piano</button>
+                                    <button class="test-sub-btn" id="test-sub-bells" onclick="setTestSubMode('bells')">Bells</button>
+                                    <button class="test-sub-btn" id="test-sub-pianoseq" onclick="setTestSubMode('pianoseq')">Piano → Sol</button>
+                                    <button class="test-sub-btn" id="test-sub-bellseq" onclick="setTestSubMode('bellseq')">Bell → Sol</button>
+                                    <button class="test-sub-btn" id="test-sub-rhodes" onclick="setTestSubMode('rhodes')">Rhodes</button>
+                                    <button class="test-sub-btn" id="test-sub-guitar" onclick="setTestSubMode('guitar')">Guitar</button>
+                                    <button class="test-sub-btn" id="test-sub-organ" onclick="setTestSubMode('organ')">Organ</button>
+                                </div>
+                            </div>
+                            <div class="test-options-group">
+                                <span class="group-label">Note / Chord Type</span>
+                                <div class="test-options-grid chord-grid">
+                                    <button class="test-sub-btn active" id="test-sub-single" onclick="setTestSubMode('single')">Single</button>
+                                    <button class="test-sub-btn" id="test-sub-dyad" onclick="setTestSubMode('dyad')">Dyad</button>
+                                    <button class="test-sub-btn" id="test-sub-dyadseq" onclick="setTestSubMode('dyadseq')">Dyad (Seq)</button>
+                                    <button class="test-sub-btn" id="test-sub-chord3" onclick="setTestSubMode('chord3')">3-Note</button>
+                                    <button class="test-sub-btn" id="test-sub-chord3seq" onclick="setTestSubMode('chord3seq')">3-Note(Seq)</button>
+                                    <button class="test-sub-btn" id="test-sub-major" onclick="setTestSubMode('major')">Major</button>
+                                    <button class="test-sub-btn" id="test-sub-majorseq" onclick="setTestSubMode('majorseq')">Major(Seq)</button>
+                                    <button class="test-sub-btn" id="test-sub-minor" onclick="setTestSubMode('minor')">Minor</button>
+                                    <button class="test-sub-btn" id="test-sub-minorseq" onclick="setTestSubMode('minorseq')">Minor(Seq)</button>
+                                    <button class="test-sub-btn" id="test-sub-diminished" onclick="setTestSubMode('diminished')">Dim</button>
+                                    <button class="test-sub-btn" id="test-sub-diminishedseq" onclick="setTestSubMode('diminishedseq')">Dim (Seq)</button>
+                                    <button class="test-sub-btn" id="test-sub-augmented" onclick="setTestSubMode('augmented')">Aug</button>
+                                    <button class="test-sub-btn" id="test-sub-augmentedseq" onclick="setTestSubMode('augmentedseq')">Aug (Seq)</button>
+                                </div>
+                            </div>
                         </div>
                         <div class="go-action-bar">
                             <button class="key-select-btn" id="practice-key-white" onclick="setPracticeKeyMode(true)">WHITE KEYS</button>
@@ -752,25 +796,35 @@
                         <button class="fader-header-btn" id="mode-interactive-holder" onclick="setAudioMode('interactive-test')">
                             <span>🎹 Test Mode (Press Key to Answer)</span>
                         </button>
-                        <div class="test-options-grid">
-                            <button class="test-sub-btn active" id="inter-sub-ravenscroft" onclick="setInteractiveSubMode('ravenscroft')">Piano</button>
-                            <button class="test-sub-btn" id="inter-sub-bells" onclick="setInteractiveSubMode('bells')">Bells</button>
-                            <button class="test-sub-btn" id="inter-sub-rhodes" onclick="setInteractiveSubMode('rhodes')">Rhodes</button>
-                            <button class="test-sub-btn" id="inter-sub-guitar" onclick="setInteractiveSubMode('guitar')">Guitar</button>
-                            <button class="test-sub-btn" id="inter-sub-organ" onclick="setInteractiveSubMode('organ')">Organ</button>
-                            <button class="test-sub-btn active" id="inter-sub-single" onclick="setInteractiveSubMode('single')">Single Note</button>
-                            <button class="test-sub-btn" id="inter-sub-dyad" onclick="setInteractiveSubMode('dyad')">Dyad Test</button>
-                            <button class="test-sub-btn" id="inter-sub-dyadseq" onclick="setInteractiveSubMode('dyadseq')">Dyad (Seq)</button>
-                            <button class="test-sub-btn" id="inter-sub-chord3" onclick="setInteractiveSubMode('chord3')">3-Note Test</button>
-                            <button class="test-sub-btn" id="inter-sub-chord3seq" onclick="setInteractiveSubMode('chord3seq')">3-Note (Seq)</button>
-                            <button class="test-sub-btn" id="inter-sub-major" onclick="setInteractiveSubMode('major')">Major Chord</button>
-                            <button class="test-sub-btn" id="inter-sub-majorseq" onclick="setInteractiveSubMode('majorseq')">Major (Seq)</button>
-                            <button class="test-sub-btn" id="inter-sub-minor" onclick="setInteractiveSubMode('minor')">Minor Chord</button>
-                            <button class="test-sub-btn" id="inter-sub-minorseq" onclick="setInteractiveSubMode('minorseq')">Minor (Seq)</button>
-                            <button class="test-sub-btn" id="inter-sub-diminished" onclick="setInteractiveSubMode('diminished')">Diminished</button>
-                            <button class="test-sub-btn" id="inter-sub-diminishedseq" onclick="setInteractiveSubMode('diminishedseq')">Diminished (Seq)</button>
-                            <button class="test-sub-btn" id="inter-sub-augmented" onclick="setInteractiveSubMode('augmented')">Augmented</button>
-                            <button class="test-sub-btn" id="inter-sub-augmentedseq" onclick="setInteractiveSubMode('augmentedseq')">Augmented (Seq)</button>
+                        <div class="test-options-section">
+                            <div class="test-options-group">
+                                <span class="group-label">Sound / Timbre</span>
+                                <div class="test-options-grid sound-grid">
+                                    <button class="test-sub-btn active" id="inter-sub-ravenscroft" onclick="setInteractiveSubMode('ravenscroft')">Piano</button>
+                                    <button class="test-sub-btn" id="inter-sub-bells" onclick="setInteractiveSubMode('bells')">Bells</button>
+                                    <button class="test-sub-btn" id="inter-sub-rhodes" onclick="setInteractiveSubMode('rhodes')">Rhodes</button>
+                                    <button class="test-sub-btn" id="inter-sub-guitar" onclick="setInteractiveSubMode('guitar')">Guitar</button>
+                                    <button class="test-sub-btn" id="inter-sub-organ" onclick="setInteractiveSubMode('organ')">Organ</button>
+                                </div>
+                            </div>
+                            <div class="test-options-group">
+                                <span class="group-label">Note / Chord Type</span>
+                                <div class="test-options-grid chord-grid">
+                                    <button class="test-sub-btn active" id="inter-sub-single" onclick="setInteractiveSubMode('single')">Single</button>
+                                    <button class="test-sub-btn" id="inter-sub-dyad" onclick="setInteractiveSubMode('dyad')">Dyad</button>
+                                    <button class="test-sub-btn" id="inter-sub-dyadseq" onclick="setInteractiveSubMode('dyadseq')">Dyad (Seq)</button>
+                                    <button class="test-sub-btn" id="inter-sub-chord3" onclick="setInteractiveSubMode('chord3')">3-Note</button>
+                                    <button class="test-sub-btn" id="inter-sub-chord3seq" onclick="setInteractiveSubMode('chord3seq')">3-Note(Seq)</button>
+                                    <button class="test-sub-btn" id="inter-sub-major" onclick="setInteractiveSubMode('major')">Major</button>
+                                    <button class="test-sub-btn" id="inter-sub-majorseq" onclick="setInteractiveSubMode('majorseq')">Major(Seq)</button>
+                                    <button class="test-sub-btn" id="inter-sub-minor" onclick="setInteractiveSubMode('minor')">Minor</button>
+                                    <button class="test-sub-btn" id="inter-sub-minorseq" onclick="setInteractiveSubMode('minorseq')">Minor(Seq)</button>
+                                    <button class="test-sub-btn" id="inter-sub-diminished" onclick="setInteractiveSubMode('diminished')">Dim</button>
+                                    <button class="test-sub-btn" id="inter-sub-diminishedseq" onclick="setInteractiveSubMode('diminishedseq')">Dim (Seq)</button>
+                                    <button class="test-sub-btn" id="inter-sub-augmented" onclick="setInteractiveSubMode('augmented')">Aug</button>
+                                    <button class="test-sub-btn" id="inter-sub-augmentedseq" onclick="setInteractiveSubMode('augmentedseq')">Aug (Seq)</button>
+                                </div>
+                            </div>
                         </div>
                         <div class="go-action-bar">
                             <button class="key-select-btn" id="inter-key-white" onclick="setInteractiveKeyMode(true)">WHITE KEYS</button>
@@ -782,7 +836,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 
@@ -1468,3 +1521,4 @@
 </script>
 </body>
 </html>
+
