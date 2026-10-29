@@ -77,23 +77,19 @@
             width: 100%;
         }
 
-        .top-layout-grid {
+        .fader-grid {
             display: grid;
-            grid-template-columns: 1fr 230px 1fr;
-            gap: 8px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
             width: 100%;
-            align-items: stretch;
         }
 
-        .vertical-faders-column {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            background-color: var(--keyboard-bg);
-            padding: 8px;
-            border-radius: 10px;
-            border: 2px solid #1e293b;
+        .test-mode-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
             width: 100%;
+            margin-top: 2px;
         }
 
         .test-options-section {
@@ -221,8 +217,8 @@
             background: #1d4ed8;
         }
 
-        @media (max-width: 1100px) {
-            .top-layout-grid {
+        @media (max-width: 992px) {
+            .fader-grid, .test-mode-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -242,12 +238,10 @@
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 6px;
-            padding: 5px 6px;
+            padding: 5px 8px;
             display: flex;
             flex-direction: column;
-            align-items: center;
             gap: 3px;
-            text-align: center;
         }
 
         .test-card {
@@ -258,7 +252,6 @@
             display: flex;
             flex-direction: column;
             gap: 6px;
-            height: 100%;
         }
 
         .test-card.interactive {
@@ -303,13 +296,14 @@
             border: none;
             color: var(--text-sub);
             font-weight: 700;
-            font-size: 0.6rem;
-            text-align: center;
+            font-size: 0.65rem;
+            text-align: left;
             padding: 0;
             cursor: pointer;
             width: 100%;
-            display: block;
-            line-height: 1.2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .fader-header-btn.active {
@@ -321,12 +315,11 @@
 
         .fader-metrics {
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            font-size: 0.5rem;
+            justify-content: space-between;
+            font-size: 0.55rem;
             font-family: monospace;
             color: #64748b;
-            gap: 1px;
+            letter-spacing: 0.5px;
         }
         .fader-metrics span.highlight {
             color: #0d9488;
@@ -334,14 +327,30 @@
         }
 
         .blend-slider {
-            -webkit-appearance: slider-vertical;
-            appearance: slider-vertical;
-            width: 16px;
-            height: 70px;
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 3px;
             background: #334155;
             border-radius: 2px;
             outline: none;
             margin: 2px 0;
+        }
+        .blend-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #0d9488;
+            cursor: pointer;
+        }
+        .blend-slider::-moz-range-thumb {
+            width: 10px;
+            height: 10px;
+            border: none;
+            border-radius: 50%;
+            background: #0d9488;
             cursor: pointer;
         }
         .blend-slider:disabled {
@@ -674,129 +683,93 @@
     <div class="header-line"></div>
 
     <div class="game-panel">
-        <div class="controls-panel-wrapper" id="controlsWrapper">
-            <div class="top-layout-grid">
-                <!-- Practice Card (Left) -->
-                <div class="test-card">
-                    <button class="fader-header-btn" id="mode-test-holder" onclick="setAudioMode('test-mode')">
-                        <span>🎯 Practice Mode (Instant Light Up)</span>
-                    </button>
-                    <div class="test-options-section">
-                        <div class="test-options-group">
-                            <span class="group-label">Sound / Timbre</span>
-                            <div class="test-options-grid sound-grid">
-                                <button class="test-sub-btn active" id="test-sub-ravenscroft" onclick="setTestSubMode('ravenscroft')">Piano</button>
-                                <button class="test-sub-btn" id="test-sub-bells" onclick="setTestSubMode('bells')">Bells</button>
-                                <button class="test-sub-btn" id="test-sub-pianoseq" onclick="setTestSubMode('pianoseq')">Piano → Sol</button>
-                                <button class="test-sub-btn" id="test-sub-bellseq" onclick="setTestSubMode('bellseq')">Bell → Sol</button>
-                                <button class="test-sub-btn" id="test-sub-rhodes" onclick="setTestSubMode('rhodes')">Rhodes</button>
-                                <button class="test-sub-btn" id="test-sub-guitar" onclick="setTestSubMode('guitar')">Guitar</button>
-                                <button class="test-sub-btn" id="test-sub-organ" onclick="setTestSubMode('organ')">Organ</button>
-                            </div>
-                        </div>
-                        <div class="test-options-group">
-                            <span class="group-label">Note / Chord Type</span>
-                            <div class="test-options-grid chord-grid">
-                                <button class="test-sub-btn active" id="test-sub-single" onclick="setTestSubMode('single')">Single</button>
-                                <button class="test-sub-btn" id="test-sub-dyad" onclick="setTestSubMode('dyad')">Dyad</button>
-                                <button class="test-sub-btn" id="test-sub-dyadseq" onclick="setTestSubMode('dyadseq')">Dyad (Seq)</button>
-                                <button class="test-sub-btn" id="test-sub-chord3" onclick="setTestSubMode('chord3')">3-Note</button>
-                                <button class="test-sub-btn" id="test-sub-chord3seq" onclick="setTestSubMode('chord3seq')">3-Note(Seq)</button>
-                                <button class="test-sub-btn" id="test-sub-major" onclick="setTestSubMode('major')">Major</button>
-                                <button class="test-sub-btn" id="test-sub-majorseq" onclick="setTestSubMode('majorseq')">Major(Seq)</button>
-                                <button class="test-sub-btn" id="test-sub-minor" onclick="setTestSubMode('minor')">Minor</button>
-                                <button class="test-sub-btn" id="test-sub-minorseq" onclick="setTestSubMode('minorseq')">Minor(Seq)</button>
-                                <button class="test-sub-btn" id="test-sub-diminished" onclick="setTestSubMode('diminished')">Dim</button>
-                                <button class="test-sub-btn" id="test-sub-diminishedseq" onclick="setTestSubMode('diminishedseq')">Dim (Seq)</button>
-                                <button class="test-sub-btn" id="test-sub-augmented" onclick="setTestSubMode('augmented')">Aug</button>
-                                <button class="test-sub-btn" id="test-sub-augmentedseq" onclick="setTestSubMode('augmentedseq')">Aug (Seq)</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="go-action-bar">
-                        <button class="key-select-btn" id="practice-key-white" onclick="setPracticeKeyMode(true)">WHITE</button>
-                        <button class="key-select-btn active" id="practice-key-all" onclick="setPracticeKeyMode(false)">ALL</button>
-                        <button class="repeat-btn" onclick="repeatPracticeSound()">REPEAT 🔁</button>
-                        <button class="trigger-go-btn" onclick="triggerPracticeGo()">GO ⚡</button>
-                    </div>
-                </div>
-
-                <!-- Vertical Faders Column (Middle) -->
-                <div class="vertical-faders-column">
-                    <div class="fader-card" id="card-bell-piano">
-                        <button class="fader-header-btn active" id="mode-bell-piano" onclick="setAudioMode('bell-piano')">
-                            <span>Bells / Piano Blend</span>
+        <div class="controls-panel-wrapper">
+            <div class="controls-panel">
+                <div class="test-mode-grid">
+                    <div class="test-card">
+                        <button class="fader-header-btn" id="mode-test-holder" onclick="setAudioMode('test-mode')">
+                            <span>🎯 Practice Mode (Instant Light Up)</span>
                         </button>
-                        <div class="fader-metrics">
-                            <span id="label-bp-left" class="highlight">Bells 50%</span>
-                            <span id="label-bp-right" class="highlight">Piano 50%</span>
-                        </div>
-                        <input type="range" min="0" max="100" value="50" class="blend-slider" id="fader-bell-piano" oninput="updateBlendValues('bell-piano', this.value)">
-                    </div>
-
-                    <div class="fader-card" id="card-bell-vocal">
-                        <button class="fader-header-btn" id="mode-bell-vocal" onclick="setAudioMode('bell-vocal')">
-                            <span>Bells / Solfège Blend</span>
-                        </button>
-                        <div class="fader-metrics">
-                            <span id="label-bv-left" class="highlight">Bells 50%</span>
-                            <span id="label-bv-right" class="highlight">Solfège 50%</span>
-                        </div>
-                        <input type="range" min="0" max="100" value="50" class="blend-slider" id="fader-bell-vocal" oninput="updateBlendValues('bell-vocal', this.value)" disabled>
-                    </div>
-
-                    <div class="fader-card" id="card-piano-vocal">
-                        <button class="fader-header-btn" id="mode-piano-vocal" onclick="setAudioMode('piano-vocal')">
-                            <span>Piano / Solfège Blend</span>
-                        </button>
-                        <div class="fader-metrics">
-                            <span id="label-pv-left" class="highlight">Piano 50%</span>
-                            <span id="label-pv-right" class="highlight">Solfège 50%</span>
-                        </div>
-                        <input type="range" min="0" max="100" value="50" class="blend-slider" id="fader-piano-vocal" oninput="updateBlendValues('piano-vocal', this.value)" disabled>
-                    </div>
-                </div>
-
-                <!-- Interactive Test Card (Right) -->
-                <div class="test-card interactive">
-                    <button class="fader-header-btn" id="mode-interactive-holder" onclick="setAudioMode('interactive-test')">
-                        <span>🎹 Test Mode (Press Key to Answer)</span>
-                    </button>
-                    <div class="test-options-section">
-                        <div class="test-options-group">
-                            <span class="group-label">Sound / Timbre</span>
-                            <div class="test-options-grid sound-grid">
-                                <button class="test-sub-btn active" id="inter-sub-ravenscroft" onclick="setInteractiveSubMode('ravenscroft')">Piano</button>
-                                <button class="test-sub-btn" id="inter-sub-bells" onclick="setInteractiveSubMode('bells')">Bells</button>
-                                <button class="test-sub-btn" id="inter-sub-rhodes" onclick="setInteractiveSubMode('rhodes')">Rhodes</button>
-                                <button class="test-sub-btn" id="inter-sub-guitar" onclick="setInteractiveSubMode('guitar')">Guitar</button>
-                                <button class="test-sub-btn" id="inter-sub-organ" onclick="setInteractiveSubMode('organ')">Organ</button>
+                        <div class="test-options-section">
+                            <div class="test-options-group">
+                                <span class="group-label">Sound / Timbre</span>
+                                <div class="test-options-grid sound-grid">
+                                    <button class="test-sub-btn active" id="test-sub-ravenscroft" onclick="setTestSubMode('ravenscroft')">Piano</button>
+                                    <button class="test-sub-btn" id="test-sub-bells" onclick="setTestSubMode('bells')">Bells</button>
+                                    <button class="test-sub-btn" id="test-sub-pianoseq" onclick="setTestSubMode('pianoseq')">Piano → Sol</button>
+                                    <button class="test-sub-btn" id="test-sub-bellseq" onclick="setTestSubMode('bellseq')">Bell → Sol</button>
+                                    <button class="test-sub-btn" id="test-sub-rhodes" onclick="setTestSubMode('rhodes')">Rhodes</button>
+                                    <button class="test-sub-btn" id="test-sub-guitar" onclick="setTestSubMode('guitar')">Guitar</button>
+                                    <button class="test-sub-btn" id="test-sub-organ" onclick="setTestSubMode('organ')">Organ</button>
+                                </div>
+                            </div>
+                            <div class="test-options-group">
+                                <span class="group-label">Note / Chord Type</span>
+                                <div class="test-options-grid chord-grid">
+                                    <button class="test-sub-btn active" id="test-sub-single" onclick="setTestSubMode('single')">Single</button>
+                                    <button class="test-sub-btn" id="test-sub-dyad" onclick="setTestSubMode('dyad')">Dyad</button>
+                                    <button class="test-sub-btn" id="test-sub-dyadseq" onclick="setTestSubMode('dyadseq')">Dyad (Seq)</button>
+                                    <button class="test-sub-btn" id="test-sub-chord3" onclick="setTestSubMode('chord3')">3-Note</button>
+                                    <button class="test-sub-btn" id="test-sub-chord3seq" onclick="setTestSubMode('chord3seq')">3-Note(Seq)</button>
+                                    <button class="test-sub-btn" id="test-sub-major" onclick="setTestSubMode('major')">Major</button>
+                                    <button class="test-sub-btn" id="test-sub-majorseq" onclick="setTestSubMode('majorseq')">Major(Seq)</button>
+                                    <button class="test-sub-btn" id="test-sub-minor" onclick="setTestSubMode('minor')">Minor</button>
+                                    <button class="test-sub-btn" id="test-sub-minorseq" onclick="setTestSubMode('minorseq')">Minor(Seq)</button>
+                                    <button class="test-sub-btn" id="test-sub-diminished" onclick="setTestSubMode('diminished')">Dim</button>
+                                    <button class="test-sub-btn" id="test-sub-diminishedseq" onclick="setTestSubMode('diminishedseq')">Dim (Seq)</button>
+                                    <button class="test-sub-btn" id="test-sub-augmented" onclick="setTestSubMode('augmented')">Aug</button>
+                                    <button class="test-sub-btn" id="test-sub-augmentedseq" onclick="setTestSubMode('augmentedseq')">Aug (Seq)</button>
+                                </div>
                             </div>
                         </div>
-                        <div class="test-options-group">
-                            <span class="group-label">Note / Chord Type</span>
-                            <div class="test-options-grid chord-grid">
-                                <button class="test-sub-btn active" id="inter-sub-single" onclick="setInteractiveSubMode('single')">Single</button>
-                                <button class="test-sub-btn" id="inter-sub-dyad" onclick="setInteractiveSubMode('dyad')">Dyad</button>
-                                <button class="test-sub-btn" id="inter-sub-dyadseq" onclick="setInteractiveSubMode('dyadseq')">Dyad (Seq)</button>
-                                <button class="test-sub-btn" id="inter-sub-chord3" onclick="setInteractiveSubMode('chord3')">3-Note</button>
-                                <button class="test-sub-btn" id="inter-sub-chord3seq" onclick="setInteractiveSubMode('chord3seq')">3-Note(Seq)</button>
-                                <button class="test-sub-btn" id="inter-sub-major" onclick="setInteractiveSubMode('major')">Major</button>
-                                <button class="test-sub-btn" id="inter-sub-majorseq" onclick="setInteractiveSubMode('majorseq')">Major(Seq)</button>
-                                <button class="test-sub-btn" id="inter-sub-minor" onclick="setInteractiveSubMode('minor')">Minor</button>
-                                <button class="test-sub-btn" id="inter-sub-minorseq" onclick="setInteractiveSubMode('minorseq')">Minor(Seq)</button>
-                                <button class="test-sub-btn" id="inter-sub-diminished" onclick="setInteractiveSubMode('diminished')">Dim</button>
-                                <button class="test-sub-btn" id="inter-sub-diminishedseq" onclick="setInteractiveSubMode('diminishedseq')">Dim (Seq)</button>
-                                <button class="test-sub-btn" id="inter-sub-augmented" onclick="setInteractiveSubMode('augmented')">Aug</button>
-                                <button class="test-sub-btn" id="inter-sub-augmentedseq" onclick="setInteractiveSubMode('augmentedseq')">Aug (Seq)</button>
-                            </div>
+                        <div class="go-action-bar">
+                            <button class="key-select-btn" id="practice-key-white" onclick="setPracticeKeyMode(true)">WHITE KEYS</button>
+                            <button class="key-select-btn active" id="practice-key-all" onclick="setPracticeKeyMode(false)">ALL KEYS</button>
+                            <button class="repeat-btn" onclick="repeatPracticeSound()">REPEAT 🔁</button>
+                            <button class="trigger-go-btn" onclick="triggerPracticeGo()">GO ⚡</button>
                         </div>
                     </div>
-                    <div class="go-action-bar">
-                        <button class="key-select-btn" id="inter-key-white" onclick="setInteractiveKeyMode(true)">WHITE</button>
-                        <button class="key-select-btn active" id="inter-key-all" onclick="setInteractiveKeyMode(false)">ALL</button>
-                        <button class="repeat-btn" onclick="repeatInteractiveSound()">REPEAT 🔁</button>
-                        <button class="trigger-go-btn" onclick="triggerInteractiveGo()">GO ⚡</button>
+
+                    <div class="test-card interactive">
+                        <button class="fader-header-btn" id="mode-interactive-holder" onclick="setAudioMode('interactive-test')">
+                            <span>🎹 Test Mode (Press Key to Answer)</span>
+                        </button>
+                        <div class="test-options-section">
+                            <div class="test-options-group">
+                                <span class="group-label">Sound / Timbre</span>
+                                <div class="test-options-grid sound-grid">
+                                    <button class="test-sub-btn active" id="inter-sub-ravenscroft" onclick="setInteractiveSubMode('ravenscroft')">Piano</button>
+                                    <button class="test-sub-btn" id="inter-sub-bells" onclick="setInteractiveSubMode('bells')">Bells</button>
+                                    <button class="test-sub-btn" id="inter-sub-rhodes" onclick="setInteractiveSubMode('rhodes')">Rhodes</button>
+                                    <button class="test-sub-btn" id="inter-sub-guitar" onclick="setInteractiveSubMode('guitar')">Guitar</button>
+                                    <button class="test-sub-btn" id="inter-sub-organ" onclick="setInteractiveSubMode('organ')">Organ</button>
+                                </div>
+                            </div>
+                            <div class="test-options-group">
+                                <span class="group-label">Note / Chord Type</span>
+                                <div class="test-options-grid chord-grid">
+                                    <button class="test-sub-btn active" id="inter-sub-single" onclick="setInteractiveSubMode('single')">Single</button>
+                                    <button class="test-sub-btn" id="inter-sub-dyad" onclick="setInteractiveSubMode('dyad')">Dyad</button>
+                                    <button class="test-sub-btn" id="inter-sub-dyadseq" onclick="setInteractiveSubMode('dyadseq')">Dyad (Seq)</button>
+                                    <button class="test-sub-btn" id="inter-sub-chord3" onclick="setInteractiveSubMode('chord3')">3-Note</button>
+                                    <button class="test-sub-btn" id="inter-sub-chord3seq" onclick="setInteractiveSubMode('chord3seq')">3-Note(Seq)</button>
+                                    <button class="test-sub-btn" id="inter-sub-major" onclick="setInteractiveSubMode('major')">Major</button>
+                                    <button class="test-sub-btn" id="inter-sub-majorseq" onclick="setInteractiveSubMode('majorseq')">Major(Seq)</button>
+                                    <button class="test-sub-btn" id="inter-sub-minor" onclick="setInteractiveSubMode('minor')">Minor</button>
+                                    <button class="test-sub-btn" id="inter-sub-minorseq" onclick="setInteractiveSubMode('minorseq')">Minor(Seq)</button>
+                                    <button class="test-sub-btn" id="inter-sub-diminished" onclick="setInteractiveSubMode('diminished')">Dim</button>
+                                    <button class="test-sub-btn" id="inter-sub-diminishedseq" onclick="setInteractiveSubMode('diminishedseq')">Dim (Seq)</button>
+                                    <button class="test-sub-btn" id="inter-sub-augmented" onclick="setInteractiveSubMode('augmented')">Aug</button>
+                                    <button class="test-sub-btn" id="inter-sub-augmentedseq" onclick="setInteractiveSubMode('augmentedseq')">Aug (Seq)</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="go-action-bar">
+                            <button class="key-select-btn" id="inter-key-white" onclick="setInteractiveKeyMode(true)">WHITE KEYS</button>
+                            <button class="key-select-btn active" id="inter-key-all" onclick="setInteractiveKeyMode(false)">ALL KEYS</button>
+                            <button class="repeat-btn" onclick="repeatInteractiveSound()">REPEAT 🔁</button>
+                            <button class="trigger-go-btn" onclick="triggerInteractiveGo()">GO ⚡</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -822,6 +795,45 @@
             <div class="piano-grid">
                 <div class="sharps-layer" id="sharps-container"></div>
                 <div class="naturals-layer" id="naturals-container"></div>
+            </div>
+        </div>
+
+        <div class="controls-panel-wrapper" id="controlsWrapper">
+            <div class="controls-panel">
+                <div class="fader-grid">
+                    <div class="fader-card" id="card-bell-piano">
+                        <button class="fader-header-btn active" id="mode-bell-piano" onclick="setAudioMode('bell-piano')">
+                            <span>Bells / Ravenscroft 275 Blend</span>
+                        </button>
+                        <div class="fader-metrics">
+                            <span id="label-bp-left" class="highlight">Bells 50%</span>
+                            <span id="label-bp-right" class="highlight">Ravenscroft 275 50%</span>
+                        </div>
+                        <input type="range" min="0" max="100" value="50" class="blend-slider" id="fader-bell-piano" oninput="updateBlendValues('bell-piano', this.value)">
+                    </div>
+
+                    <div class="fader-card" id="card-bell-vocal">
+                        <button class="fader-header-btn" id="mode-bell-vocal" onclick="setAudioMode('bell-vocal')">
+                            <span>Bells / Solfège Blend</span>
+                        </button>
+                        <div class="fader-metrics">
+                            <span id="label-bv-left" class="highlight">Bells 50%</span>
+                            <span id="label-bv-right" class="highlight">Solfège 50%</span>
+                        </div>
+                        <input type="range" min="0" max="100" value="50" class="blend-slider" id="fader-bell-vocal" oninput="updateBlendValues('bell-vocal', this.value)" disabled>
+                    </div>
+
+                    <div class="fader-card" id="card-piano-vocal">
+                        <button class="fader-header-btn" id="mode-piano-vocal" onclick="setAudioMode('piano-vocal')">
+                            <span>Ravenscroft 275 / Solfège Blend</span>
+                        </button>
+                        <div class="fader-metrics">
+                            <span id="label-pv-left" class="highlight">Ravenscroft 275 50%</span>
+                            <span id="label-pv-right" class="highlight">Solfège 50%</span>
+                        </div>
+                        <input type="range" min="0" max="100" value="50" class="blend-slider" id="fader-piano-vocal" oninput="updateBlendValues('piano-vocal', this.value)" disabled>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -1222,7 +1234,7 @@
 
         if (targetFader === 'bell-piano') {
             document.getElementById('label-bp-left').innerHTML = `Bells ${percentage}%`;
-            document.getElementById('label-bp-right').innerHTML = `Piano ${100 - percentage}%`;
+            document.getElementById('label-bp-right').innerHTML = `Ravenscroft 275 ${100 - percentage}%`;
             document.getElementById('label-bp-left').className = percentage > 0 ? "highlight" : "";
             document.getElementById('label-bp-right').className = (100 - percentage) > 0 ? "highlight" : "";
             
@@ -1237,7 +1249,7 @@
             bellGainNode.gain.linearRampToValueAtTime(leftSideGain, currentTime + rampTime);
             vocalGainNode.gain.linearRampToValueAtTime(rightSideGain, currentTime + rampTime);
         } else if (targetFader === 'piano-vocal') {
-            document.getElementById('label-pv-left').innerHTML = `Piano ${percentage}%`;
+            document.getElementById('label-pv-left').innerHTML = `Ravenscroft 275 ${percentage}%`;
             document.getElementById('label-pv-right').innerHTML = `Solfège ${100 - percentage}%`;
             document.getElementById('label-pv-left').className = percentage > 0 ? "highlight" : "";
             document.getElementById('label-pv-right').className = (100 - percentage) > 0 ? "highlight" : "";
@@ -1369,10 +1381,10 @@
             lockInterface.classList.remove('hidden');
             
             document.getElementById('label-bp-left').innerHTML = `Bells 50%`;
-            document.getElementById('label-bp-right').innerHTML = `Piano 50%`;
+            document.getElementById('label-bp-right').innerHTML = `Ravenscroft 275 50%`;
             document.getElementById('label-bv-left').innerHTML = `Bells 50%`;
             document.getElementById('label-bv-right').innerHTML = `Solfège 50%`;
-            document.getElementById('label-pv-left').innerHTML = `Piano 50%`;
+            document.getElementById('label-pv-left').innerHTML = `Ravenscroft 275 50%`;
             document.getElementById('label-pv-right').innerHTML = `Solfège 50%`;
         }, 600);
     }
