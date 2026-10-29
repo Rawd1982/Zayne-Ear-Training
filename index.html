@@ -700,7 +700,9 @@
                             <button class="test-sub-btn" id="test-sub-organ" onclick="setTestSubMode('organ')">Organ</button>
                             <button class="test-sub-btn active" id="test-sub-single" onclick="setTestSubMode('single')">Single Note</button>
                             <button class="test-sub-btn" id="test-sub-dyad" onclick="setTestSubMode('dyad')">Dyad (2 Notes)</button>
+                            <button class="test-sub-btn" id="test-sub-dyadseq" onclick="setTestSubMode('dyadseq')">Dyad (Seq)</button>
                             <button class="test-sub-btn" id="test-sub-chord3" onclick="setTestSubMode('chord3')">3-Note Chord</button>
+                            <button class="test-sub-btn" id="test-sub-chord3seq" onclick="setTestSubMode('chord3seq')">3-Note (Seq)</button>
                             <button class="test-sub-btn" id="test-sub-major" onclick="setTestSubMode('major')">Major Chord</button>
                             <button class="test-sub-btn" id="test-sub-minor" onclick="setTestSubMode('minor')">Minor Chord</button>
                             <button class="test-sub-btn" id="test-sub-diminished" onclick="setTestSubMode('diminished')">Diminished</button>
@@ -726,7 +728,9 @@
                             <button class="test-sub-btn" id="inter-sub-organ" onclick="setInteractiveSubMode('organ')">Organ</button>
                             <button class="test-sub-btn active" id="inter-sub-single" onclick="setInteractiveSubMode('single')">Single Note</button>
                             <button class="test-sub-btn" id="inter-sub-dyad" onclick="setInteractiveSubMode('dyad')">Dyad Test</button>
+                            <button class="test-sub-btn" id="inter-sub-dyadseq" onclick="setInteractiveSubMode('dyadseq')">Dyad (Seq)</button>
                             <button class="test-sub-btn" id="inter-sub-chord3" onclick="setInteractiveSubMode('chord3')">3-Note Test</button>
+                            <button class="test-sub-btn" id="inter-sub-chord3seq" onclick="setInteractiveSubMode('chord3seq')">3-Note (Seq)</button>
                             <button class="test-sub-btn" id="inter-sub-major" onclick="setInteractiveSubMode('major')">Major Chord</button>
                             <button class="test-sub-btn" id="inter-sub-minor" onclick="setInteractiveSubMode('minor')">Minor Chord</button>
                             <button class="test-sub-btn" id="inter-sub-diminished" onclick="setInteractiveSubMode('diminished')">Diminished</button>
@@ -935,7 +939,7 @@
         if (isCurrentlyLocked) return;
         
         const sounds = ['ravenscroft', 'bells', 'pianoseq', 'bellseq', 'rhodes', 'guitar', 'organ'];
-        const types = ['single', 'dyad', 'chord3', 'major', 'minor', 'diminished', 'augmented'];
+        const types = ['single', 'dyad', 'dyadseq', 'chord3', 'chord3seq', 'major', 'minor', 'diminished', 'augmented'];
         
         if (sounds.includes(type)) {
             activePracticeSound = type;
@@ -973,28 +977,40 @@
         if (activePracticeType === 'single') {
             let selectedNote = eligibleNotes[Math.floor(Math.random() * eligibleNotes.length)].id;
             lastPracticeNotes = [selectedNote];
-        } else if (activePracticeType === 'dyad') {
+        } else if (activePracticeType === 'dyad' || activePracticeType === 'dyadseq') {
             lastPracticeNotes = getRandomNotesWithinOctave(2, practiceWhiteKeysOnly);
-        } else if (activePracticeType === 'chord3') {
+        } else if (activePracticeType === 'chord3' || activePracticeType === 'chord3seq') {
             lastPracticeNotes = getRandomNotesWithinOctave(3, practiceWhiteKeysOnly);
         } else if (['major', 'minor', 'diminished', 'augmented'].includes(activePracticeType)) {
             lastPracticeNotes = getChordNotes(activePracticeType, practiceWhiteKeysOnly);
         }
 
-        lastPracticeNotes.forEach(n => playPracticeSound(n, activePracticeSound));
+        playPracticeNotesWithTiming(lastPracticeNotes, activePracticeType, activePracticeSound);
     }
 
     function repeatPracticeSound() {
         if (lastPracticeNotes.length === 0) return;
         clearAllFlashEffects();
-        lastPracticeNotes.forEach(n => playPracticeSound(n, activePracticeSound));
+        playPracticeNotesWithTiming(lastPracticeNotes, activePracticeType, activePracticeSound);
+    }
+
+    function playPracticeNotesWithTiming(notes, type, sound) {
+        if (type === 'dyadseq' || type === 'chord3seq') {
+            notes.forEach((note, idx) => {
+                setTimeout(() => {
+                    playPracticeSound(note, sound);
+                }, idx * 500);
+            });
+        } else {
+            notes.forEach(n => playPracticeSound(n, sound));
+        }
     }
 
     function setInteractiveSubMode(type) {
         if (isCurrentlyLocked) return;
         
         const sounds = ['ravenscroft', 'bells', 'rhodes', 'guitar', 'organ'];
-        const types = ['single', 'dyad', 'chord3', 'major', 'minor', 'diminished', 'augmented'];
+        const types = ['single', 'dyad', 'dyadseq', 'chord3', 'chord3seq', 'major', 'minor', 'diminished', 'augmented'];
 
         if (sounds.includes(type)) {
             activeInteractiveSound = type;
@@ -1033,20 +1049,32 @@
             let eligible = interactiveWhiteKeysOnly ? progression.filter(n => n.type === 'white') : progression;
             targetActiveTestNote = eligible[Math.floor(Math.random() * eligible.length)].id;
             targetActiveTestNotes = [targetActiveTestNote];
-        } else if (activeInteractiveType === 'dyad') {
+        } else if (activeInteractiveType === 'dyad' || activeInteractiveType === 'dyadseq') {
             targetActiveTestNotes = getRandomNotesWithinOctave(2, interactiveWhiteKeysOnly);
-        } else if (activeInteractiveType === 'chord3') {
+        } else if (activeInteractiveType === 'chord3' || activeInteractiveType === 'chord3seq') {
             targetActiveTestNotes = getRandomNotesWithinOctave(3, interactiveWhiteKeysOnly);
         } else if (['major', 'minor', 'diminished', 'augmented'].includes(activeInteractiveType)) {
             targetActiveTestNotes = getChordNotes(activeInteractiveType, interactiveWhiteKeysOnly);
         }
 
-        targetActiveTestNotes.forEach(n => triggerInstrumentAudioOnly(n, activeInteractiveSound));
+        playInteractiveNotesWithTiming(targetActiveTestNotes, activeInteractiveType, activeInteractiveSound);
     }
 
     function repeatInteractiveSound() {
         if (targetActiveTestNotes.length === 0) return;
-        targetActiveTestNotes.forEach(n => triggerInstrumentAudioOnly(n, activeInteractiveSound));
+        playInteractiveNotesWithTiming(targetActiveTestNotes, activeInteractiveType, activeInteractiveSound);
+    }
+
+    function playInteractiveNotesWithTiming(notes, type, sound) {
+        if (type === 'dyadseq' || type === 'chord3seq') {
+            notes.forEach((note, idx) => {
+                setTimeout(() => {
+                    triggerInstrumentAudioOnly(note, sound);
+                }, idx * 500);
+            });
+        } else {
+            notes.forEach(n => triggerInstrumentAudioOnly(n, sound));
+        }
     }
 
     function clearAllFlashEffects() {
@@ -1315,12 +1343,12 @@
             clearAllFlashEffects();
             if (activePracticeType === 'single') {
                 lastPracticeNotes = [choice];
-            } else if (activePracticeType === 'dyad') {
+            } else if (activePracticeType === 'dyad' || activePracticeType === 'dyadseq') {
                 let idx = progression.findIndex(n => n.id === choice);
                 let offset = Math.floor(Math.random() * 12) + 1;
                 let nextIdx = Math.min(progression.length - 1, idx + offset);
                 lastPracticeNotes = [progression[idx].id, progression[nextIdx].id];
-            } else if (activePracticeType === 'chord3') {
+            } else if (activePracticeType === 'chord3' || activePracticeType === 'chord3seq') {
                 let idx = progression.findIndex(n => n.id === choice);
                 let off1 = Math.floor(Math.random() * 6) + 1;
                 let off2 = Math.floor(Math.random() * 6) + 7;
@@ -1330,7 +1358,7 @@
             } else if (['major', 'minor', 'diminished', 'augmented'].includes(activePracticeType)) {
                 lastPracticeNotes = getChordNotes(activePracticeType, false, choice);
             }
-            lastPracticeNotes.forEach(n => playPracticeSound(n, activePracticeSound));
+            playPracticeNotesWithTiming(lastPracticeNotes, activePracticeType, activePracticeSound);
             return;
         }
 
@@ -1363,8 +1391,8 @@
                         correctBtn.style.setProperty('--light-color', targetColor);
                         correctBtn.classList.add('playing');
                     }
-                    triggerInstrumentAudioOnly(n, activeInteractiveSound);
                 });
+                playInteractiveNotesWithTiming(targetActiveTestNotes, activeInteractiveType, activeInteractiveSound);
             }
             return;
         }
@@ -1424,3 +1452,4 @@
 </script>
 </body>
 </html>
+
