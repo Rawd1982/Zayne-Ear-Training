@@ -1,4 +1,5 @@
 
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -37,7 +38,7 @@
             font-size: 1.8rem; 
             font-weight: 900; 
             text-align: center; 
-            margin: 2px 0 2px 0; 
+            margin: 3px 0 2px 0; 
             width: 100%; 
             letter-spacing: 2px; 
         }
@@ -51,7 +52,7 @@
         .game-panel {
             background-color: var(--panel-bg);
             padding: 10px;
-            border-radius: 14px;
+            border-radius: 12px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -77,11 +78,19 @@
             width: 100%;
         }
 
+        .fader-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+            width: 100%;
+        }
+
         .test-mode-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 8px;
             width: 100%;
+            margin-top: 2px;
         }
 
         .test-options-section {
@@ -119,9 +128,17 @@
             align-items: center;
         }
 
+        .test-options-grid.sound-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .test-options-grid.chord-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
         .go-action-bar {
             display: flex;
-            gap: 4px;
+            gap: 5px;
             width: 100%;
             margin-top: 4px;
             padding-top: 4px;
@@ -133,14 +150,13 @@
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.15);
             color: var(--text-sub);
-            padding: 4px 1px;
-            font-size: 0.58rem;
+            padding: 3px 1px;
+            font-size: 0.55rem;
             font-weight: 800;
             border-radius: 3px;
             cursor: pointer;
             text-align: center;
             transition: all 0.15s ease;
-            height: 24px;
         }
 
         .key-select-btn.active {
@@ -158,7 +174,7 @@
 
         .trigger-go-btn {
             flex: 1.2;
-            height: 24px;
+            height: 26px;
             background: #e65c40;
             border: 1px solid transparent;
             color: white;
@@ -182,7 +198,7 @@
 
         .repeat-btn {
             flex: 1;
-            height: 24px;
+            height: 26px;
             background: #3b82f6;
             border: 1px solid transparent;
             color: white;
@@ -203,7 +219,7 @@
         }
 
         @media (max-width: 992px) {
-            .test-mode-grid {
+            .fader-grid, .test-mode-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -223,11 +239,10 @@
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 6px;
-            padding: 4px 8px;
+            padding: 5px 8px;
             display: flex;
             flex-direction: column;
-            gap: 2px;
-            margin-bottom: 6px;
+            gap: 3px;
         }
 
         .test-card {
@@ -395,7 +410,7 @@
         .slide-lock-container {
             width: 100%;
             max-width: 300px;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -455,7 +470,7 @@
             height: 14px;
             border-radius: 7px;
             background: #ffffff;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.4);
             cursor: grab;
         }
         .lock-slider::-webkit-slider-thumb:active { background: #e2e8f0; cursor: grabbing; }
@@ -466,25 +481,25 @@
             border: none;
             border-radius: 7px;
             background: #ffffff;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.4);
             cursor: grab;
         }
         .lock-slider::-moz-range-thumb:active { background: #e2e8f0; cursor: grabbing; }
 
         .keyboard-wrapper {
             background-color: var(--keyboard-bg);
-            padding: 10px 8px;
-            border-radius: 12px;
+            padding: 15px 12px;
+            border-radius: 14px;
             width: 100%;
             max-width: 1100px; 
             overflow-x: auto;
             overflow-y: hidden;
             display: block;
             -webkit-overflow-scrolling: touch; 
-            border: 2px solid #1e293b;
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+            border: 3px solid #1e293b;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
             position: relative;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
         .keyboard-wrapper.locked {
@@ -502,38 +517,38 @@
             }
         }
 
-        .keyboard-wrapper::-webkit-scrollbar { height: 5px; }
-        .keyboard-wrapper::-webkit-scrollbar-track { background: #0b0f19; border-radius: 6px; }
-        .keyboard-wrapper::-webkit-scrollbar-thumb { background: #d62828; border-radius: 6px; }
+        .keyboard-wrapper::-webkit-scrollbar { height: 6px; }
+        .keyboard-wrapper::-webkit-scrollbar-track { background: #0b0f19; border-radius: 8px; }
+        .keyboard-wrapper::-webkit-scrollbar-thumb { background: #d62828; border-radius: 8px; }
         .keyboard-wrapper.locked::-webkit-scrollbar { display: none; height: 0; }
 
         .piano-grid {
             position: relative;
             display: block;
             width: max-content;
-            height: 200px;
+            height: 240px;
             background: #000;
-            padding: 3px;
+            padding: 4px;
             border-radius: 4px;
         }
 
         .sharps-layer {
             position: absolute;
-            top: 3px;
-            left: 3px;
+            top: 4px;
+            left: 4px;
             width: 100%;
-            height: 120px;
+            height: 145px;
             z-index: 2;
             pointer-events: none;
             display: grid;
-            grid-template-columns: repeat(15, 50px);
-            gap: 4px;
+            grid-template-columns: repeat(15, 60px);
+            gap: 5px;
         }
 
         .naturals-layer { 
             display: grid;
-            grid-template-columns: repeat(15, 50px);
-            gap: 4px;
+            grid-template-columns: repeat(15, 60px);
+            gap: 5px;
             height: 100%;
         }
 
@@ -546,28 +561,28 @@
             position: relative;
             transition: filter 0.2s, transform 0.05s, box-shadow 0.05s, background 0.1s;
             pointer-events: auto;
-            padding-bottom: 12px;
+            padding-bottom: 15px;
             user-select: none;
             -webkit-user-select: none;
         }
         
         .naturals-layer .bell-btn {
-            height: 194px;
+            height: 232px;
             background: linear-gradient(to bottom, #eeeeee 0%, #ffffff 100%);
-            border-radius: 0 0 6px 6px;
-            box-shadow: inset 0 2px 2px #ffffff, 0 3px 5px rgba(0,0,0,0.25);
-            border-bottom: 3px solid #cccccc;
+            border-radius: 0 0 7px 7px;
+            box-shadow: inset 0 2px 3px #ffffff, 0 4px 6px rgba(0,0,0,0.25);
+            border-bottom: 4px solid #cccccc;
         }
 
         .sharps-layer .bell-btn {
-            height: 120px;
-            width: 32px;
+            height: 145px;
+            width: 38px;
             background: linear-gradient(to bottom, #333333 0%, #111111 100%);
-            border-radius: 0 0 4px 4px;
+            border-radius: 0 0 5px 5px;
             z-index: 3;
-            box-shadow: inset 0 1px 1px rgba(255,255,255,0.2), 2px 3px 6px rgba(0,0,0,0.5);
-            border-bottom: 4px solid #000000;
-            padding-bottom: 8px;
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.2), 2px 4px 8px rgba(0,0,0,0.5);
+            border-bottom: 5px solid #000000;
+            padding-bottom: 10px;
         }
 
         .naturals-layer .bell-btn:active, .naturals-layer .bell-btn.playing { 
@@ -580,7 +595,7 @@
         .sharps-layer .bell-btn:active, .sharps-layer .bell-btn.playing {
             transform: translateY(2px);
             border-bottom-width: 2px;
-            box-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            box-shadow: 1px 1px 3px rgba(0,0,0,0.5);
             background: var(--light-color, #222222);
         }
 
@@ -594,9 +609,9 @@
         }
         
         .color-badge {
-            width: 38px;
-            height: 38px;
-            border-radius: 6px;
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -604,14 +619,14 @@
             font-weight: 800;
             color: #ffffff;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8);
-            box-shadow: 0 2px 3px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
             border: 1px solid rgba(255, 255, 255, 0.15);
             margin: 0 auto;
             pointer-events: none;
         }
 
-        .naturals-layer .color-badge { font-size: 0.85rem; }
-        .sharps-layer .color-badge { width: 26px; height: 26px; font-size: 0.55rem; border-radius: 4px; }
+        .naturals-layer .color-badge { font-size: 0.95rem; }
+        .sharps-layer .color-badge { width: 32px; height: 32px; font-size: 0.65rem; border-radius: 6px; }
 
         .accidental-stack {
             display: flex;
@@ -624,7 +639,7 @@
         }
 
         .solfege-tiny {
-            font-size: 7px;
+            font-size: 8px;
             font-weight: 500;
             opacity: 0.85;
             text-shadow: none;
@@ -633,16 +648,16 @@
             margin-bottom: 1px;
         }
 
-        #btn-Ab3  { grid-column: 1; margin-left: 32px; }
-        #btn-Bb3  { grid-column: 2; margin-left: 32px; }
-        #btn-Db4  { grid-column: 4; margin-left: 32px; }
-        #btn-Eb4  { grid-column: 5; margin-left: 32px; }
-        #btn-Gb4  { grid-column: 7; margin-left: 32px; }
-        #btn-Ab4  { grid-column: 8; margin-left: 32px; }
-        #btn-Bb4  { grid-column: 9; margin-left: 32px; }
-        #btn-Db5  { grid-column: 11; margin-left: 32px; }
-        #btn-Eb5  { grid-column: 12; margin-left: 32px; }
-        #btn-Gb5  { grid-column: 14; margin-left: 32px; }
+        #btn-Ab3  { grid-column: 1; margin-left: 38px; }
+        #btn-Bb3  { grid-column: 2; margin-left: 38px; }
+        #btn-Db4  { grid-column: 4; margin-left: 38px; }
+        #btn-Eb4  { grid-column: 5; margin-left: 38px; }
+        #btn-Gb4  { grid-column: 7; margin-left: 38px; }
+        #btn-Ab4  { grid-column: 8; margin-left: 38px; }
+        #btn-Bb4  { grid-column: 9; margin-left: 38px; }
+        #btn-Db5  { grid-column: 11; margin-left: 38px; }
+        #btn-Eb5  { grid-column: 12; margin-left: 38px; }
+        #btn-Gb5  { grid-column: 14; margin-left: 38px; }
 
         .bell-btn.G3 .color-badge,  .bell-btn.G4 .color-badge,  .bell-btn.G5 .color-badge   { background: linear-gradient(to bottom, #3a6d6b, #4d908e); } 
         .bell-btn.Ab3 .color-badge, .bell-btn.Ab4 .color-badge, .bell-btn.Ab5 .color-badge  { background: linear-gradient(to bottom, #1d5f7a, #277da1); } 
@@ -672,33 +687,18 @@
         <div class="controls-panel-wrapper">
             <div class="controls-panel">
                 <div class="test-mode-grid">
-                    
-                    <!-- Practice Card (With Incorporated Blend Sliders) -->
                     <div class="test-card">
                         <button class="fader-header-btn" id="mode-test-holder" onclick="setAudioMode('test-mode')">
                             <span>🎯 Practice Mode (Instant Light Up)</span>
                         </button>
-                        
-                        <!-- Incorporated Blend Sliders (Compact) -->
-                        <div class="fader-card" id="card-bell-piano">
-                            <button class="fader-header-btn active" id="mode-bell-piano" onclick="setAudioMode('bell-piano')">
-                                <span>Bells / Ravenscroft Blend</span>
-                            </button>
-                            <div class="fader-metrics">
-                                <span id="label-bp-left" class="highlight">Bells 50%</span>
-                                <span id="label-bp-right" class="highlight">Ravenscroft 50%</span>
-                            </div>
-                            <input type="range" min="0" max="100" value="50" class="blend-slider" id="fader-bell-piano" oninput="updateBlendValues('bell-piano', this.value)">
-                        </div>
-
                         <div class="test-options-section">
                             <div class="test-options-group">
                                 <span class="group-label">Sound / Timbre</span>
-                                <div class="test-options-grid">
+                                <div class="test-options-grid sound-grid">
                                     <button class="test-sub-btn active" id="test-sub-ravenscroft" onclick="setTestSubMode('ravenscroft')">Piano</button>
                                     <button class="test-sub-btn" id="test-sub-bells" onclick="setTestSubMode('bells')">Bells</button>
-                                    <button class="test-sub-btn" id="test-sub-pianoseq" onclick="setTestSubMode('pianoseq')">Piano→Sol</button>
-                                    <button class="test-sub-btn" id="test-sub-bellseq" onclick="setTestSubMode('bellseq')">Bell→Sol</button>
+                                    <button class="test-sub-btn" id="test-sub-pianoseq" onclick="setTestSubMode('pianoseq')">Piano → Sol</button>
+                                    <button class="test-sub-btn" id="test-sub-bellseq" onclick="setTestSubMode('bellseq')">Bell → Sol</button>
                                     <button class="test-sub-btn" id="test-sub-rhodes" onclick="setTestSubMode('rhodes')">Rhodes</button>
                                     <button class="test-sub-btn" id="test-sub-guitar" onclick="setTestSubMode('guitar')">Guitar</button>
                                     <button class="test-sub-btn" id="test-sub-organ" onclick="setTestSubMode('organ')">Organ</button>
@@ -706,10 +706,10 @@
                             </div>
                             <div class="test-options-group">
                                 <span class="group-label">Note / Chord Type</span>
-                                <div class="test-options-grid">
+                                <div class="test-options-grid chord-grid">
                                     <button class="test-sub-btn active" id="test-sub-single" onclick="setTestSubMode('single')">Single</button>
                                     <button class="test-sub-btn" id="test-sub-dyad" onclick="setTestSubMode('dyad')">Dyad</button>
-                                    <button class="test-sub-btn" id="test-sub-dyadseq" onclick="setTestSubMode('dyadseq')">Dyad(Seq)</button>
+                                    <button class="test-sub-btn" id="test-sub-dyadseq" onclick="setTestSubMode('dyadseq')">Dyad (Seq)</button>
                                     <button class="test-sub-btn" id="test-sub-chord3" onclick="setTestSubMode('chord3')">3-Note</button>
                                     <button class="test-sub-btn" id="test-sub-chord3seq" onclick="setTestSubMode('chord3seq')">3-Note(Seq)</button>
                                     <button class="test-sub-btn" id="test-sub-major" onclick="setTestSubMode('major')">Major</button>
@@ -717,54 +717,28 @@
                                     <button class="test-sub-btn" id="test-sub-minor" onclick="setTestSubMode('minor')">Minor</button>
                                     <button class="test-sub-btn" id="test-sub-minorseq" onclick="setTestSubMode('minorseq')">Minor(Seq)</button>
                                     <button class="test-sub-btn" id="test-sub-diminished" onclick="setTestSubMode('diminished')">Dim</button>
-                                    <button class="test-sub-btn" id="test-sub-diminishedseq" onclick="setTestSubMode('diminishedseq')">Dim(Seq)</button>
+                                    <button class="test-sub-btn" id="test-sub-diminishedseq" onclick="setTestSubMode('diminishedseq')">Dim (Seq)</button>
                                     <button class="test-sub-btn" id="test-sub-augmented" onclick="setTestSubMode('augmented')">Aug</button>
-                                    <button class="test-sub-btn" id="test-sub-augmentedseq" onclick="setTestSubMode('augmentedseq')">Aug(Seq)</button>
+                                    <button class="test-sub-btn" id="test-sub-augmentedseq" onclick="setTestSubMode('augmentedseq')">Aug (Seq)</button>
                                 </div>
                             </div>
                         </div>
                         <div class="go-action-bar">
-                            <button class="key-select-btn" id="practice-key-white" onclick="setPracticeKeyMode(true)">WHITE</button>
-                            <button class="key-select-btn active" id="practice-key-all" onclick="setPracticeKeyMode(false)">ALL</button>
+                            <button class="key-select-btn" id="practice-key-white" onclick="setPracticeKeyMode(true)">WHITE KEYS</button>
+                            <button class="key-select-btn active" id="practice-key-all" onclick="setPracticeKeyMode(false)">ALL KEYS</button>
                             <button class="repeat-btn" onclick="repeatPracticeSound()">REPEAT 🔁</button>
                             <button class="trigger-go-btn" onclick="triggerPracticeGo()">GO ⚡</button>
                         </div>
                     </div>
 
-                    <!-- Interactive Test Card (With Incorporated Blend Sliders) -->
                     <div class="test-card interactive">
                         <button class="fader-header-btn" id="mode-interactive-holder" onclick="setAudioMode('interactive-test')">
                             <span>🎹 Test Mode (Press Key to Answer)</span>
                         </button>
-                        
-                        <!-- Incorporated Blend Sliders (Compact) -->
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px;">
-                            <div class="fader-card" id="card-bell-vocal" style="margin-bottom:0;">
-                                <button class="fader-header-btn" id="mode-bell-vocal" onclick="setAudioMode('bell-vocal')">
-                                    <span>Bells / Solfège</span>
-                                </button>
-                                <div class="fader-metrics">
-                                    <span id="label-bv-left" class="highlight">Bells 50%</span>
-                                    <span id="label-bv-right" class="highlight">Sol 50%</span>
-                                </div>
-                                <input type="range" min="0" max="100" value="50" class="blend-slider" id="fader-bell-vocal" oninput="updateBlendValues('bell-vocal', this.value)" disabled>
-                            </div>
-                            <div class="fader-card" id="card-piano-vocal" style="margin-bottom:0;">
-                                <button class="fader-header-btn" id="mode-piano-vocal" onclick="setAudioMode('piano-vocal')">
-                                    <span>Piano / Solfège</span>
-                                </button>
-                                <div class="fader-metrics">
-                                    <span id="label-pv-left" class="highlight">Piano 50%</span>
-                                    <span id="label-pv-right" class="highlight">Sol 50%</span>
-                                </div>
-                                <input type="range" min="0" max="100" value="50" class="blend-slider" id="fader-piano-vocal" oninput="updateBlendValues('piano-vocal', this.value)" disabled>
-                            </div>
-                        </div>
-
                         <div class="test-options-section">
                             <div class="test-options-group">
                                 <span class="group-label">Sound / Timbre</span>
-                                <div class="test-options-grid">
+                                <div class="test-options-grid sound-grid">
                                     <button class="test-sub-btn active" id="inter-sub-ravenscroft" onclick="setInteractiveSubMode('ravenscroft')">Piano</button>
                                     <button class="test-sub-btn" id="inter-sub-bells" onclick="setInteractiveSubMode('bells')">Bells</button>
                                     <button class="test-sub-btn" id="inter-sub-rhodes" onclick="setInteractiveSubMode('rhodes')">Rhodes</button>
@@ -774,10 +748,10 @@
                             </div>
                             <div class="test-options-group">
                                 <span class="group-label">Note / Chord Type</span>
-                                <div class="test-options-grid">
+                                <div class="test-options-grid chord-grid">
                                     <button class="test-sub-btn active" id="inter-sub-single" onclick="setInteractiveSubMode('single')">Single</button>
                                     <button class="test-sub-btn" id="inter-sub-dyad" onclick="setInteractiveSubMode('dyad')">Dyad</button>
-                                    <button class="test-sub-btn" id="inter-sub-dyadseq" onclick="setInteractiveSubMode('dyadseq')">Dyad(Seq)</button>
+                                    <button class="test-sub-btn" id="inter-sub-dyadseq" onclick="setInteractiveSubMode('dyadseq')">Dyad (Seq)</button>
                                     <button class="test-sub-btn" id="inter-sub-chord3" onclick="setInteractiveSubMode('chord3')">3-Note</button>
                                     <button class="test-sub-btn" id="inter-sub-chord3seq" onclick="setInteractiveSubMode('chord3seq')">3-Note(Seq)</button>
                                     <button class="test-sub-btn" id="inter-sub-major" onclick="setInteractiveSubMode('major')">Major</button>
@@ -785,20 +759,19 @@
                                     <button class="test-sub-btn" id="inter-sub-minor" onclick="setInteractiveSubMode('minor')">Minor</button>
                                     <button class="test-sub-btn" id="inter-sub-minorseq" onclick="setInteractiveSubMode('minorseq')">Minor(Seq)</button>
                                     <button class="test-sub-btn" id="inter-sub-diminished" onclick="setInteractiveSubMode('diminished')">Dim</button>
-                                    <button class="test-sub-btn" id="inter-sub-diminishedseq" onclick="setInteractiveSubMode('diminishedseq')">Dim(Seq)</button>
+                                    <button class="test-sub-btn" id="inter-sub-diminishedseq" onclick="setInteractiveSubMode('diminishedseq')">Dim (Seq)</button>
                                     <button class="test-sub-btn" id="inter-sub-augmented" onclick="setInteractiveSubMode('augmented')">Aug</button>
-                                    <button class="test-sub-btn" id="inter-sub-augmentedseq" onclick="setInteractiveSubMode('augmentedseq')">Aug(Seq)</button>
+                                    <button class="test-sub-btn" id="inter-sub-augmentedseq" onclick="setInteractiveSubMode('augmentedseq')">Aug (Seq)</button>
                                 </div>
                             </div>
                         </div>
                         <div class="go-action-bar">
-                            <button class="key-select-btn" id="inter-key-white" onclick="setInteractiveKeyMode(true)">WHITE</button>
-                            <button class="key-select-btn active" id="inter-key-all" onclick="setInteractiveKeyMode(false)">ALL</button>
+                            <button class="key-select-btn" id="inter-key-white" onclick="setInteractiveKeyMode(true)">WHITE KEYS</button>
+                            <button class="key-select-btn active" id="inter-key-all" onclick="setInteractiveKeyMode(false)">ALL KEYS</button>
                             <button class="repeat-btn" onclick="repeatInteractiveSound()">REPEAT 🔁</button>
                             <button class="trigger-go-btn" onclick="triggerInteractiveGo()">GO ⚡</button>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -819,11 +792,49 @@
             </div>
         </div>
 
-        <!-- Piano in the Middle -->
         <div class="keyboard-wrapper" id="pianoWrapper">
             <div class="piano-grid">
                 <div class="sharps-layer" id="sharps-container"></div>
                 <div class="naturals-layer" id="naturals-container"></div>
+            </div>
+        </div>
+
+        <div class="controls-panel-wrapper" id="controlsWrapper">
+            <div class="controls-panel">
+                <div class="fader-grid">
+                    <div class="fader-card" id="card-bell-piano">
+                        <button class="fader-header-btn active" id="mode-bell-piano" onclick="setAudioMode('bell-piano')">
+                            <span>Bells / Ravenscroft 275 Blend</span>
+                        </button>
+                        <div class="fader-metrics">
+                            <span id="label-bp-left" class="highlight">Bells 50%</span>
+                            <span id="label-bp-right" class="highlight">Ravenscroft 275 50%</span>
+                        </div>
+                        <input type="range" min="0" max="100" value="50" class="blend-slider" id="fader-bell-piano" oninput="updateBlendValues('bell-piano', this.value)">
+                    </div>
+
+                    <div class="fader-card" id="card-bell-vocal">
+                        <button class="fader-header-btn" id="mode-bell-vocal" onclick="setAudioMode('bell-vocal')">
+                            <span>Bells / Solfège Blend</span>
+                        </button>
+                        <div class="fader-metrics">
+                            <span id="label-bv-left" class="highlight">Bells 50%</span>
+                            <span id="label-bv-right" class="highlight">Solfège 50%</span>
+                        </div>
+                        <input type="range" min="0" max="100" value="50" class="blend-slider" id="fader-bell-vocal" oninput="updateBlendValues('bell-vocal', this.value)" disabled>
+                    </div>
+
+                    <div class="fader-card" id="card-piano-vocal">
+                        <button class="fader-header-btn" id="mode-piano-vocal" onclick="setAudioMode('piano-vocal')">
+                            <span>Ravenscroft 275 / Solfège Blend</span>
+                        </button>
+                        <div class="fader-metrics">
+                            <span id="label-pv-left" class="highlight">Ravenscroft 275 50%</span>
+                            <span id="label-pv-right" class="highlight">Solfège 50%</span>
+                        </div>
+                        <input type="range" min="0" max="100" value="50" class="blend-slider" id="fader-piano-vocal" oninput="updateBlendValues('piano-vocal', this.value)" disabled>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -904,7 +915,7 @@
         { id: "D5",  solfege: "Re 5", display: "D", voiceWav: "Re 5.wav",  bellSourceFile: "Re 5 Bell.wav",  bellRate: 1.0, type: "white", style: "D5" },
         { id: "Eb5", solfege: "Me 5", display: { sharp: "D#", flat: "Eb" }, voiceWav: "Me 5.wav",  bellSourceFile: "Me 5 Bell.wav",  bellRate: 1.0, type: "black", style: "Eb5" },
         { id: "E5",  solfege: "Mi 5", display: "E", voiceWav: "Mi 5.wav",  bellSourceFile: "Mi 5 Bell.wav",  bellRate: 1.0, type: "white", style: "E5" },
-        { id: "F5",  solfege: "Fa 5", display: "F", voiceWav: "Fa 5.wav",  bellSourceFile: "Fa 5 Bell.wav",  bellRate: 1.0, type: "white", style: "F5" },
+        { id: "F5",  solfege: "Fa 5", display: "F", voiceWav: "F5.wav",  bellSourceFile: "F5 Bell.wav",  bellRate: 1.0, type: "white", style: "F5" },
         { id: "Gb5", solfege: "Fi 5", display: { sharp: "F#", flat: "Gb" }, voiceWav: "Fi 5.wav",  bellSourceFile: "Fi 5 Bell.wav",  bellRate: 1.0, type: "black", style: "Gb5" },
         { id: "G5",  solfege: "So 5", display: "G", voiceWav: "So 5.wav",  bellSourceFile: "So 5 Bell.wav",  bellRate: 1.0, type: "white", style: "G5" }
     ];
@@ -1224,7 +1235,7 @@
 
         if (targetFader === 'bell-piano') {
             document.getElementById('label-bp-left').innerHTML = `Bells ${percentage}%`;
-            document.getElementById('label-bp-right').innerHTML = `Ravenscroft ${100 - percentage}%`;
+            document.getElementById('label-bp-right').innerHTML = `Ravenscroft 275 ${100 - percentage}%`;
             document.getElementById('label-bp-left').className = percentage > 0 ? "highlight" : "";
             document.getElementById('label-bp-right').className = (100 - percentage) > 0 ? "highlight" : "";
             
@@ -1232,15 +1243,15 @@
             bellPianoMixGainPiano.gain.linearRampToValueAtTime(rightSideGain, currentTime + rampTime);
         } else if (targetFader === 'bell-vocal') {
             document.getElementById('label-bv-left').innerHTML = `Bells ${percentage}%`;
-            document.getElementById('label-bv-right').innerHTML = `Sol ${100 - percentage}%`;
+            document.getElementById('label-bv-right').innerHTML = `Solfège ${100 - percentage}%`;
             document.getElementById('label-bv-left').className = percentage > 0 ? "highlight" : "";
             document.getElementById('label-bv-right').className = (100 - percentage) > 0 ? "highlight" : "";
             
             bellGainNode.gain.linearRampToValueAtTime(leftSideGain, currentTime + rampTime);
             vocalGainNode.gain.linearRampToValueAtTime(rightSideGain, currentTime + rampTime);
         } else if (targetFader === 'piano-vocal') {
-            document.getElementById('label-pv-left').innerHTML = `Piano ${percentage}%`;
-            document.getElementById('label-pv-right').innerHTML = `Sol ${100 - percentage}%`;
+            document.getElementById('label-pv-left').innerHTML = `Ravenscroft 275 ${percentage}%`;
+            document.getElementById('label-pv-right').innerHTML = `Solfège ${100 - percentage}%`;
             document.getElementById('label-pv-left').className = percentage > 0 ? "highlight" : "";
             document.getElementById('label-pv-right').className = (100 - percentage) > 0 ? "highlight" : "";
 
@@ -1286,17 +1297,20 @@
 
     function updateLockUI(lockState) {
         isCurrentlyLocked = lockState;
+        const controlsWrapper = document.getElementById('controlsWrapper');
         const pianoWrapper = document.getElementById('pianoWrapper');
         const slideLabel = document.getElementById('slideLabel');
         const trackWrapper = document.getElementById('trackWrapper');
 
         if (lockState) {
             lockedScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            controlsWrapper.classList.add('locked');
             pianoWrapper.classList.add('locked');
             trackWrapper.classList.add('is-locked');
             slideLabel.innerText = "◄ Slide left to unlock";
             slideLabel.className = "slide-label locked";
         } else {
+            controlsWrapper.classList.remove('locked');
             pianoWrapper.classList.remove('locked');
             trackWrapper.classList.remove('is-locked');
             slideLabel.innerText = "Slide right to lock";
@@ -1368,11 +1382,11 @@
             lockInterface.classList.remove('hidden');
             
             document.getElementById('label-bp-left').innerHTML = `Bells 50%`;
-            document.getElementById('label-bp-right').innerHTML = `Ravenscroft 50%`;
+            document.getElementById('label-bp-right').innerHTML = `Ravenscroft 275 50%`;
             document.getElementById('label-bv-left').innerHTML = `Bells 50%`;
-            document.getElementById('label-bv-right').innerHTML = `Sol 50%`;
-            document.getElementById('label-pv-left').innerHTML = `Piano 50%`;
-            document.getElementById('label-pv-right').innerHTML = `Sol 50%`;
+            document.getElementById('label-bv-right').innerHTML = `Solfège 50%`;
+            document.getElementById('label-pv-left').innerHTML = `Ravenscroft 275 50%`;
+            document.getElementById('label-pv-right').innerHTML = `Solfège 50%`;
         }, 600);
     }
     loadAllSounds();
