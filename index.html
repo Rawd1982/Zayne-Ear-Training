@@ -1,4 +1,3 @@
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -704,9 +703,13 @@
                             <button class="test-sub-btn" id="test-sub-chord3" onclick="setTestSubMode('chord3')">3-Note Chord</button>
                             <button class="test-sub-btn" id="test-sub-chord3seq" onclick="setTestSubMode('chord3seq')">3-Note (Seq)</button>
                             <button class="test-sub-btn" id="test-sub-major" onclick="setTestSubMode('major')">Major Chord</button>
+                            <button class="test-sub-btn" id="test-sub-majorseq" onclick="setTestSubMode('majorseq')">Major (Seq)</button>
                             <button class="test-sub-btn" id="test-sub-minor" onclick="setTestSubMode('minor')">Minor Chord</button>
+                            <button class="test-sub-btn" id="test-sub-minorseq" onclick="setTestSubMode('minorseq')">Minor (Seq)</button>
                             <button class="test-sub-btn" id="test-sub-diminished" onclick="setTestSubMode('diminished')">Diminished</button>
+                            <button class="test-sub-btn" id="test-sub-diminishedseq" onclick="setTestSubMode('diminishedseq')">Diminished (Seq)</button>
                             <button class="test-sub-btn" id="test-sub-augmented" onclick="setTestSubMode('augmented')">Augmented</button>
+                            <button class="test-sub-btn" id="test-sub-augmentedseq" onclick="setTestSubMode('augmentedseq')">Augmented (Seq)</button>
                         </div>
                         <div class="go-action-bar">
                             <button class="key-select-btn" id="practice-key-white" onclick="setPracticeKeyMode(true)">WHITE KEYS</button>
@@ -732,9 +735,13 @@
                             <button class="test-sub-btn" id="inter-sub-chord3" onclick="setInteractiveSubMode('chord3')">3-Note Test</button>
                             <button class="test-sub-btn" id="inter-sub-chord3seq" onclick="setInteractiveSubMode('chord3seq')">3-Note (Seq)</button>
                             <button class="test-sub-btn" id="inter-sub-major" onclick="setInteractiveSubMode('major')">Major Chord</button>
+                            <button class="test-sub-btn" id="inter-sub-majorseq" onclick="setInteractiveSubMode('majorseq')">Major (Seq)</button>
                             <button class="test-sub-btn" id="inter-sub-minor" onclick="setInteractiveSubMode('minor')">Minor Chord</button>
+                            <button class="test-sub-btn" id="inter-sub-minorseq" onclick="setInteractiveSubMode('minorseq')">Minor (Seq)</button>
                             <button class="test-sub-btn" id="inter-sub-diminished" onclick="setInteractiveSubMode('diminished')">Diminished</button>
+                            <button class="test-sub-btn" id="inter-sub-diminishedseq" onclick="setInteractiveSubMode('diminishedseq')">Diminished (Seq)</button>
                             <button class="test-sub-btn" id="inter-sub-augmented" onclick="setInteractiveSubMode('augmented')">Augmented</button>
+                            <button class="test-sub-btn" id="inter-sub-augmentedseq" onclick="setInteractiveSubMode('augmentedseq')">Augmented (Seq)</button>
                         </div>
                         <div class="go-action-bar">
                             <button class="key-select-btn" id="inter-key-white" onclick="setInteractiveKeyMode(true)">WHITE KEYS</button>
@@ -939,7 +946,7 @@
         if (isCurrentlyLocked) return;
         
         const sounds = ['ravenscroft', 'bells', 'pianoseq', 'bellseq', 'rhodes', 'guitar', 'organ'];
-        const types = ['single', 'dyad', 'dyadseq', 'chord3', 'chord3seq', 'major', 'minor', 'diminished', 'augmented'];
+        const types = ['single', 'dyad', 'dyadseq', 'chord3', 'chord3seq', 'major', 'majorseq', 'minor', 'minorseq', 'diminished', 'diminishedseq', 'augmented', 'augmentedseq'];
         
         if (sounds.includes(type)) {
             activePracticeSound = type;
@@ -981,8 +988,9 @@
             lastPracticeNotes = getRandomNotesWithinOctave(2, practiceWhiteKeysOnly);
         } else if (activePracticeType === 'chord3' || activePracticeType === 'chord3seq') {
             lastPracticeNotes = getRandomNotesWithinOctave(3, practiceWhiteKeysOnly);
-        } else if (['major', 'minor', 'diminished', 'augmented'].includes(activePracticeType)) {
-            lastPracticeNotes = getChordNotes(activePracticeType, practiceWhiteKeysOnly);
+        } else if (['major', 'majorseq', 'minor', 'minorseq', 'diminished', 'diminishedseq', 'augmented', 'augmentedseq'].includes(activePracticeType)) {
+            let baseChordType = activePracticeType.replace('seq', '');
+            lastPracticeNotes = getChordNotes(baseChordType, practiceWhiteKeysOnly);
         }
 
         playPracticeNotesWithTiming(lastPracticeNotes, activePracticeType, activePracticeSound);
@@ -995,7 +1003,7 @@
     }
 
     function playPracticeNotesWithTiming(notes, type, sound) {
-        if (type === 'dyadseq' || type === 'chord3seq') {
+        if (type.endsWith('seq')) {
             notes.forEach((note, idx) => {
                 setTimeout(() => {
                     playPracticeSound(note, sound);
@@ -1010,7 +1018,7 @@
         if (isCurrentlyLocked) return;
         
         const sounds = ['ravenscroft', 'bells', 'rhodes', 'guitar', 'organ'];
-        const types = ['single', 'dyad', 'dyadseq', 'chord3', 'chord3seq', 'major', 'minor', 'diminished', 'augmented'];
+        const types = ['single', 'dyad', 'dyadseq', 'chord3', 'chord3seq', 'major', 'majorseq', 'minor', 'minorseq', 'diminished', 'diminishedseq', 'augmented', 'augmentedseq'];
 
         if (sounds.includes(type)) {
             activeInteractiveSound = type;
@@ -1053,8 +1061,9 @@
             targetActiveTestNotes = getRandomNotesWithinOctave(2, interactiveWhiteKeysOnly);
         } else if (activeInteractiveType === 'chord3' || activeInteractiveType === 'chord3seq') {
             targetActiveTestNotes = getRandomNotesWithinOctave(3, interactiveWhiteKeysOnly);
-        } else if (['major', 'minor', 'diminished', 'augmented'].includes(activeInteractiveType)) {
-            targetActiveTestNotes = getChordNotes(activeInteractiveType, interactiveWhiteKeysOnly);
+        } else if (['major', 'majorseq', 'minor', 'minorseq', 'diminished', 'diminishedseq', 'augmented', 'augmentedseq'].includes(activeInteractiveType)) {
+            let baseChordType = activeInteractiveType.replace('seq', '');
+            targetActiveTestNotes = getChordNotes(baseChordType, interactiveWhiteKeysOnly);
         }
 
         playInteractiveNotesWithTiming(targetActiveTestNotes, activeInteractiveType, activeInteractiveSound);
@@ -1066,7 +1075,7 @@
     }
 
     function playInteractiveNotesWithTiming(notes, type, sound) {
-        if (type === 'dyadseq' || type === 'chord3seq') {
+        if (type.endsWith('seq')) {
             notes.forEach((note, idx) => {
                 setTimeout(() => {
                     triggerInstrumentAudioOnly(note, sound);
@@ -1355,8 +1364,9 @@
                 let idx1 = Math.min(progression.length - 1, idx + off1);
                 let idx2 = Math.min(progression.length - 1, idx + off2);
                 lastPracticeNotes = [progression[idx].id, progression[idx1].id, progression[idx2].id];
-            } else if (['major', 'minor', 'diminished', 'augmented'].includes(activePracticeType)) {
-                lastPracticeNotes = getChordNotes(activePracticeType, false, choice);
+            } else if (['major', 'majorseq', 'minor', 'minorseq', 'diminished', 'diminishedseq', 'augmented', 'augmentedseq'].includes(activePracticeType)) {
+                let baseChordType = activePracticeType.replace('seq', '');
+                lastPracticeNotes = getChordNotes(baseChordType, false, choice);
             }
             playPracticeNotesWithTiming(lastPracticeNotes, activePracticeType, activePracticeSound);
             return;
