@@ -1,5 +1,4 @@
 
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -75,13 +74,6 @@
             padding: 8px;
             border-radius: 10px;
             border: 2px solid #1e293b;
-            width: 100%;
-        }
-
-        .fader-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 5px;
             width: 100%;
         }
 
@@ -219,30 +211,9 @@
         }
 
         @media (max-width: 992px) {
-            .fader-grid, .test-mode-grid {
+            .test-mode-grid {
                 grid-template-columns: 1fr;
             }
-        }
-
-        .controls-panel-wrapper.locked::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(1px);
-            border-radius: 10px;
-            z-index: 10;
-            cursor: not-allowed;
-        }
-
-        .fader-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 6px;
-            padding: 5px 8px;
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
         }
 
         .test-card {
@@ -297,7 +268,7 @@
             border: none;
             color: var(--text-sub);
             font-weight: 700;
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             text-align: left;
             padding: 0;
             cursor: pointer;
@@ -314,47 +285,111 @@
             color: #f3722c;
         }
 
-        .fader-metrics {
+        /* Piano + Vertical Faders Layout container */
+        .piano-dock-section {
             display: flex;
+            flex-direction: row;
+            align-items: stretch;
+            gap: 8px;
+            width: 100%;
+            max-width: 1100px;
+            margin-bottom: 8px;
+        }
+
+        /* Vertical Faders Panel on the Left */
+        .vertical-faders-panel {
+            background-color: var(--keyboard-bg);
+            border: 3px solid #1e293b;
+            border-radius: 14px;
+            padding: 10px 8px;
+            display: flex;
+            flex-direction: row;
+            gap: 8px;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+            position: relative;
+        }
+
+        .controls-panel-wrapper.locked .vertical-faders-panel::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(1px);
+            border-radius: 10px;
+            z-index: 10;
+            cursor: not-allowed;
+        }
+
+        .vertical-fader-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            padding: 6px 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             justify-content: space-between;
+            width: 54px;
+            height: 100%;
+        }
+
+        .vertical-fader-card .fader-header-btn {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            text-align: center;
             font-size: 0.55rem;
+            height: 100px;
+            justify-content: center;
+            white-space: nowrap;
+        }
+
+        .fader-metrics-vertical {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 0.48rem;
             font-family: monospace;
             color: #64748b;
-            letter-spacing: 0.5px;
+            text-align: center;
+            gap: 2px;
+            margin: 4px 0;
         }
-        .fader-metrics span.highlight {
+        .fader-metrics-vertical span.highlight {
             color: #0d9488;
             font-weight: bold;
         }
 
-        .blend-slider {
+        /* Vertical range slider styling */
+        .blend-slider-vertical {
             -webkit-appearance: none;
             appearance: none;
-            width: 100%;
-            height: 3px;
+            writing-mode: vertical-lr;
+            direction: rtl;
+            width: 4px;
+            height: 90px;
             background: #334155;
             border-radius: 2px;
             outline: none;
-            margin: 2px 0;
+            margin: 6px 0;
         }
-        .blend-slider::-webkit-slider-thumb {
+        .blend-slider-vertical::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 10px;
-            height: 10px;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
             background: #0d9488;
             cursor: pointer;
         }
-        .blend-slider::-moz-range-thumb {
-            width: 10px;
-            height: 10px;
+        .blend-slider-vertical::-moz-range-thumb {
+            width: 14px;
+            height: 14px;
             border: none;
             border-radius: 50%;
             background: #0d9488;
             cursor: pointer;
         }
-        .blend-slider:disabled {
+        .blend-slider-vertical:disabled {
             opacity: 0.2;
             cursor: not-allowed;
         }
@@ -491,7 +526,6 @@
             padding: 15px 12px;
             border-radius: 14px;
             width: 100%;
-            max-width: 1100px; 
             overflow-x: auto;
             overflow-y: hidden;
             display: block;
@@ -499,7 +533,7 @@
             border: 3px solid #1e293b;
             box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
             position: relative;
-            margin-bottom: 8px;
+            flex: 1;
         }
 
         .keyboard-wrapper.locked {
@@ -507,14 +541,6 @@
             overflow-y: hidden !important;
             -webkit-overflow-scrolling: auto;
             touch-action: manipulation !important;
-        }
-
-        @media screen and (orientation: landscape) {
-            .keyboard-wrapper {
-                max-width: 100%; 
-                display: flex;
-                justify-content: center;
-            }
         }
 
         .keyboard-wrapper::-webkit-scrollbar { height: 6px; }
@@ -792,48 +818,49 @@
             </div>
         </div>
 
-        <div class="keyboard-wrapper" id="pianoWrapper">
-            <div class="piano-grid">
-                <div class="sharps-layer" id="sharps-container"></div>
-                <div class="naturals-layer" id="naturals-container"></div>
-            </div>
-        </div>
-
-        <div class="controls-panel-wrapper" id="controlsWrapper">
-            <div class="controls-panel">
-                <div class="fader-grid">
-                    <div class="fader-card" id="card-bell-piano">
+        <!-- Piano Dock Section (Vertical Faders on Left + Piano on Right) -->
+        <div class="piano-dock-section">
+            <div class="controls-panel-wrapper locked-target" id="controlsWrapper" style="width: auto;">
+                <div class="vertical-faders-panel">
+                    <div class="vertical-fader-card" id="card-bell-piano">
                         <button class="fader-header-btn active" id="mode-bell-piano" onclick="setAudioMode('bell-piano')">
-                            <span>Bells / Ravenscroft 275 Blend</span>
+                            <span>Bells / Ravenscroft 275</span>
                         </button>
-                        <div class="fader-metrics">
-                            <span id="label-bp-left" class="highlight">Bells 50%</span>
-                            <span id="label-bp-right" class="highlight">Ravenscroft 275 50%</span>
+                        <div class="fader-metrics-vertical">
+                            <span id="label-bp-left" class="highlight">B 50%</span>
+                            <span id="label-bp-right" class="highlight">R 50%</span>
                         </div>
-                        <input type="range" min="0" max="100" value="50" class="blend-slider" id="fader-bell-piano" oninput="updateBlendValues('bell-piano', this.value)">
+                        <input type="range" min="0" max="100" value="50" class="blend-slider-vertical" id="fader-bell-piano" oninput="updateBlendValues('bell-piano', this.value)">
                     </div>
 
-                    <div class="fader-card" id="card-bell-vocal">
+                    <div class="vertical-fader-card" id="card-bell-vocal">
                         <button class="fader-header-btn" id="mode-bell-vocal" onclick="setAudioMode('bell-vocal')">
-                            <span>Bells / Solfège Blend</span>
+                            <span>Bells / Solfège</span>
                         </button>
-                        <div class="fader-metrics">
-                            <span id="label-bv-left" class="highlight">Bells 50%</span>
-                            <span id="label-bv-right" class="highlight">Solfège 50%</span>
+                        <div class="fader-metrics-vertical">
+                            <span id="label-bv-left" class="highlight">B 50%</span>
+                            <span id="label-bv-right" class="highlight">S 50%</span>
                         </div>
-                        <input type="range" min="0" max="100" value="50" class="blend-slider" id="fader-bell-vocal" oninput="updateBlendValues('bell-vocal', this.value)" disabled>
+                        <input type="range" min="0" max="100" value="50" class="blend-slider-vertical" id="fader-bell-vocal" oninput="updateBlendValues('bell-vocal', this.value)" disabled>
                     </div>
 
-                    <div class="fader-card" id="card-piano-vocal">
+                    <div class="vertical-fader-card" id="card-piano-vocal">
                         <button class="fader-header-btn" id="mode-piano-vocal" onclick="setAudioMode('piano-vocal')">
-                            <span>Ravenscroft 275 / Solfège Blend</span>
+                            <span>Ravenscroft / Solfège</span>
                         </button>
-                        <div class="fader-metrics">
-                            <span id="label-pv-left" class="highlight">Ravenscroft 275 50%</span>
-                            <span id="label-pv-right" class="highlight">Solfège 50%</span>
+                        <div class="fader-metrics-vertical">
+                            <span id="label-pv-left" class="highlight">R 50%</span>
+                            <span id="label-pv-right" class="highlight">S 50%</span>
                         </div>
-                        <input type="range" min="0" max="100" value="50" class="blend-slider" id="fader-piano-vocal" oninput="updateBlendValues('piano-vocal', this.value)" disabled>
+                        <input type="range" min="0" max="100" value="50" class="blend-slider-vertical" id="fader-piano-vocal" oninput="updateBlendValues('piano-vocal', this.value)" disabled>
                     </div>
+                </div>
+            </div>
+
+            <div class="keyboard-wrapper" id="pianoWrapper">
+                <div class="piano-grid">
+                    <div class="sharps-layer" id="sharps-container"></div>
+                    <div class="naturals-layer" id="naturals-container"></div>
                 </div>
             </div>
         </div>
@@ -1234,24 +1261,24 @@
         const rampTime = 0.03;
 
         if (targetFader === 'bell-piano') {
-            document.getElementById('label-bp-left').innerHTML = `Bells ${percentage}%`;
-            document.getElementById('label-bp-right').innerHTML = `Ravenscroft 275 ${100 - percentage}%`;
+            document.getElementById('label-bp-left').innerHTML = `B ${percentage}%`;
+            document.getElementById('label-bp-right').innerHTML = `R ${100 - percentage}%`;
             document.getElementById('label-bp-left').className = percentage > 0 ? "highlight" : "";
             document.getElementById('label-bp-right').className = (100 - percentage) > 0 ? "highlight" : "";
             
             bellPianoMixGainBell.gain.linearRampToValueAtTime(leftSideGain, currentTime + rampTime);
             bellPianoMixGainPiano.gain.linearRampToValueAtTime(rightSideGain, currentTime + rampTime);
         } else if (targetFader === 'bell-vocal') {
-            document.getElementById('label-bv-left').innerHTML = `Bells ${percentage}%`;
-            document.getElementById('label-bv-right').innerHTML = `Solfège ${100 - percentage}%`;
+            document.getElementById('label-bv-left').innerHTML = `B ${percentage}%`;
+            document.getElementById('label-bv-right').innerHTML = `S ${100 - percentage}%`;
             document.getElementById('label-bv-left').className = percentage > 0 ? "highlight" : "";
             document.getElementById('label-bv-right').className = (100 - percentage) > 0 ? "highlight" : "";
             
             bellGainNode.gain.linearRampToValueAtTime(leftSideGain, currentTime + rampTime);
             vocalGainNode.gain.linearRampToValueAtTime(rightSideGain, currentTime + rampTime);
         } else if (targetFader === 'piano-vocal') {
-            document.getElementById('label-pv-left').innerHTML = `Ravenscroft 275 ${percentage}%`;
-            document.getElementById('label-pv-right').innerHTML = `Solfège ${100 - percentage}%`;
+            document.getElementById('label-pv-left').innerHTML = `R ${percentage}%`;
+            document.getElementById('label-pv-right').innerHTML = `S ${100 - percentage}%`;
             document.getElementById('label-pv-left').className = percentage > 0 ? "highlight" : "";
             document.getElementById('label-pv-right').className = (100 - percentage) > 0 ? "highlight" : "";
 
@@ -1381,12 +1408,12 @@
             loadingZone.classList.add('hidden');
             lockInterface.classList.remove('hidden');
             
-            document.getElementById('label-bp-left').innerHTML = `Bells 50%`;
-            document.getElementById('label-bp-right').innerHTML = `Ravenscroft 275 50%`;
-            document.getElementById('label-bv-left').innerHTML = `Bells 50%`;
-            document.getElementById('label-bv-right').innerHTML = `Solfège 50%`;
-            document.getElementById('label-pv-left').innerHTML = `Ravenscroft 275 50%`;
-            document.getElementById('label-pv-right').innerHTML = `Solfège 50%`;
+            document.getElementById('label-bp-left').innerHTML = `B 50%`;
+            document.getElementById('label-bp-right').innerHTML = `R 50%`;
+            document.getElementById('label-bv-left').innerHTML = `B 50%`;
+            document.getElementById('label-bv-right').innerHTML = `S 50%`;
+            document.getElementById('label-pv-left').innerHTML = `R 50%`;
+            document.getElementById('label-pv-right').innerHTML = `S 50%`;
         }, 600);
     }
     loadAllSounds();
