@@ -281,13 +281,6 @@
             align-items: center;
         }
 
-        .fader-header-btn.active {
-            color: #0d9488;
-        }
-        .test-card.interactive .fader-header-btn.active {
-            color: #f3722c;
-        }
-
         .loading-zone {
             display: flex;
             flex-direction: column;
@@ -613,7 +606,7 @@
     <div class="header-line"></div>
 
     <div class="game-panel">
-        <div class="controls-panel-wrapper" id="controlsWrapper">
+        <div class="controls-panel-wrapper">
             <div class="controls-panel">
                 <div class="test-mode-grid">
                     <div class="test-card">
@@ -623,22 +616,22 @@
                         <div class="test-options-section">
                             <div class="test-options-group">
                                 <span class="group-label">Sound / Timbre</span>
-                                <div class="test-options-grid sound-grid">
+                                <div class="test-options-grid">
                                     <button class="test-sub-btn active" id="test-sub-ravenscroft" onclick="setTestSubMode('ravenscroft')">Piano</button>
                                     <button class="test-sub-btn" id="test-sub-bells" onclick="setTestSubMode('bells')">Bells</button>
-                                    <button class="test-sub-btn" id="test-sub-bellvocal" onclick="setTestSubMode('bellvocal')">Bell/Solfege</button>
-                                    <button class="test-sub-btn" id="test-sub-solfege" onclick="setTestSubMode('solfege')">Solfege</button>
-                                    <button class="test-sub-btn" id="test-sub-pianovocal" onclick="setTestSubMode('pianovocal')">Piano/Solfege</button>
                                     <button class="test-sub-btn" id="test-sub-pianoseq" onclick="setTestSubMode('pianoseq')">Piano → Sol</button>
                                     <button class="test-sub-btn" id="test-sub-bellseq" onclick="setTestSubMode('bellseq')">Bell → Sol</button>
                                     <button class="test-sub-btn" id="test-sub-rhodes" onclick="setTestSubMode('rhodes')">Rhodes</button>
                                     <button class="test-sub-btn" id="test-sub-guitar" onclick="setTestSubMode('guitar')">Guitar</button>
                                     <button class="test-sub-btn" id="test-sub-organ" onclick="setTestSubMode('organ')">Organ</button>
+                                    <button class="test-sub-btn" id="test-sub-bellsolfege" onclick="setTestSubMode('bellsolfege')">Bell/Solfege</button>
+                                    <button class="test-sub-btn" id="test-sub-solfegeonly" onclick="setTestSubMode('solfegeonly')">Solfege</button>
+                                    <button class="test-sub-btn" id="test-sub-pianosolfege" onclick="setTestSubMode('pianosolfege')">Ravenscroft/solfege</button>
                                 </div>
                             </div>
                             <div class="test-options-group">
                                 <span class="group-label">Note / Chord Type</span>
-                                <div class="test-options-grid chord-grid">
+                                <div class="test-options-grid">
                                     <button class="test-sub-btn active" id="test-sub-single" onclick="setTestSubMode('single')">Single</button>
                                     <button class="test-sub-btn" id="test-sub-dyad" onclick="setTestSubMode('dyad')">Dyad</button>
                                     <button class="test-sub-btn" id="test-sub-dyadseq" onclick="setTestSubMode('dyadseq')">Dyad (Seq)</button>
@@ -670,20 +663,20 @@
                         <div class="test-options-section">
                             <div class="test-options-group">
                                 <span class="group-label">Sound / Timbre</span>
-                                <div class="test-options-grid sound-grid">
+                                <div class="test-options-grid">
                                     <button class="test-sub-btn active" id="inter-sub-ravenscroft" onclick="setInteractiveSubMode('ravenscroft')">Piano</button>
                                     <button class="test-sub-btn" id="inter-sub-bells" onclick="setInteractiveSubMode('bells')">Bells</button>
-                                    <button class="test-sub-btn" id="inter-sub-bellvocal" onclick="setInteractiveSubMode('bellvocal')">Bell/Solfege</button>
-                                    <button class="test-sub-btn" id="inter-sub-solfege" onclick="setInteractiveSubMode('solfege')">Solfege</button>
-                                    <button class="test-sub-btn" id="inter-sub-pianovocal" onclick="setInteractiveSubMode('pianovocal')">Piano/Solfege</button>
                                     <button class="test-sub-btn" id="inter-sub-rhodes" onclick="setInteractiveSubMode('rhodes')">Rhodes</button>
                                     <button class="test-sub-btn" id="inter-sub-guitar" onclick="setInteractiveSubMode('guitar')">Guitar</button>
                                     <button class="test-sub-btn" id="inter-sub-organ" onclick="setInteractiveSubMode('organ')">Organ</button>
+                                    <button class="test-sub-btn" id="inter-sub-bellsolfege" onclick="setInteractiveSubMode('bellsolfege')">Bell/Solfege</button>
+                                    <button class="test-sub-btn" id="inter-sub-solfegeonly" onclick="setInteractiveSubMode('solfegeonly')">Solfege</button>
+                                    <button class="test-sub-btn" id="inter-sub-pianosolfege" onclick="setInteractiveSubMode('pianosolfege')">Ravenscroft/solfege</button>
                                 </div>
                             </div>
                             <div class="test-options-group">
                                 <span class="group-label">Note / Chord Type</span>
-                                <div class="test-options-grid chord-grid">
+                                <div class="test-options-grid">
                                     <button class="test-sub-btn active" id="inter-sub-single" onclick="setInteractiveSubMode('single')">Single</button>
                                     <button class="test-sub-btn" id="inter-sub-dyad" onclick="setInteractiveSubMode('dyad')">Dyad</button>
                                     <button class="test-sub-btn" id="inter-sub-dyadseq" onclick="setInteractiveSubMode('dyadseq')">Dyad (Seq)</button>
@@ -746,7 +739,7 @@
     generalGainNode.gain.setValueAtTime(1.0, audioCtx.currentTime);
     generalGainNode.connect(audioCtx.destination);
 
-    let currentAudioMode = 'ravenscroft'; 
+    let currentAudioMode = 'ravenscroft'; // Default mode when app opens is piano (ravenscroft)
     let activePracticeSound = 'ravenscroft';
     let activePracticeType = 'single';
     let practiceWhiteKeysOnly = false;
@@ -846,24 +839,18 @@
         if (isCurrentlyLocked) return; 
         currentAudioMode = mode;
         
-        if(mode !== 'interactive-test') {
+        if(mode !== 'interactive-test' && mode !== 'test-mode') {
             targetActiveTestNote = null;
             targetActiveTestNotes = [];
             userInteractiveSelectedNotes = [];
             clearAllFlashEffects();
-        }
-
-        if (mode === 'test-mode') {
-            document.getElementById('mode-test-holder').classList.add('active');
-        } else if (mode === 'interactive-test') {
-            document.getElementById('mode-interactive-holder').classList.add('active');
         }
     }
 
     function setTestSubMode(type) {
         if (isCurrentlyLocked) return;
         
-        const sounds = ['ravenscroft', 'bells', 'bellvocal', 'solfege', 'pianovocal', 'pianoseq', 'bellseq', 'rhodes', 'guitar', 'organ'];
+        const sounds = ['ravenscroft', 'bells', 'pianoseq', 'bellseq', 'rhodes', 'guitar', 'organ', 'bellsolfege', 'solfegeonly', 'pianosolfege'];
         const types = ['single', 'dyad', 'dyadseq', 'chord3', 'chord3seq', 'major', 'majorseq', 'minor', 'minorseq', 'diminished', 'diminishedseq', 'augmented', 'augmentedseq'];
         
         if (sounds.includes(type)) {
@@ -874,7 +861,6 @@
             });
             const soundEl = document.getElementById(`test-sub-${type}`);
             if (soundEl) soundEl.classList.add('active');
-            currentAudioMode = type;
         } else if (types.includes(type)) {
             activePracticeType = type;
             types.forEach(t => {
@@ -925,18 +911,18 @@
         if (type.endsWith('seq')) {
             notes.forEach((note, idx) => {
                 setTimeout(() => {
-                    playSoundMode(note, sound);
+                    playPracticeSound(note, sound);
                 }, idx * 500);
             });
         } else {
-            notes.forEach(n => playSoundMode(n, sound));
+            notes.forEach(n => playPracticeSound(n, sound));
         }
     }
 
     function setInteractiveSubMode(type) {
         if (isCurrentlyLocked) return;
         
-        const sounds = ['ravenscroft', 'bells', 'bellvocal', 'solfege', 'pianovocal', 'rhodes', 'guitar', 'organ'];
+        const sounds = ['ravenscroft', 'bells', 'rhodes', 'guitar', 'organ', 'bellsolfege', 'solfegeonly', 'pianosolfege'];
         const types = ['single', 'dyad', 'dyadseq', 'chord3', 'chord3seq', 'major', 'majorseq', 'minor', 'minorseq', 'diminished', 'diminishedseq', 'augmented', 'augmentedseq'];
 
         if (sounds.includes(type)) {
@@ -997,11 +983,11 @@
         if (type.endsWith('seq')) {
             notes.forEach((note, idx) => {
                 setTimeout(() => {
-                    playInstrumentAudioOnly(note, sound);
+                    triggerSpecificSoundAudioOnly(note, sound);
                 }, idx * 500);
             });
         } else {
-            notes.forEach(n => playInstrumentAudioOnly(n, sound));
+            notes.forEach(n => triggerSpecificSoundAudioOnly(n, sound));
         }
     }
 
@@ -1053,35 +1039,35 @@
         return chordIntervals.map(i => progression[masterIndex + i].id);
     }
 
-    function playSoundMode(choice, soundMode) {
+    function playSpecificSound(choice, sound) {
         triggerLightEffect(choice);
-        playInstrumentAudioOnly(choice, soundMode);
+        triggerSpecificSoundAudioOnly(choice, sound);
     }
 
-    function playInstrumentAudioOnly(choice, mode) {
+    function triggerSpecificSoundAudioOnly(choice, sound) {
         if (audioCtx.state === 'suspended') audioCtx.resume();
         if (Tone.context.state === 'suspended') Tone.start();
 
-        if (mode === 'ravenscroft') {
+        if (sound === 'ravenscroft') {
             playTargetBuffer(ravenscroftBuffers[choice], generalGainNode);
-        } else if (mode === 'bells') {
+        } else if (sound === 'bells') {
             playTargetBuffer(bellBuffers[choice], generalGainNode);
-        } else if (mode === 'bellvocal') {
-            playTargetBuffer(bellBuffers[choice], generalGainNode);
-            playTargetBuffer(voiceBuffers[choice], generalGainNode);
-        } else if (mode === 'solfege') {
-            playTargetBuffer(voiceBuffers[choice], generalGainNode);
-        } else if (mode === 'pianovocal') {
-            playTargetBuffer(ravenscroftBuffers[choice], generalGainNode);
-            playTargetBuffer(voiceBuffers[choice], generalGainNode);
-        } else if (mode === 'pianoseq') {
+        } else if (sound === 'pianoseq') {
             playTargetBuffer(ravenscroftBuffers[choice], generalGainNode);
             playTargetBuffer(voiceBuffers[choice], generalGainNode, 0.6);
-        } else if (mode === 'bellseq') {
+        } else if (sound === 'bellseq') {
             playTargetBuffer(bellBuffers[choice], generalGainNode);
             playTargetBuffer(voiceBuffers[choice], generalGainNode, 0.6);
-        } else if (samplers[mode]) {
-            samplers[mode].triggerAttackRelease(choice, "1m");
+        } else if (sound === 'bellsolfege') {
+            playTargetBuffer(bellBuffers[choice], generalGainNode);
+            playTargetBuffer(voiceBuffers[choice], generalGainNode, 0.4);
+        } else if (sound === 'solfegeonly') {
+            playTargetBuffer(voiceBuffers[choice], generalGainNode);
+        } else if (sound === 'pianosolfege') {
+            playTargetBuffer(ravenscroftBuffers[choice], generalGainNode);
+            playTargetBuffer(voiceBuffers[choice], generalGainNode, 0.4);
+        } else if (samplers[sound]) {
+            samplers[sound].triggerAttackRelease(choice, "1m");
         }
     }
 
@@ -1257,7 +1243,7 @@
 
             if (targetActiveTestNotes.includes(choice)) {
                 if (chosenBtn) chosenBtn.classList.add('success-flash');
-                playInstrumentAudioOnly(choice, activeInteractiveSound);
+                triggerSpecificSoundAudioOnly(choice, activeInteractiveSound);
                 
                 let allMatched = targetActiveTestNotes.every(n => userInteractiveSelectedNotes.includes(n));
                 if (allMatched) {
@@ -1299,7 +1285,22 @@
         if (Tone.context.state === 'suspended') Tone.start();
 
         triggerLightEffect(choice);
-        playInstrumentAudioOnly(choice, currentAudioMode);
+
+        if (currentAudioMode === 'ravenscroft') {
+            playTargetBuffer(ravenscroftBuffers[choice], generalGainNode);
+        } else if (currentAudioMode === 'bells') {
+            playTargetBuffer(bellBuffers[choice], generalGainNode);
+        } else if (currentAudioMode === 'bellsolfege') {
+            playTargetBuffer(bellBuffers[choice], generalGainNode);
+            playTargetBuffer(voiceBuffers[choice], generalGainNode, 0.4);
+        } else if (currentAudioMode === 'solfegeonly') {
+            playTargetBuffer(voiceBuffers[choice], generalGainNode);
+        } else if (currentAudioMode === 'pianosolfege') {
+            playTargetBuffer(ravenscroftBuffers[choice], generalGainNode);
+            playTargetBuffer(voiceBuffers[choice], generalGainNode, 0.4);
+        } else if (samplers[currentAudioMode]) {
+            samplers[currentAudioMode].triggerAttackRelease(choice, "1m");
+        }
     }
 
     document.addEventListener('visibilitychange', () => {
