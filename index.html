@@ -1,4 +1,3 @@
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -943,7 +942,12 @@
 
     function playPracticeNotesWithTiming(notes, type, sound) {
         if (type.endsWith('seq')) {
-            notes.forEach((note, idx) => {
+            // Randomly choose ascending or descending for sequential buttons
+            let seqNotes = [...notes];
+            if (Math.random() < 0.5) {
+                seqNotes.reverse();
+            }
+            seqNotes.forEach((note, idx) => {
                 setTimeout(() => {
                     playPracticeSound(note, sound);
                 }, idx * 500);
@@ -1015,7 +1019,12 @@
 
     function playInteractiveNotesWithTiming(notes, type, sound) {
         if (type.endsWith('seq')) {
-            notes.forEach((note, idx) => {
+            // Randomly choose ascending or descending for sequential buttons
+            let seqNotes = [...notes];
+            if (Math.random() < 0.5) {
+                seqNotes.reverse();
+            }
+            seqNotes.forEach((note, idx) => {
                 setTimeout(() => {
                     triggerInstrumentAudioOnly(note, sound);
                 }, idx * 500);
@@ -1334,4 +1343,3 @@
 </script>
 </body>
 </html>
-
